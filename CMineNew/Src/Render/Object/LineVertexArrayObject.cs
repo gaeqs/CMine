@@ -1,9 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Object{
-    public class VertexArrayObject{
+    public class LineVertexArrayObject{
         private static int _currentBindVao = 0;
 
         public static void Unbind() {
@@ -16,7 +17,7 @@ namespace CMineNew.Render.Object{
         private readonly Collection<VertexBufferObject> _buffers;
         private readonly Collection<int> _attributes;
 
-        private VertexArrayObject(Vertex[] vertices, int[] indices) {
+        private LineVertexArrayObject(Vector3[] vertices, int[] indices) {
             GL.GenVertexArrays(1, out _id);
             _buffers = new Collection<VertexBufferObject>();
             _attributes = new Collection<int>();
@@ -78,17 +79,13 @@ namespace CMineNew.Render.Object{
 
         #region private methods
 
-        private void GenerateDrawVbo(Vertex[] vertices) {
+        private void GenerateDrawVbo(Vector3[] vertices) {
             var vbo = new VertexBufferObject();
             LinkBuffer(vbo);
             var data = ToFloatArray(vertices);
             vbo.Bind(BufferTarget.ArrayBuffer);
             vbo.SetData(BufferTarget.ArrayBuffer, data, BufferUsageHint.StaticDraw);
-
-            var builder = new AttributePointerBuilder(this, Vertex.Size, 0);
-            builder.AddPointer(3, false);
-            builder.AddPointer(3, false);
-            builder.AddPointer(2, false);
+            AttributePointer(0, 3, 3 * sizeof(float), 0, false);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 
@@ -111,44 +108,18 @@ namespace CMineNew.Render.Object{
             }
         }
 
-        private static float[] ToFloatArray(Vertex[] vertices) {
-            var array = new float[vertices.Length * Vertex.Size];
+        private static float[] ToFloatArray(Vector3[] vertices) {
+            var array = new float[vertices.Length * 3]; //3 = Size of Vector3 in floats.
             var current = 0;
             for (uint index = 0; index < vertices.Length; index++) {
-                array[current++] = vertices[index]._position.X;
-                array[current++] = vertices[index]._position.Y;
-                array[current++] = vertices[index]._position.Z;
-                array[current++] = vertices[index]._normal.X;
-                array[current++] = vertices[index]._normal.Y;
-                array[current++] = vertices[index]._normal.Z;
-                array[current++] = vertices[index]._textureCoords.X;
-                array[current++] = vertices[index]._textureCoords.Y;
+                array[current++] = vertices[index].X;
+                array[current++] = vertices[index].Y;
+                array[current++] = vertices[index].Z;
             }
 
             return array;
         }
 
         #endregion
-    }
-
-    public class AttributePointerBuilder{
-        private readonly VertexArrayObject _vao;
-        private readonly int _elementSize;
-
-        private int _currentOffset;
-        private int _currentIndex;
-
-        public AttributePointerBuilder(VertexArrayObject vao, int elementSize, int indexOffset) {
-            _vao = vao;
-            _elementSize = elementSize * sizeof(float);
-            _currentOffset = 0;
-            _currentIndex = indexOffset;
-        }
-
-        public void AddPointer(int size, bool elementAttribute) {
-            _vao.AttributePointer(_currentIndex, size, _elementSize, _currentOffset, elementAttribute);
-            _currentIndex++;
-            _currentOffset += size * sizeof(float);
-        }
     }
 }

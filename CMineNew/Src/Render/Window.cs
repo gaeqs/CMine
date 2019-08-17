@@ -1,11 +1,15 @@
 using System;
+using System.ComponentModel;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace CMineNew.Render{
     public class Window : GameWindow{
         private EventHandler _onLoaded;
+
+        private Room _room;
 
         private Vector2 _unitsPerPixel;
 
@@ -17,6 +21,8 @@ namespace CMineNew.Render{
             _unitsPerPixel = new Vector2(2f / width, 2f / height);
             VSync = vSync ? VSyncMode.On : VSyncMode.Off;
             X += 1920;
+
+            _room = null;
         }
 
         public EventHandler OnLoaded {
@@ -24,9 +30,19 @@ namespace CMineNew.Render{
             set => _onLoaded = value;
         }
 
+        public Room Room {
+            get => _room;
+            set {
+                _room?.Close();
+                _room = value;
+            }
+        }
+
         public long LastTick => _lastTick;
 
         public long Delay => _delay;
+
+        public Vector2 UnitsPerPixel => _unitsPerPixel;
 
         protected override void OnLoad(EventArgs e) {
             Console.WriteLine("OpenGL Version: " + GL.GetString(StringName.Version));
@@ -42,6 +58,71 @@ namespace CMineNew.Render{
         }
 
         protected override void OnRenderFrame(FrameEventArgs e) {
+            var now = DateTime.Now.Ticks;
+            _delay = Math.Min(now - -_lastTick, CMine.TicksPerSecond / 30);
+            _lastTick = now;
+
+            if (_room != null) {
+                _room.Tick(_delay);
+                _room.Draw();
+            }
+
+            SwapBuffers();
         }
+
+        #region Room events
+
+        protected override void OnKeyPress(KeyPressEventArgs args) {
+            base.OnKeyPress(args);
+            _room?.KeyPress(args);
+        }
+
+        protected override void OnKeyDown(KeyboardKeyEventArgs args) {
+            base.OnKeyDown(args);
+            _room?.KeyPush(args);
+            if (args.Key == Key.Escape)
+                Exit();
+        }
+
+        protected override void OnKeyUp(KeyboardKeyEventArgs args) {
+            base.OnKeyUp(args);
+            _room?.KeyRelease(args);
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e) {
+            base.OnMouseUp(e);
+            _room?.MousePush(e);
+        }
+
+        protected override void OnMouseUp(MouseButtonEventArgs e) {
+            base.OnMouseDown(e);
+            _room?.MouseRelease(e);
+        }
+
+        protected override void OnMouseMove(MouseMoveEventArgs e) {
+            base.OnMouseMove(e);
+            _room?.MouseMove(e);
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e) {
+            base.OnMouseWheel(e);
+            _room?.MouseWheel(e);
+        }
+
+        protected override void OnMouseEnter(EventArgs e) {
+            base.OnMouseEnter(e);
+            _room?.MouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e) {
+            base.OnMouseLeave(e);
+            _room?.MouseExit(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e) {
+            _room.Close();
+        }
+
+        #endregion
     }
 }

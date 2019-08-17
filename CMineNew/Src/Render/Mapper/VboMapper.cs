@@ -1,0 +1,209 @@
+using System;
+using System.Collections.Generic;
+using CMine.DataStructure.Queue;
+using CMineNew.Render.Object;
+using OpenTK.Graphics.OpenGL;
+
+namespace CMineNew.Render.Mapper{
+    public class VboMapper<TKey>{
+        private VertexBufferObject _vbo;
+        private VertexArrayObject _vao;
+
+        private readonly int _elementSize;
+
+        private OnResize _onResize;
+
+        private int _amount;
+        private int _maximumAmount;
+
+        private int _updates;
+        private bool _onBackground;
+
+
+        private readonly EConcurrentLinkedQueue<VboMapperTask<TKey>> _tasks;
+        private readonly Dictionary<TKey, int> _offsets;
+        private readonly Dictionary<int, TKey> _keys;
+        private readonly object _backgroundLock = new object();
+
+        public VboMapper(VertexBufferObject vbo, VertexArrayObject vao, int elementSize, int maximumAmount,
+            OnResize onResize) {
+            _vbo = vbo;
+            _vao = vao;
+
+            _elementSize = elementSize;
+
+            _onResize = onResize;
+
+            _amount = 0;
+            _maximumAmount = maximumAmount;
+
+            _updates = 0;
+            _onBackground = false;
+
+            _tasks = new EConcurrentLinkedQueue<VboMapperTask<TKey>>();
+            _offsets = new Dictionary<TKey, int>();
+            _keys = new Dictionary<int, TKey>();
+        }
+
+        public VertexBufferObject Vbo {
+            get => _vbo;
+            set => _vbo = value;
+        }
+
+        public VertexArrayObject Vao {
+            get => _vao;
+            set => _vao = value;
+        }
+
+        public int ElementSize => _elementSize;
+
+        public int Amount => _amount;
+
+        public int Updates => _updates;
+
+        public bool OnBackground {
+            get => _onBackground;
+            set {
+                if (_onBackground == value) return;
+                lock (_backgroundLock) {
+                    _onBackground = value;
+                    if (value) {
+                        _vbo.StartMapping();
+                    }
+                }
+            }
+        }
+
+
+        public void AddTask(VboMapperTask<TKey> task) {
+            if (_onBackground) {
+                _tasks.Push(task);
+                return;
+            }
+
+            lock (_backgroundLock) {
+                if (!_vbo.Mapping) {
+                    _vbo.StartMapping();
+                }
+
+                ExecuteTask(task);
+                _updates++;
+            }
+        }
+
+        public void FlushQueue() {
+            _updates = 0;
+            if (_tasks.IsEmpty()) {
+                if (!_onBackground) {
+                    _vbo.FinishMapping();
+                }
+
+                return;
+            }
+
+            if (!_onBackground) {
+                _vbo.StartMapping();
+            }
+
+            lock (_backgroundLock) {
+                while (!_tasks.IsEmpty()) {
+                    unsafe {
+                        if (_vbo.Pointer == null) {
+                            Console.WriteLine("Warning! Pointer is null!");
+                            break;
+                        }
+
+                        var current = _tasks.Pop();
+                        if (current == null) continue;
+                        ExecuteTask(current);
+                        _updates++;
+                    }
+                }
+            }
+
+            if (!_onBackground) {
+                _vbo.FinishMapping();
+            }
+        }
+        
+        public bool ContainsKey(TKey key) {
+            lock (_backgroundLock) {
+                return _offsets.ContainsKey(key);
+            }
+        }
+
+        private void ExecuteTask(VboMapperTask<TKey> task) {
+            switch (task.Type) {
+                case VboMapperTaskType.Add:
+                    AddToMap(task.Key, task.Data);
+                    break;
+                case VboMapperTaskType.Remove:
+                    RemoveFromMap(task.Key);
+                    break;
+                case VboMapperTaskType.Edit:
+                    EditMap(task.Key, task.Data, task.Offset);
+                    break;
+            }
+
+            if (_amount < _maximumAmount) return;
+            Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
+            ResizeBuffer();
+        }
+
+        private void AddToMap(TKey key, float[] data) {
+            if (_offsets.TryGetValue(key, out _)) return;
+
+            _vbo.AddToMap(data, _elementSize * _amount);
+
+            _offsets[key] = _amount;
+            _keys[_amount] = key;
+            _amount++;
+        }
+
+        private void EditMap(TKey key, float[] data, int offset) {
+            if (!_offsets.TryGetValue(key, out var point)) return;
+            _vbo.AddToMap(data, _elementSize * point + offset);
+        }
+
+        private void RemoveFromMap(TKey key) {
+            if (!_offsets.TryGetValue(key, out var point)) return;
+            if (point == -1) return;
+
+            if (point == _amount - 1) {
+                _offsets.Remove(key);
+                _keys.Remove(_amount - 1);
+                _amount--;
+                return;
+            }
+
+            _vbo.MoveMapData(_elementSize * (_amount - 1), _elementSize * point, _elementSize);
+
+            var lastKey = _keys[_amount - 1];
+            _offsets[lastKey] = point;
+            _keys[point] = lastKey;
+            _keys.Remove(_amount - 1);
+            _offsets.Remove(key);
+            _amount--;
+        }
+
+        private void ResizeBuffer() {
+            _vbo.FinishMapping();
+            var newVbo = new VertexBufferObject();
+            _vbo.Bind(BufferTarget.CopyReadBuffer);
+            newVbo.Bind(BufferTarget.CopyWriteBuffer);
+
+            newVbo.SetData(BufferTarget.CopyWriteBuffer, _maximumAmount * _elementSize * sizeof(float) << 1,
+                BufferUsageHint.StreamDraw);
+            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer,
+                IntPtr.Zero, IntPtr.Zero, _amount * _elementSize * sizeof(float));
+
+            _onResize?.Invoke(_vao, _vbo, newVbo);
+            _vbo.CleanUp();
+            _vbo = newVbo;
+            _maximumAmount <<= 1;
+            newVbo.StartMapping();
+        }
+    }
+
+    public delegate void OnResize(VertexArrayObject obj, VertexBufferObject oldBuffer, VertexBufferObject newBuffer);
+}
