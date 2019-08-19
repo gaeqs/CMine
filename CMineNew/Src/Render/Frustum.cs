@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CMineNew.Geometry;
+using CMineNew.Map;
 using OpenTK;
 
 namespace CMineNew.Render{
@@ -36,7 +37,6 @@ namespace CMineNew.Render{
             _fov = fov;
             _aspectRatio = aspectRatio;
             RecalculateFrustum();
-            GenerateMatrix();
         }
 
         public float Near {
@@ -125,22 +125,23 @@ namespace CMineNew.Render{
             _planes = new Plane[6];
         }
 
-        private void RecalculateAspectRatioAndFov() {
+        private void  RecalculateAspectRatioAndFov() {
             _aspectRatio = (_right - _left) / (_top - _bottom);
             _fov = (float) Math.Atan(_top / _near) / Pi360;
         }
 
-        private void GenerateMatrix() {
+        public void GenerateMatrix() {
             _matrix = new Matrix4(2 * _near / (_right - _left), 0, 0, 0,
                 0, 2 * _near / (_top - _bottom), 0, 0,
                 (_right + _left) / (_right - _left), (_top + _bottom) / (_top - _bottom),
                 -(_far + _near) / (_far - _near), -1,
                 0, 0, -2 * _far * _near / (_far - _near), 0);
             GeneratePlanes();
+            _camera.GenerateViewProjectionMatrix();
         }
 
         public void GeneratePlanes() {
-            var mat = _camera.Matrix * _matrix;
+            var mat = _camera.ViewProjection;
             //Left
             _planes[0].A = mat.M14 + mat.M11;
             _planes[0].B = mat.M24 + mat.M21;
@@ -177,9 +178,9 @@ namespace CMineNew.Render{
             }
         }
 
-        //public bool IsVisible(ChunkRegion chunk) {
-        //    return IsVisible(((chunk.Position << 6) + 32).ToFloat(), ChunkRegion.RegionRadius);
-        //}
+        public bool IsVisible(ChunkRegion region) {
+            return IsVisible(((region.Position << 6) + 32).ToFloat(), ChunkRegion.RegionRadius);
+        }
 
         public bool IsVisible(Vector3 position, float radius) {
             return _planes.All(t => t.Distance(position) >= -radius);

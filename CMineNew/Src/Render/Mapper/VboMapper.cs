@@ -76,7 +76,7 @@ namespace CMineNew.Render.Mapper{
 
 
         public void AddTask(VboMapperTask<TKey> task) {
-            if (_onBackground) {
+            if (_onBackground || _vbo == null) {
                 _tasks.Push(task);
                 return;
             }
@@ -125,7 +125,7 @@ namespace CMineNew.Render.Mapper{
                 _vbo.FinishMapping();
             }
         }
-        
+
         public bool ContainsKey(TKey key) {
             lock (_backgroundLock) {
                 return _offsets.ContainsKey(key);
@@ -151,7 +151,10 @@ namespace CMineNew.Render.Mapper{
         }
 
         private void AddToMap(TKey key, float[] data) {
-            if (_offsets.TryGetValue(key, out _)) return;
+            if (_offsets.TryGetValue(key, out var point)) {
+                _vbo.AddToMap(data, _elementSize * point);
+                return;
+            }
 
             _vbo.AddToMap(data, _elementSize * _amount);
 

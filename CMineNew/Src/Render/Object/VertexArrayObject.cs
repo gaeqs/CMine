@@ -11,13 +11,22 @@ namespace CMineNew.Render.Object{
             _currentBindVao = 0;
         }
 
+        public static void Bind(int id) {
+            GL.BindVertexArray(id);
+            _currentBindVao = id;
+        }
+
         private readonly int _id;
         private readonly int _indicesAmount;
         private readonly Collection<VertexBufferObject> _buffers;
         private readonly Collection<int> _attributes;
 
-        private VertexArrayObject(Vertex[] vertices, int[] indices) {
+        public VertexArrayObject(Vertex[] vertices, int[] indices) {
             GL.GenVertexArrays(1, out _id);
+            if (_id == 0) {
+                throw new System.Exception("Couldn't create VAO. ID is 0.");
+            }
+
             _buffers = new Collection<VertexBufferObject>();
             _attributes = new Collection<int>();
             _indicesAmount = indices.Length;
@@ -27,11 +36,18 @@ namespace CMineNew.Render.Object{
             Unbind();
         }
 
+        public VertexArrayObject() {
+            GL.GenVertexArrays(1, out _id);
+            _buffers = new Collection<VertexBufferObject>();
+            _attributes = new Collection<int>();
+        }
+
         public int Id => _id;
 
         public int IndicesAmount => _indicesAmount;
 
         public void Bind() {
+            if(_currentBindVao == _id) return;
             GL.BindVertexArray(_id);
             _currentBindVao = _id;
         }
@@ -42,7 +58,7 @@ namespace CMineNew.Render.Object{
             }
 
             GL.VertexAttribPointer(index, size, VertexAttribPointerType.Float, false, stride, offset);
-            GL.VertexAttribDivisor(index, elementAttribute ? 0 : 1);
+            GL.VertexAttribDivisor(index, elementAttribute ? 1 : 0);
             _attributes.Add(index);
         }
 
@@ -76,6 +92,12 @@ namespace CMineNew.Render.Object{
             DisableAttributes();
         }
 
+        public void DrawArrays(int first, int count) {
+            EnableAttributes();
+            GL.DrawArrays(PrimitiveType.Triangles, first, count);
+            DisableAttributes();
+        }
+
         #region private methods
 
         private void GenerateDrawVbo(Vertex[] vertices) {
@@ -101,13 +123,14 @@ namespace CMineNew.Render.Object{
 
         private void EnableAttributes() {
             foreach (var i in _attributes) {
+             
                 GL.EnableVertexAttribArray(i);
             }
         }
 
         private void DisableAttributes() {
             foreach (var i in _attributes) {
-                GL.EnableVertexAttribArray(i);
+                GL.DisableVertexAttribArray(i);
             }
         }
 

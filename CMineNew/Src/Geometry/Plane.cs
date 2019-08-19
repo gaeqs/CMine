@@ -5,7 +5,7 @@ namespace CMineNew.Geometry{
     /// <summary>
     /// Represents the plane equation p -> ax + by + cz + d = 0;
     /// </summary>
-    public class Plane{
+    public struct Plane{
         private const float DistanceTolerance = 0.001f;
         private const float RotationTolerance = 0.001f;
 

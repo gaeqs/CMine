@@ -40,11 +40,11 @@ namespace CMine.DataStructure.Queue{
         }
 
 
-        private class Node<T>{
-            public T _value;
-            public Node<T> _next;
+        private class Node<TKey>{
+            public TKey _value;
+            public Node<TKey> _next;
 
-            public Node(T value) {
+            public Node(TKey value) {
                 _value = value;
             }
         }

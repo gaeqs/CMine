@@ -39,4 +39,28 @@
     <data name="block_lines_fragment" type="System.Resources.ResXFileRef">
         <value>BlockLines/fragment.frag;System.String</value>
     </data>
+
+    <data name="post_render_vertex" type="System.Resources.ResXFileRef">
+        <value>PostRender/vertex.vert;System.String</value>
+    </data>
+
+    <data name="post_render_fragment" type="System.Resources.ResXFileRef">
+        <value>PostRender/fragment.frag;System.String</value>
+    </data>
+
+    <data name="background_vertex" type="System.Resources.ResXFileRef">
+        <value>Background/vertex.vert;System.String</value>
+    </data>
+
+    <data name="background_fragment" type="System.Resources.ResXFileRef">
+        <value>Background/fragment.frag;System.String</value>
+    </data>
+
+    <data name="static_text_vertex" type="System.Resources.ResXFileRef">
+        <value>StaticText/vertex.vert;System.String</value>
+    </data>
+
+    <data name="static_text_fragment" type="System.Resources.ResXFileRef">
+        <value>StaticText/fragment.frag;System.String</value>
+    </data>
 </root>

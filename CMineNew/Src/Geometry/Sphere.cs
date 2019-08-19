@@ -5,7 +5,7 @@ namespace CMineNew.Geometry{
     /// <summary>
     /// Represents a sphere.
     /// </summary>
-    public class Sphere{
+    public struct Sphere{
         private float _x, _y, _z;
         private float _radius;
 

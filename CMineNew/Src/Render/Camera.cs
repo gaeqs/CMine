@@ -1,11 +1,14 @@
 using System;
+using CMineNew.Map;
 using OpenTK;
 
 namespace CMineNew.Render{
     public class Camera{
+        public const float ExtremePitch = (float) Math.PI / 2 - 0.001f;
+
         private Vector3 _position, _lookAt, _up;
         private Vector3 _n, _v, _u;
-        private Matrix4 _matrix, _invertedMatrix;
+        private Matrix4 _matrix, _invertedMatrix, _viewProjection;
         private Frustum _frustum;
         private bool _requiresRecalculation;
 
@@ -13,8 +16,9 @@ namespace CMineNew.Render{
             _position = position;
             _lookAt = lookAt;
             _up = up;
-            _frustum = new Frustum(this, 0.03f, 500, fov, CMine._window.Width / (float) CMine._window.Height);
+            _frustum = new Frustum(this, 0.03f, 500, fov, CMine.Window.Width / (float) CMine.Window.Height);
             RecalculateN();
+            _frustum.GenerateMatrix();
         }
 
         public Vector3 Position {
@@ -69,6 +73,16 @@ namespace CMineNew.Render{
             }
         }
 
+        public Matrix4 ViewProjection {
+            get {
+                if (_requiresRecalculation) {
+                    GenerateMatrix();
+                }
+
+                return _viewProjection;
+            }
+        }
+
         public void SetRotation(Vector2 rotation) {
             var yawCos = (float) Math.Cos(rotation.Y);
             var yawSin = (float) Math.Sin(rotation.Y);
@@ -76,6 +90,14 @@ namespace CMineNew.Render{
             var pitchSin = (float) Math.Sin(rotation.X);
 
             LookAt = new Vector3(yawCos * pitchCos, pitchSin, yawSin * pitchCos);
+        }
+
+        public bool IsVisible(ChunkRegion region) {
+            if (_requiresRecalculation) {
+                GenerateMatrix();
+            }
+
+            return _frustum.IsVisible(region);
         }
 
         public bool IsVisible(Vector3 position, float radius) {
@@ -86,6 +108,15 @@ namespace CMineNew.Render{
             return _frustum.IsVisible(position, radius);
         }
 
+        public void GenerateViewProjectionMatrix() {
+            if (_requiresRecalculation) {
+                GenerateMatrix();
+            }
+            else {
+                _viewProjection = _matrix * _frustum.Matrix;
+            }
+        }
+
         private void RecalculateN() {
             _n = -_lookAt.Normalized();
             RecalculateV();
@@ -93,7 +124,7 @@ namespace CMineNew.Render{
 
         private void RecalculateV() {
             _v = _up - Vector3.Dot(_n, _up) * _n;
-            _n.Normalize();
+            _v.Normalize();
             RecalculateU();
         }
 
@@ -108,14 +139,16 @@ namespace CMineNew.Render{
                 _v.X, _v.Y, _v.Z, 0,
                 _n.X, _n.Y, _n.Z, 0,
                 _position.X, _position.Y, _position.Z, 1);
+
+
             var p = -_position;
-            _matrix = new Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -_position.X, -_position.Y, -_position.Z, 1)
-                      * new Matrix4(_u.X, _v.X, _n.X, 0,
-                          _u.Y, _v.Y, _n.Y, 0,
-                          _u.Z, _v.Z, _n.Z, 0,
-                          Vector3.Dot(_u, p), Vector3.Dot(_v, p), Vector3.Dot(_n, p), 1);
+            _matrix = new Matrix4(_u.X, _v.X, _n.X, 0,
+                _u.Y, _v.Y, _n.Y, 0,
+                _u.Z, _v.Z, _n.Z, 0,
+                Vector3.Dot(_u, p), Vector3.Dot(_v, p), Vector3.Dot(_n, p), 1);
             _requiresRecalculation = false;
             _frustum.GeneratePlanes();
+            GenerateViewProjectionMatrix();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CMineNew.Exception.Shader;
@@ -31,6 +32,22 @@ namespace CMineNew.Render.Object{
             GL.LinkProgram(_id);
         }
 
+        public ShaderProgram(string vertexData, string fragmentData) {
+            _shaders = new Collection<Shader>();
+            var vertex = new Shader(vertexData, ShaderType.VertexShader);
+            if (vertex.Error) throw new ShaderProgramCreationException("Error while loading vertex shader.");
+            var fragment = new Shader(fragmentData, ShaderType.FragmentShader);
+            if (fragment.Error) throw new ShaderProgramCreationException("Error while loading vertex shader.");
+            _uniforms = new Dictionary<string, int>();
+            _id = GL.CreateProgram();
+            if (_id == 0) throw new ShaderProgramCreationException("Program id is 0.");
+            GL.AttachShader(_id, vertex.Id);
+            GL.AttachShader(_id, fragment.Id);
+            GL.LinkProgram(_id);
+            vertex.CleanUp();
+            fragment.CleanUp();
+        }
+
         public ShaderProgram(IReadOnlyList<string> shaderData, IReadOnlyList<ShaderType> types) {
             if (shaderData.Count != types.Count)
                 throw new ShaderProgramCreationException("Shaders and types must have the same length.");
@@ -57,6 +74,12 @@ namespace CMineNew.Render.Object{
 
         public int Id => _id;
 
+        public void Use() {
+            if (_bindShader == _id) return;
+            GL.UseProgram(_id);
+            _bindShader = _id;
+        }
+
         public void CleanUp() {
             if (_bindShader == _id) {
                 UnbindShader();
@@ -68,7 +91,7 @@ namespace CMineNew.Render.Object{
 
             GL.DeleteProgram(_id);
         }
-        
+
         public int GetUniformLocation(string uniformName) {
             if (_uniforms.ContainsKey(uniformName))
                 return _uniforms[uniformName];
@@ -96,7 +119,7 @@ namespace CMineNew.Render.Object{
         public void SetUVector(string name, Vector3 value) {
             GL.Uniform3(GetUniformLocation(name), value);
         }
-        
+
         public void SetUVector(string name, Vector3i value) {
             GL.Uniform3(GetUniformLocation(name), value.ToFloat());
         }
@@ -107,6 +130,13 @@ namespace CMineNew.Render.Object{
 
         public void SetUMatrix(string name, Matrix4 value) {
             GL.UniformMatrix4(GetUniformLocation(name), false, ref value);
+        }
+        
+        public void SetupForPostRender() {
+            Use();
+            SetUInt("gAmbient", 0);
+            SetUInt("gDiffuse", 1);
+            SetUInt("gSpecular", 2);
         }
     }
 }

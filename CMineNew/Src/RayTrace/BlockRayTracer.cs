@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CMineNew.Geometry;
 using CMineNew.Map;
+using CMineNew.Map.BlockData;
 using OpenTK;
 
 namespace CMineNew.RayTrace{

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Text;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -51,15 +52,33 @@ namespace CMineNew.Render{
 
             //Enable static capabilities.
             GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.ProgramPointSize);
             CursorVisible = false;
             _lastTick = DateTime.Now.Ticks;
+
+
+            //GL.Enable(EnableCap.DebugOutput);
+            //GL.DebugMessageCallback(Debug, IntPtr.Zero);
 
             _onLoaded?.Invoke(this, EventArgs.Empty);
         }
 
+        private void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity,
+            int length, IntPtr message, IntPtr userParam) {
+            unsafe {
+                Console.WriteLine("--- DEBUG ---");
+                Console.WriteLine(new string((sbyte*)message.ToPointer(), 0, length, Encoding.ASCII));
+                Console.WriteLine("Source: "+source);
+                Console.WriteLine("Type: "+type);
+                Console.WriteLine("Id: "+id);
+                Console.WriteLine("Severity: "+severity);
+                Console.WriteLine("-------------");
+            }
+        }
+
         protected override void OnRenderFrame(FrameEventArgs e) {
             var now = DateTime.Now.Ticks;
-            _delay = Math.Min(now - -_lastTick, CMine.TicksPerSecond / 30);
+            _delay = Math.Min(now -_lastTick, CMine.TicksPerSecond / 30);
             _lastTick = now;
 
             if (_room != null) {

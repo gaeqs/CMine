@@ -6,7 +6,11 @@ namespace CMineNew.Geometry{
     /// <summary>
     /// Represents a 3D integer vector.
     /// </summary>
-    public class Vector3i{
+    public struct Vector3i{
+        
+        public static readonly Vector3i Zero = new Vector3i(0);
+        public static readonly Vector3i One = new Vector3i(1);
+        
         private int _x;
         private int _y;
         private int _z;

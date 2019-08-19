@@ -15,6 +15,10 @@ namespace CMineNew.Render.Object{
 
         public VertexBufferObject() {
             GL.GenBuffers(1, out _id);
+            if (_id == 0) {
+                throw new System.Exception("Couldn't create VBO. ID is 0.");
+            }
+
             _mapping = false;
         }
 
@@ -35,7 +39,7 @@ namespace CMineNew.Render.Object{
         public void SetData(BufferTarget target, int[] data, BufferUsageHint usageHint) {
             GL.BufferData(target, data.Length * sizeof(int), data, usageHint);
         }
-        
+
         public void SetData(BufferTarget target, int length, BufferUsageHint usageHint) {
             GL.BufferData(target, length, IntPtr.Zero, usageHint);
         }
@@ -50,7 +54,7 @@ namespace CMineNew.Render.Object{
             if (_mapping) return;
             Bind(BufferTarget.ArrayBuffer);
             unsafe {
-                _pointer = (float*) GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite);
+                _pointer = (float*) GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite).ToPointer();
             }
 
             _mapping = true;

@@ -3,11 +3,11 @@
 in vec3 fragPos, fragNormal;
 in vec2 fragTexCoord;
 
-layout (location = 0) out vec4 gAmbient;
-layout (location = 1) out vec4 gDiffuse;
-layout (location = 2) out vec4 gSpecular;
-layout (location = 3) out vec3 gPosition;
-layout (location = 4) out vec4 gNormal;
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec4 gNormal;
+layout (location = 2) out vec4 gAmbient;
+layout (location = 3) out vec4 gDiffuse;
+layout (location = 4) out vec4 gSpecular;
 
 uniform sampler2D sampler;
 

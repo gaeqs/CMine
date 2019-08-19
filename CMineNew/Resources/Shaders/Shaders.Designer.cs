@@ -63,14 +63,55 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
+        ///uniform vec4 background;
+        ///
+        ///layout (location = 0) out vec3 gPosition;
+        ///layout (location = 1) out vec4 gNormal;
+        ///layout (location = 2) out vec4 gAmbient;
+        ///layout (location = 3) out vec4 gDiffuse;
+        ///layout (location = 4) out vec4 gSpecular;
+        ///
+        ///void main() {
+        ///    gAmbient = background;
+        ///    gDiffuse = vec4(0);
+        ///    gSpecular = vec4(0);
+        ///    gPosition = vec3(0);
+        ///    gNormal = vec4(0);
+        ///}.
+        /// </summary>
+        internal static string background_fragment {
+            get {
+                return ResourceManager.GetString("background_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec2 position;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position.xy, -1, 1);
+        ///}
+        ///.
+        /// </summary>
+        internal static string background_vertex {
+            get {
+                return ResourceManager.GetString("background_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
         ///
-        ///layout (location = 0) out vec4 gAmbient;
-        ///layout (location = 1) out vec4 gDiffuse;
-        ///layout (location = 2) out vec4 gSpecular;
-        ///layout (location = 3) out vec3 gPosition;
-        ///layout (location = 4) out vec4 gNormal;
+        ///layout (location = 0) out vec3 gPosition;
+        ///layout (location = 1) out vec4 gNormal;
+        ///layout (location = 2) out vec4 gAmbient;
+        ///layout (location = 3) out vec4 gDiffuse;
+        ///layout (location = 4) out vec4 gSpecular;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -92,11 +133,11 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///in vec3 fragPos;
         ///
-        ///layout (location = 0) out vec4 gAmbient;
-        ///layout (location = 1) out vec4 gDiffuse;
-        ///layout (location = 2) out vec4 gSpecular;
-        ///layout (location = 3) out vec3 gPosition;
-        ///layout (location = 4) out vec4 gNormal;
+        ///layout (location = 0) out vec3 gPosition;
+        ///layout (location = 1) out vec4 gNormal;
+        ///layout (location = 2) out vec4 gAmbient;
+        ///layout (location = 3) out vec4 gDiffuse;
+        ///layout (location = 4) out vec4 gSpecular;
         ///
         ///void main() {
         ///    gAmbient = vec4(0, 0, 0, 1);
@@ -158,6 +199,105 @@ namespace CMineNew.Resources.Shaders {
         internal static string block_vertex {
             get {
                 return ResourceManager.GetString("block_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///in vec2 fragTexCoords;
+        ///out vec4 FragColor;
+        ///
+        ///uniform sampler2D gAmbient;
+        ///uniform sampler2D gDiffuse;
+        ///uniform sampler2D gSpecular;
+        ///uniform sampler2D gAmbientBrightness;
+        ///uniform sampler2D gDiffuseBrightness;
+        ///uniform sampler2D gSpecularBrightness;
+        ///
+        ///uniform float ambientStrength;
+        ///uniform vec3 ambientColor;
+        ///
+        ///vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
+        ///    return ambientStrength * ambientColor * modelAmbientColor;
+        ///}
+        ///
+        ///vec3 toLdr (vec3 color) {
+        ///    float exposure = 1 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string post_render_fragment {
+            get {
+                return ResourceManager.GetString("post_render_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec2 position;
+        ///layout (location = 1) in vec2 texturePosition;
+        ///
+        ///out vec2 fragTexCoords;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position.xy, 0, 1);
+        ///    fragTexCoords = texturePosition;
+        ///}
+        ///.
+        /// </summary>
+        internal static string post_render_vertex {
+            get {
+                return ResourceManager.GetString("post_render_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///out vec4 FragColor;
+        ///
+        ///in vec2 fragTextCoord;
+        ///in vec4 fragColor;
+        ///
+        ///uniform float relative;
+        ///uniform sampler2D textureSampler;
+        ///
+        ///void main() {
+        ///    vec4 color = texture(textureSampler, fragTextCoord) * fragColor;
+        ///    if(color.w &lt; 0.01) discard;
+        ///    FragColor = color;
+        ///}.
+        /// </summary>
+        internal static string static_text_fragment {
+            get {
+                return ResourceManager.GetString("static_text_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///
+        ///layout (location = 3) in vec2 minPosition;
+        ///layout (location = 4) in vec2 size;
+        ///layout (location = 5) in vec4 color;
+        ///layout (location = 6) in vec4 textureCoords;
+        ///
+        ///out vec2 fragTextCoord;
+        ///out vec4 fragColor;
+        ///
+        ///uniform mat4 model, view, projection;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position.xy * size, 0.9f, 1.0) + vec4(minPosition, 0, 0);
+        ///    fra [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string static_text_vertex {
+            get {
+                return ResourceManager.GetString("static_text_vertex", resourceCulture);
             }
         }
     }

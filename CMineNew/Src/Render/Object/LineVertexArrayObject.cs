@@ -17,7 +17,7 @@ namespace CMineNew.Render.Object{
         private readonly Collection<VertexBufferObject> _buffers;
         private readonly Collection<int> _attributes;
 
-        private LineVertexArrayObject(Vector3[] vertices, int[] indices) {
+        public LineVertexArrayObject(Vector3[] vertices, int[] indices) {
             GL.GenVertexArrays(1, out _id);
             _buffers = new Collection<VertexBufferObject>();
             _attributes = new Collection<int>();

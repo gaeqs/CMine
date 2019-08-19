@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CMineNew.Geometry;
+using CMineNew.Map.BlockData;
 
 namespace CMineNew.Map{
     public class ChunkRegion{
@@ -17,12 +18,15 @@ namespace CMineNew.Map{
         private readonly World _world;
         private readonly Vector3i _position;
         private readonly Chunk[,,] _chunks;
+
+        private ChunkRegionRender _render;
         private bool _deleted;
 
         public ChunkRegion(World world, Vector3i position) {
             _world = world;
             _position = position;
             _chunks = new Chunk[RegionChunkLength, RegionChunkLength, RegionChunkLength];
+            _render = new ChunkRegionRender(this);
             _deleted = true;
         }
 
@@ -32,6 +36,8 @@ namespace CMineNew.Map{
 
         public Chunk[,,] Chunks => _chunks;
 
+        public ChunkRegionRender Render => _render;
+        
         public bool Deleted => _deleted;
 
         public Chunk GetChunk(Vector3i regionPosition) {
@@ -50,15 +56,14 @@ namespace CMineNew.Map{
 
             _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
             if (!_deleted || chunk == null) return;
-            //TODO create chunk region renderer.
             _deleted = false;
         }
 
         public void DeleteIfEmpty() {
-            if(_deleted) return;
+            if (_deleted) return;
             if (_chunks.Cast<Chunk>().Any(chunk => chunk != null)) return;
             _deleted = true;
-            //TODO delete chunk region renderer.
+            _render.CleanUp();
         }
     }
 }

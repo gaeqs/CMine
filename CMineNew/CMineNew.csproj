@@ -51,6 +51,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Shaders.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Textures\Textures.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Textures.resx</DependentUpon>
+    </Compile>
     <Compile Include="Src\CMine.cs" />
     <Compile Include="Src\Collision\Aabb.cs" />
     <Compile Include="Src\Collision\CollisionData.cs" />
@@ -62,18 +67,33 @@
     <Compile Include="Src\DataStructure\Queue\EDynamicPriorityQueue.cs" />
     <Compile Include="Src\DataStructure\Queue\ELinkedQueue.cs" />
     <Compile Include="Src\DataStructure\Queue\IEQueue.cs" />
+    <Compile Include="Src\Entities\Controller\LocalPlayerController.cs" />
+    <Compile Include="Src\Entities\Controller\PlayerController.cs" />
+    <Compile Include="Src\Entities\Entity.cs" />
+    <Compile Include="Src\Entities\PhysicEntity.cs" />
+    <Compile Include="Src\Entities\Player.cs" />
     <Compile Include="Src\Exception\Shader\ShaderProgramCreationException.cs" />
     <Compile Include="Src\Geometry\Area2d.cs" />
     <Compile Include="Src\Geometry\Plane.cs" />
     <Compile Include="Src\Geometry\Sphere.cs" />
     <Compile Include="Src\Geometry\Vector3i.cs" />
-    <Compile Include="Src\Map\Block.cs" />
+    <Compile Include="Src\Loader\ImageLoader.cs" />
+    <Compile Include="Src\Map\BlockData\Model\BlockModelManager.cs" />
+    <Compile Include="Src\Map\BlockData\Sketch\CubicBlock.cs" />
+    <Compile Include="Src\Map\BlockData\Sketch\TexturedCubicBlock.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
     <Compile Include="Src\Map\BlockFace.cs" />
+    <Compile Include="Src\Map\BlockData\Block.cs" />
+    <Compile Include="Src\Map\BlockData\Model\BlockModel.cs" />
+    <Compile Include="Src\Map\BlockData\Model\CubicBlockModel.cs" />
+    <Compile Include="Src\Map\BlockData\Render\BlockRender.cs" />
+    <Compile Include="Src\Map\BlockData\Render\CubicBlockRender.cs" />
     <Compile Include="Src\Map\Chunk.cs" />
     <Compile Include="Src\Map\ChunkRegion.cs" />
-    <Compile Include="Src\Map\Model\BlockModel.cs" />
-    <Compile Include="Src\Map\Render\BlockRender.cs" />
+    <Compile Include="Src\Map\ChunkRegionRender.cs" />
     <Compile Include="Src\Map\World.cs" />
+    <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
     <Compile Include="Src\Render\Camera.cs" />
     <Compile Include="Src\Render\Frustum.cs" />
@@ -87,6 +107,13 @@
     <Compile Include="Src\Render\Object\VertexArrayObject.cs" />
     <Compile Include="Src\Render\Room.cs" />
     <Compile Include="Src\Render\Window.cs" />
+    <Compile Include="Src\Test\FPSViewer.cs" />
+    <Compile Include="Src\Test\PositionViewer.cs" />
+    <Compile Include="Src\Texture\TextureMap.cs" />
+    <Compile Include="Src\Text\StaticText.cs" />
+    <Compile Include="Src\Text\StaticTextRenderer.cs" />
+    <Compile Include="Src\Text\TrueTypeFont.cs" />
+    <Compile Include="Src\Util\ModelLinesUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
@@ -97,12 +124,27 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Textures\Textures.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Textures.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Shaders\Background\fragment.frag" />
+    <Content Include="Resources\Shaders\Background\vertex.vert" />
     <Content Include="Resources\Shaders\BlockLines\fragment.frag" />
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />
     <Content Include="Resources\Shaders\Block\vertex.vert" />
+    <Content Include="Resources\Shaders\PostRender\fragment.frag" />
+    <Content Include="Resources\Shaders\PostRender\vertex.vert" />
+    <Content Include="Resources\Shaders\StaticText\fragment.frag" />
+    <Content Include="Resources\Shaders\StaticText\vertex.vert" />
+    <Content Include="Resources\Textures\dirt.png" />
+    <Content Include="Resources\Textures\grass_side.png" />
+    <Content Include="Resources\Textures\grass_top.png" />
+    <Content Include="Resources\Textures\stone.png" />
+    <Content Include="Resources\Textures\water.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
