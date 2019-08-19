@@ -4,9 +4,14 @@ namespace CMineNew.Map.BlockData.Sketch{
     public class TexturedCubicBlock : CubicBlock{
         protected Area2d _textureArea;
 
-        public TexturedCubicBlock(string id, Chunk chunk, Vector3i position, Area2d textureArea) 
+        public TexturedCubicBlock(string id, Chunk chunk, Vector3i position, Area2d texture)
             : base(id, chunk, position) {
-            _textureArea = textureArea;
+            _textureArea = texture;
+        }
+
+        public TexturedCubicBlock(string id, Chunk chunk, Vector3i position, string texture)
+            : base(id, chunk, position) {
+            _textureArea = CMine.Textures.Areas[texture];
         }
 
         public Area2d TextureArea => _textureArea;

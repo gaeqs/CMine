@@ -80,8 +80,11 @@
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\BlockData\Model\BlockModelManager.cs" />
     <Compile Include="Src\Map\BlockData\Sketch\CubicBlock.cs" />
+    <Compile Include="Src\Map\BlockData\Sketch\MultiTexturedCubicBlock.cs" />
     <Compile Include="Src\Map\BlockData\Sketch\TexturedCubicBlock.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockDirt.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
     <Compile Include="Src\Map\BlockFace.cs" />
     <Compile Include="Src\Map\BlockData\Block.cs" />

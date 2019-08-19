@@ -1,12 +1,12 @@
 using System;
 using System.Drawing;
-using CMine.Texture;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Render;
 using CMineNew.Test;
 using CMineNew.Text;
+using CMineNew.Texture;
 using OpenTK;
 
 namespace CMineNew{
@@ -27,7 +27,7 @@ namespace CMineNew{
                         Console.WriteLine();
                         for (var z = 0; z < 100; z++) {
                             for (var y = 80; y < 90 + x / 2; y++) {
-                                world.SetBlock(new BlockStone(null, Vector3i.Zero), new Vector3i(x, y, z));
+                                world.SetBlock(new BlockGrass(null, Vector3i.Zero), new Vector3i(x, y, z));
                             }
                         }
                     }

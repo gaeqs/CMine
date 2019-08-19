@@ -6,7 +6,7 @@ using CMineNew.Geometry;
 using CMineNew.Resources.Textures;
 using GraphicEngine.Loader;
 
-namespace CMine.Texture{
+namespace CMineNew.Texture{
     public class TextureMap{
         private int _texture;
         private Dictionary<string, Area2d> _areas;

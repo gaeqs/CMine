@@ -43,7 +43,7 @@ namespace CMineNew.Render.Object{
             }
 
             GL.VertexAttribPointer(index, size, VertexAttribPointerType.Float, false, stride, offset);
-            GL.VertexAttribDivisor(index, elementAttribute ? 0 : 1);
+            GL.VertexAttribDivisor(index, elementAttribute ? 1 : 0);
             _attributes.Add(index);
         }
 
@@ -65,14 +65,14 @@ namespace CMineNew.Render.Object{
 
         public void Draw() {
             EnableAttributes();
-            GL.DrawElements(PrimitiveType.Triangles, _indicesAmount,
+            GL.DrawElements(PrimitiveType.Lines, _indicesAmount,
                 DrawElementsType.UnsignedInt, IntPtr.Zero);
             DisableAttributes();
         }
 
         public void DrawnInstanced(int amount) {
             EnableAttributes();
-            GL.DrawElementsInstanced(PrimitiveType.Triangles, _indicesAmount,
+            GL.DrawElementsInstanced(PrimitiveType.Lines, _indicesAmount,
                 DrawElementsType.UnsignedInt, IntPtr.Zero, amount);
             DisableAttributes();
         }
@@ -104,7 +104,7 @@ namespace CMineNew.Render.Object{
 
         private void DisableAttributes() {
             foreach (var i in _attributes) {
-                GL.EnableVertexAttribArray(i);
+                GL.DisableVertexAttribArray(i);
             }
         }
 

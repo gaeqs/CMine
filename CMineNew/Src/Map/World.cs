@@ -16,7 +16,6 @@ using OpenTK.Input;
 namespace CMineNew.Map{
     public class World : Room{
         private readonly Camera _camera;
-        private readonly BlockRayTracer _blockRayTracer;
         private readonly WorldGBuffer _gBuffer;
 
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
@@ -30,7 +29,6 @@ namespace CMineNew.Map{
             Background = Color4.Aqua;
 
             _camera = new Camera(new Vector3(0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 110);
-            _blockRayTracer = new BlockRayTracer(this, _camera.Position, _camera.LookAt, 5);
             _gBuffer = new WorldGBuffer(CMine.Window);
 
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
@@ -44,8 +42,6 @@ namespace CMineNew.Map{
         }
 
         public Camera Camera => _camera;
-
-        public BlockRayTracer BlockRayTracer => _blockRayTracer;
 
         public Dictionary<Vector3i, ChunkRegion> ChunkRegions => _chunkRegions;
 
@@ -167,14 +163,11 @@ namespace CMineNew.Map{
             foreach (var staticText in _staticTexts) {
                 staticText.Draw();
             }
-
-            //TODO draw front data.
         }
 
         private void DrawSelectedBlock() {
-            _blockRayTracer.Reset(_camera.Position, _camera.LookAt);
-            _blockRayTracer.Run();
-            _blockRayTracer.Result?.BlockModel.DrawLines(_camera, _blockRayTracer.Result.Position);
+            var tracer = _player.BlockRayTracer;
+            tracer.Result?.BlockModel.DrawLines(_camera, tracer.Result.Position);
         }
 
         public override void KeyPush(KeyboardKeyEventArgs args) {

@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.Map.BlockData.Model{
     public abstract class BlockModel{
         public static readonly ShaderProgram BlockLinesShaderProgram =
-            new ShaderProgram(Shaders.block_lines_vertex, Shaders.block_fragment);
+            new ShaderProgram(Shaders.block_lines_vertex, Shaders.block_lines_fragment);
 
         private string _id;
         private readonly Aabb _blockCollision;

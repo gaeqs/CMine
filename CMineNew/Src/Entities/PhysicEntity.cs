@@ -46,7 +46,6 @@ namespace CMineNew.Entities{
         }
 
         public override void Tick(long dif) {
-            if (_world.GetChunk(new Vector3i(_position) >> 4) == null) return;
             var oldPosition = _position;
             var h = dif / CMine.TicksPerSecondF;
             var force = Force + (OnGround ? DampingConstantGround : DampingConstantAir) * _velocity *

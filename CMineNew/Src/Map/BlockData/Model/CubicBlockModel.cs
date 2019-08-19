@@ -33,11 +33,11 @@ namespace CMineNew.Map.BlockData.Model{
         }
 
         public override void DrawLines(Camera camera, Vector3i blockPosition) {
+            _lineVao.Bind();
             BlockLinesShaderProgram.Use();
             BlockLinesShaderProgram.SetUMatrix("viewProjection", camera.ViewProjection);
             BlockLinesShaderProgram.SetUVector("worldPosition", blockPosition);
             GL.LineWidth(2);
-            _lineVao.Bind();
             _lineVao.Draw();
         }
     }
