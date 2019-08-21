@@ -11,3 +11,16 @@ F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csproj.CoreCompileInputs.c
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csproj.CopyComplete
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.exe
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.pdb
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csprojAssemblyReference.cache
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.Resources.Shaders.Shaders.resources
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.Resources.Textures.Textures.resources
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.GenerateResource.cache
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.CoreCompileInputs.cache
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.exe
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.pdb
+D:\RiderProjects\CMine\CMineNew\bin\Debug\CMineNew.exe
+D:\RiderProjects\CMine\CMineNew\bin\Debug\CMineNew.pdb
+D:\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.dll
+D:\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.pdb
+D:\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.xml
+D:\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.CopyComplete
