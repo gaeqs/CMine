@@ -52,7 +52,7 @@ namespace CMineNew.Texture{
 
             graphics.Save();
             graphics.Dispose();
-            map.Save(@"D:/test.png", ImageFormat.Png);
+            //map.Save(@"D:/test.png", ImageFormat.Png);
             _texture = ImageLoader.Load(map, true, true, false);
         }
 

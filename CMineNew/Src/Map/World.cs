@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using CMine.DataStructure.List;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
@@ -28,6 +30,7 @@ namespace CMineNew.Map{
         private readonly WorldTaskManager _worldTaskManager;
 
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
+        private readonly ELinkedList<ChunkRegion> _tickRegions;
 
         private readonly HashSet<Entity> _entities;
         private readonly Player _player;
@@ -43,6 +46,7 @@ namespace CMineNew.Map{
             _gBuffer = new WorldGBuffer(CMine.Window);
 
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
+            _tickRegions = new ELinkedList<ChunkRegion>();
 
             _entities = new HashSet<Entity>();
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
@@ -78,6 +82,8 @@ namespace CMineNew.Map{
                 }
             }
         }
+
+        public object RegionsLock => _regionsLock;
 
         public WorldGBuffer GBuffer => _gBuffer;
 
@@ -135,6 +141,7 @@ namespace CMineNew.Map{
             if (chunk == null) {
                 chunk = new Chunk(region, chunkPosition);
                 region.SetChunk(chunk, chunkPosition - (regionPosition << 2));
+                //TODO ASYNC CHUNK GENERATOR
             }
 
             chunk.SetBlockFromWorldPosition(snapshot, position);
@@ -163,6 +170,18 @@ namespace CMineNew.Map{
 
         public override void Tick(long delay) {
             _worldTaskManager.Tick(delay);
+
+            lock (_regionsLock) {
+                _tickRegions.Clear();
+                foreach (var region in _chunkRegions.Values) {
+                    _tickRegions.Add(region);
+                }
+
+                foreach (var region in _tickRegions) {
+                    region.Tick(delay);
+                }
+            }
+
             foreach (var entity in _entities) {
                 entity.Tick(delay);
             }
@@ -204,7 +223,7 @@ namespace CMineNew.Map{
             DrawSelectedBlock();
 
             //Draws GBuffer squad.
-            _gBuffer.Draw(Vector3.One, 0.5f);
+            _gBuffer.Draw(_camera.Position, Vector3.One, 0.5f, _player.EyesOnWater);
 
             //Transfers depth buffer to main FBO.
             _gBuffer.TransferDepthBufferToMainFbo();
@@ -248,14 +267,14 @@ namespace CMineNew.Map{
                     break;
                 case Key.K:
                     var snapshot = new BlockSnapshotStone();
-                    for (var x = -10; x < 10; x++) {
-                        for (var y = -15; y < -2; y++) {
-                            for (var z = -10; z < 10; z++) {
-                                SetBlock(snapshot, new Vector3i(_player.Position) + new Vector3i(x, y, z));
-                            }
+                    var now = DateTime.Now.Ticks;
+                    for (var x = -100; x < 100; x++) {
+                        for (var z = -100; z < 100; z++) {
+                            SetBlock(snapshot, new Vector3i(_player.Position) + new Vector3i(x, -2, z));
                         }
                     }
 
+                    Console.WriteLine("Filled in " + (DateTime.Now.Ticks - now) / CMine.TicksPerSecondF + " seconds");
                     break;
             }
         }
@@ -284,6 +303,7 @@ namespace CMineNew.Map{
                 foreach (var region in _chunkRegions.Values) {
                     region.Delete();
                 }
+
                 _chunkRegions.Clear();
             }
         }

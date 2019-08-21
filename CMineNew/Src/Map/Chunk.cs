@@ -2,6 +2,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
+using CMineNew.Map.Task;
 
 namespace CMineNew.Map{
     public class Chunk{
@@ -13,11 +14,13 @@ namespace CMineNew.Map{
         private readonly ChunkRegion _region;
         private Vector3i _position;
         private readonly Block[,,] _blocks;
+        private WorldTaskManager _taskManager;
 
         public Chunk(ChunkRegion region, Vector3i position) {
             _region = region;
             _position = position;
             _blocks = new Block[ChunkLength, ChunkLength, ChunkLength];
+            _taskManager = new WorldTaskManager();
         }
 
         public World World => _region.World;
@@ -30,6 +33,8 @@ namespace CMineNew.Map{
         }
 
         public Block[,,] Blocks => _blocks;
+
+        public WorldTaskManager TaskManager => _taskManager;
 
         public Block GetBlock(Vector3i chunkPosition) {
             return _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
@@ -80,6 +85,26 @@ namespace CMineNew.Map{
                         var block = _blocks[x, y, z];
                         GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
                         block.OnPlace0(null, blocks);
+                        if (x == 0) {
+                            blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
+                        }
+                        else if (x == 15) {
+                            blocks[(int) BlockFace.East]?.OnNeighbourBlockChange0(null, block, BlockFace.West);
+                        }
+
+                        if (y == 0) {
+                            blocks[(int) BlockFace.Down]?.OnNeighbourBlockChange0(null, block, BlockFace.Up);
+                        }
+                        else if (y == 15) {
+                            blocks[(int) BlockFace.Up]?.OnNeighbourBlockChange0(null, block, BlockFace.Down);
+                        }
+
+                        if (z == 0) {
+                            blocks[(int) BlockFace.North]?.OnNeighbourBlockChange0(null, block, BlockFace.South);
+                        }
+                        else if (z == 15) {
+                            blocks[(int) BlockFace.South]?.OnNeighbourBlockChange0(null, block, BlockFace.North);
+                        }
                     }
                 }
             }
@@ -96,7 +121,7 @@ namespace CMineNew.Map{
             }
         }
 
-        private Block[] GetNeighbourBlocks(Block[] blocks, Vector3i position, Vector3i chunkPosition) {
+        public Block[] GetNeighbourBlocks(Block[] blocks, Vector3i position, Vector3i chunkPosition) {
             //East block
             blocks[(int) BlockFace.East] = chunkPosition.X == 15
                 ? World.GetBlock(position + new Vector3i(1, 0, 0))

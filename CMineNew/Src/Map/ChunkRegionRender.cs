@@ -27,14 +27,14 @@ namespace CMineNew.Map{
             lock (_lock) {
                 _deleted = false;
             }
-            GetOrCreateRender(block.BlockModel).AddData(mapper, block);
+            GetOrCreateRender(block.BlockModel)?.AddData(mapper, block);
         }
 
         public void RemoveData(int mapper, Block block) {
             lock (_lock) {
                 _deleted = false;
             }
-            GetOrCreateRender(block.BlockModel).RemoveData(mapper, block);
+            GetOrCreateRender(block.BlockModel)?.RemoveData(mapper, block);
         }
 
         public void Draw() {

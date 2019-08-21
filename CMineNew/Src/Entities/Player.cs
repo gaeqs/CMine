@@ -3,6 +3,7 @@ using CMine.Collision;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
 using CMineNew.Map;
+using CMineNew.Map.BlockData.Type;
 using CMineNew.RayTrace;
 using OpenTK;
 
@@ -12,7 +13,8 @@ namespace CMineNew.Entities{
         private float _eyesHeight;
 
         private Vector2 _headRotation;
-        private BlockRayTracer _blockRayTracer;
+        private readonly BlockRayTracer _blockRayTracer;
+        private bool _eyesOnWater;
 
         public Player(Guid guid, World world, Vector3 position, PlayerController controller)
             : base(guid, world, position, new Aabb(-0.4f, 0, -0.4f, 0.8f, 1.8f, 0.8f)) {
@@ -41,12 +43,16 @@ namespace CMineNew.Entities{
 
         public BlockRayTracer BlockRayTracer => _blockRayTracer;
 
+        public bool EyesOnWater => _eyesOnWater;
+
         public override void Tick(long dif) {
             base.Tick(dif);
             _controller?.Tick(dif);
 
             _blockRayTracer.Reset(_position + new Vector3(0, _eyesHeight, 0), _world.Camera.LookAt);
             _blockRayTracer.Run();
+            
+            _eyesOnWater = _world.GetBlock(new Vector3i(_position + new Vector3(0, _eyesHeight, 0), true)) is BlockWater;
         }
 
         public override void UpdatePosition(Vector3 old) {

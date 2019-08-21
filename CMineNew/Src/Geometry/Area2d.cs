@@ -65,7 +65,7 @@ namespace CMineNew.Geometry{
                 RecalculatePositions(false, true);
             }
         }
-        
+
         /// <summary>
         /// Sets the minimum position.
         /// </summary>
@@ -89,7 +89,7 @@ namespace CMineNew.Geometry{
             RecalculatePositions(true, true);
             return this;
         }
-        
+
         /// <summary>
         /// Recalculates all values, so min values are less or equal than max values.
         /// </summary>
@@ -106,6 +106,10 @@ namespace CMineNew.Geometry{
             var minY = Math.Min(_minY, _maxY);
             _maxY = Math.Max(_minY, _maxY);
             _minY = minY;
+        }
+
+        public override string ToString() {
+            return "[{" + _minX + ", " + _minY + "},{" + _maxX + ", " + _maxY + "}]";
         }
     }
 }

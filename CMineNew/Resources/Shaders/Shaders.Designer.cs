@@ -106,6 +106,7 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
+        ///in vec4 fragColorFilter;
         ///
         ///layout (location = 0) out vec3 gPosition;
         ///layout (location = 1) out vec4 gNormal;
@@ -117,10 +118,9 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///void main() {
         ///    vec4 texture = texture(sampler, fragTexCoord);
-        ///    if(texture.w &lt; 0.1) discard;
-        ///    gAmbient = vec4(texture.rgb, 1);
-        ///    gDiffuse = vec4(0, 0, 0, 1);
-        ///    gSpecular = vec4 [rest of string was truncated]&quot;;.
+        ///    if (texture.w &lt; 0.1) discard;
+        ///
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -186,15 +186,16 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 2) in vec2 texturePosition;
         ///layout (location = 3) in vec3 worldPosition;
         ///layout (location = 4) in vec4 textureArea;
+        ///layout (location = 5) in vec4 blockColorFilter;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
+        ///out vec4 fragColorFilter;
         ///
         ///uniform mat4 viewProjection;
         ///
         ///void main () {
-        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y, worldPosition.z, 1);
-        ///    vec4 modelPosition = model * vec4(position, 1);        /// [rest of string was truncated]&quot;;.
+        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_vertex {
             get {
@@ -210,10 +211,12 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///out vec4 FragColor;
         ///
+        ///uniform sampler2D pointer;
+        ///
         ///void main() {
-        ///    vec4 texture = texture(sampler, fragTexCoord);
+        ///    vec4 texture = texture(pointer, fragTexCoord);
         ///    if(texture.w &lt; 0.1) discard;
-        ///    FragColor = vec4(0, 0, 0, 0);
+        ///    FragColor = vec4(1);
         ///}.
         /// </summary>
         internal static string pointer_fragment {
@@ -232,10 +235,11 @@ namespace CMineNew.Resources.Shaders {
         ///out vec3 fragPos;
         ///out vec2 fragTexCoord;
         ///
-        ///uniform mat4 viewProjection;
+        ///uniform float aspectRatio;
         ///
         ///void main () {
         ///    gl_Position = vec4(position, 1);
+        ///    gl_Position.y *= aspectRatio;
         ///    fragTexCoord = texturePosition;
         ///}
         ///.
@@ -342,6 +346,58 @@ namespace CMineNew.Resources.Shaders {
         internal static string static_text_vertex {
             get {
                 return ResourceManager.GetString("static_text_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///in vec3 fragPos, fragNormal;
+        ///in vec2 fragTexCoord;
+        ///in vec4 fragColorFilter;
+        ///
+        ///layout (location = 0) out vec3 gPosition;
+        ///layout (location = 1) out vec4 gNormal;
+        ///layout (location = 2) out vec4 gAmbient;
+        ///layout (location = 3) out vec4 gDiffuse;
+        ///layout (location = 4) out vec4 gSpecular;
+        ///
+        ///uniform sampler2D sampler;
+        ///
+        ///void main() {
+        ///    vec4 texture = texture(sampler, fragTexCoord);
+        ///    if (texture.w &lt; 0.1) discard;
+        ///
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string water_fragment {
+            get {
+                return ResourceManager.GetString("water_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///layout (location = 3) in vec3 worldPosition;
+        ///layout (location = 4) in vec4 textureArea;
+        ///layout (location = 5) in vec4 blockColorFilter;
+        ///
+        ///out vec3 fragPos, fragNormal;
+        ///out vec2 fragTexCoord;
+        ///out vec4 fragColorFilter;
+        ///
+        ///uniform mat4 viewProjection;
+        ///
+        ///void main () {
+        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string water_vertex {
+            get {
+                return ResourceManager.GetString("water_vertex", resourceCulture);
             }
         }
     }

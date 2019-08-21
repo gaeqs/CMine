@@ -1,6 +1,8 @@
 using System;
+using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.BlockData.Type;
 using CMineNew.Render;
 using OpenTK;
 using OpenTK.Input;
@@ -14,28 +16,51 @@ namespace CMineNew.Entities.Controller{
         private bool _w, _a, _s, _d, _control, _space;
         private float _toPitch, _toYaw;
 
+        private bool _wasOnWater;
+        private int _lastWaterLevel;
+
         public LocalPlayerController(Player player, Camera camera) : base(player) {
             _player = player;
             _camera = camera;
+            _wasOnWater = false;
         }
 
         public override void Tick(long dif) {
-            var velocity = Vector3.Zero;
-            if (_w && !_s) velocity += (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
-            if (_s && !_w) velocity -= (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
-            if (_d && !_a) velocity += _camera.U;
-            if (_a && !_d) velocity -= _camera.U;
+            var force = Vector3.Zero;
+            if (_w && !_s) force += (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
+            if (_s && !_w) force -= (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
+            if (_d && !_a) force += _camera.U;
+            if (_a && !_d) force -= _camera.U;
 
-            velocity *= _control ? 180 : 100;
-            velocity *= _player.OnGround ? 1 : 0.3f;
+            force *= _control && !_player.OnWater && _player.OnGround ? 180 : 100;
+            force *= _player.OnWater || _player.OnGround ? 1 : 0.1f;
 
-            var maximum = _control ? 5 : 3;
+            var maximum = _control && !_player.OnWater ? 5 : 3;
 
             var pVelocity = new Vector3(_player.Velocity.X, 0, _player.Velocity.Z);
             if (pVelocity.LengthSquared < maximum * maximum)
-                _player.Velocity += velocity * dif / CMine.TicksPerSecondF;
-            if (_space)
-                _player.Jump();
+                _player.Force += force * PhysicEntity.Mass;
+
+            if (_space) {
+                if (_player.OnWater) {
+                    if (_player.Velocity.Y < 2.5f) {
+                        _player.Force += new Vector3(0, 15 * PhysicEntity.Mass, 0);
+                    }
+
+                    _wasOnWater = true;
+                    _lastWaterLevel = _player.BlockWater.WaterLevel;
+                }
+                else {
+                    if (_wasOnWater) {
+                        _player.Velocity += new Vector3(0, 2 + (BlockWater.MaxWaterLevel - _lastWaterLevel) / 3, 0);
+                    }
+                    else {
+                        _player.Jump();
+                    }
+
+                    _wasOnWater = false;
+                }
+            }
 
             var rotation = _player.HeadRotation;
             var dPitch = _toPitch - rotation.X;
@@ -51,6 +76,12 @@ namespace CMineNew.Entities.Controller{
                 ? Math.Max(rotation.Y - rYawVelocity, _toYaw)
                 : Math.Min(rotation.Y + rYawVelocity, _toYaw);
             _player.HeadRotation = rotation;
+        }
+
+        private bool IsBelowBlockPassable() {
+            var block = _player.World.GetBlock(new Vector3i(_player.Position, true)
+                                               + new Vector3i(0, -1, 0));
+            return block.Passable;
         }
 
         public override void HandleKeyPush(KeyboardKeyEventArgs eventArgs) {
@@ -101,7 +132,7 @@ namespace CMineNew.Entities.Controller{
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotTallGrass();
+                var matInstance = new BlockSnapshotStone();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -114,6 +145,17 @@ namespace CMineNew.Entities.Controller{
             else if (args.Button == MouseButton.Left) {
                 if (_player.BlockRayTracer.Result == null) return;
                 _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
+            }
+            else if (args.Button == MouseButton.Middle) {
+                var matInstance = new BlockSnapshotWater(6);
+                if (_player.BlockRayTracer.Result == null) return;
+                var result = _player.BlockRayTracer.Result;
+                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                if (!matInstance.CanBePlaced(position, _player.World)) return;
+                if (!matInstance.Passable &&
+                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
+                _player.World.SetBlock(matInstance, position);
             }
         }
 

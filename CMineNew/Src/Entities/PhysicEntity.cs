@@ -2,30 +2,44 @@ using System;
 using CMine.Collision;
 using CMineNew.Geometry;
 using CMineNew.Map;
+using CMineNew.Map.BlockData.Type;
 using OpenTK;
 
 namespace CMineNew.Entities{
     public class PhysicEntity : Entity{
-        private static readonly float Mass = 10;
-        private static readonly Vector3 Force = new Vector3(0, -21f * Mass, 0);
+        public static readonly float Mass = 10;
+        private static readonly Vector3 OnGroundGravity = new Vector3(0, -21f * Mass, 0);
+        private static readonly Vector3 WaterGravity = new Vector3(0, -3f * Mass, 0);
         private const float DampingConstantGround = -200;
+        private const float DampingConstantWater = -550;
         private const float DampingConstantAir = -20;
 
-        protected Vector3 _velocity;
-        protected long _lastOnGroundTick;
+        protected Vector3 _force, _velocity;
+        protected bool _onWater;
+        protected long _lastOnGroundTick, _onGroundTicks;
         protected long _lastJumpTick;
 
+        private BlockWater _blockWater;
+
         public PhysicEntity(World world, Vector3 position, Aabb collisionBox) : base(world, position, collisionBox) {
+            _force = Vector3.Zero;
             _velocity = Vector3.Zero;
             _lastOnGroundTick = 0;
+            _onGroundTicks = 0;
             _lastJumpTick = 0;
         }
 
         public PhysicEntity(Guid guid, World world, Vector3 position, Aabb collisionBox) : base(guid, world, position,
             collisionBox) {
+            _force = Vector3.Zero;
             _velocity = Vector3.Zero;
             _lastOnGroundTick = 0;
             _lastJumpTick = 0;
+        }
+
+        public Vector3 Force {
+            get => _force;
+            set => _force = value;
         }
 
         public Vector3 Velocity {
@@ -33,30 +47,50 @@ namespace CMineNew.Entities{
             set => _velocity = value;
         }
 
+        public BlockWater BlockWater => _blockWater;
+
+
         public bool OnGround => DateTime.Now.Ticks - _lastOnGroundTick < CMine.TicksPerSecond / 10;
+
+        public bool OnWater => _onWater;
 
         public long LastOnGroundTick => _lastOnGroundTick;
 
         public void Jump() {
-            if (DateTime.Now.Ticks - _lastOnGroundTick < CMine.TicksPerSecond / 10 &&
-                DateTime.Now.Ticks - _lastJumpTick > CMine.TicksPerSecond / 3) {
+            var now = DateTime.Now.Ticks;
+            if (now - _lastOnGroundTick < CMine.TicksPerSecond / 10 &&
+                now - _lastJumpTick > CMine.TicksPerSecond / 3 && 
+                _onGroundTicks > CMine.TicksPerSecond / 10) {
                 _velocity += new Vector3(0, 7, 0);
                 _lastJumpTick = DateTime.Now.Ticks;
             }
         }
 
         public override void Tick(long dif) {
+            if (_world.GetBlock(new Vector3i(_position, true)) is BlockWater water
+                && water.WaterHeight >= _position.Y - Math.Floor(_position.Y)) {
+                _onWater = true;
+                _blockWater = water;
+            }
+            else {
+                _onWater = false;
+                _blockWater = null;
+            }
+
+
             var oldPosition = _position;
             var h = dif / CMine.TicksPerSecondF;
-            var force = Force + (OnGround ? DampingConstantGround : DampingConstantAir) * _velocity *
-                        new Vector3(1, 0, 1);
-            _velocity += force * h / Mass;
+            _force += (OnWater ? WaterGravity : OnGroundGravity) +
+                      (OnWater ? DampingConstantWater : OnGround ? DampingConstantGround : DampingConstantAir) *
+                      _velocity * new Vector3(1, 0, 1);
+            _velocity += _force * h / Mass;
             _position += _velocity * h;
-            ManageCollision();
+            _force = Vector3.Zero;
+            ManageCollision(dif);
             UpdatePosition(oldPosition);
         }
 
-        protected void ManageCollision() {
+        protected void ManageCollision(long dif) {
             var mix = (int) Math.Floor(_collisionBox.X + _position.X - 1);
             var miy = (int) Math.Floor(_collisionBox.Y + _position.Y - 1);
             var miz = (int) Math.Floor(_collisionBox.Z + _position.Z - 1);
@@ -74,8 +108,13 @@ namespace CMineNew.Entities{
                         _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
                         ReduceVelocity(data.BlockFace);
 
+                        var now = DateTime.Now.Ticks;
                         if (data.BlockFace == BlockFace.Up) {
-                            _lastOnGroundTick = DateTime.Now.Ticks;
+                            _lastOnGroundTick = now;
+                            _onGroundTicks += dif;
+                        }
+                        else if (now - _lastOnGroundTick > CMine.TicksPerSecond / 3) {
+                            _onGroundTicks = 0;
                         }
                     }
                 }

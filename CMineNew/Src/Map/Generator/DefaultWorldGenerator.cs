@@ -1,5 +1,6 @@
 using CMine.Map.Generator.Noise;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.Generator{
     public class DefaultWorldGenerator : WorldGenerator{
@@ -8,8 +9,9 @@ namespace CMineNew.Map.Generator{
         private static readonly BlockSnapshot TallGrass = new BlockSnapshotTallGrass();
         private static readonly BlockSnapshot Dirt = new BlockSnapshotDirt();
         private static readonly BlockSnapshot Stone = new BlockSnapshotStone();
+        private static readonly BlockSnapshot Water = new BlockSnapshotWater(BlockWater.MaxWaterLevel);
 
-        private static readonly BlockSnapshot[,,] _buffer =
+        private static readonly BlockSnapshot[,,] Buffer =
             new BlockSnapshot[Chunk.ChunkLength, Chunk.ChunkLength, Chunk.ChunkLength];
 
 
@@ -36,28 +38,28 @@ namespace CMineNew.Map.Generator{
                                         x + chunkWorldPosition.X, z + chunkWorldPosition.Z) > 0.4f;
 
                         if (wy > noiseY + 1) {
-                            _buffer[x, y, z] = Air;
+                            Buffer[x, y, z] = wy > 45 ? Air : Water;
                         }
                         else if (wy == noiseY + 1) {
-                            _buffer[x, y, z] = grass ? TallGrass : Air;
+                            Buffer[x, y, z] = wy > 45 ? grass ? TallGrass : Air : Water;
                         }
                         else if (wy == noiseY) {
                             empty = false;
-                            _buffer[x, y, z] = Grass;
+                            Buffer[x, y, z] = wy > 44 ? Grass : Dirt;
                         }
                         else if (noiseY - wy < 4) {
                             empty = false;
-                            _buffer[x, y, z] = Dirt;
+                            Buffer[x, y, z] = Dirt;
                         }
                         else {
                             empty = false;
-                            _buffer[x, y, z] = Stone;
+                            Buffer[x, y, z] = Stone;
                         }
                     }
                 }
             }
 
-            chunk.FillWithBlocks(_buffer, empty);
+            chunk.FillWithBlocks(Buffer, empty);
             return empty;
         }
     }

@@ -67,21 +67,25 @@ namespace CMineNew.Map{
             DrawQuad();
         }
 
-        public void Draw(Vector3 ambientColor, float ambientStrength) {
+        public void Draw(Vector3 cameraPosition, Vector3 ambientColor, float ambientStrength, bool waterShader) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             VertexArrayObject.Bind(_quadVao);
             _postRenderShader.Use();
+            _postRenderShader.SetUVector("cameraPosition", cameraPosition);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
             _postRenderShader.SetUFloat("ambientStrength", ambientStrength);
-          
+            _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
+
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _ambientTexture);
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.BindTexture(TextureTarget.Texture2D, _diffuseTexture);
             GL.ActiveTexture(TextureUnit.Texture2);
             GL.BindTexture(TextureTarget.Texture2D, _specularTexture);
+            GL.ActiveTexture(TextureUnit.Texture3);
+            GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
             DrawQuad();
         }
 

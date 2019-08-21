@@ -13,6 +13,7 @@ namespace CMineNew.Render{
         private float _near, _far, _left, _right, _top, _bottom;
         private float _fov;
         private float _aspectRatio;
+        private bool _projective;
         private Matrix4 _matrix;
 
         private Plane[] _planes;
@@ -26,6 +27,7 @@ namespace CMineNew.Render{
             _top = top;
             _bottom = bottom;
             _planes = new Plane[6];
+            _projective = true;
             RecalculateAspectRatioAndFov();
             GenerateMatrix();
         }
@@ -36,6 +38,7 @@ namespace CMineNew.Render{
             _far = far;
             _fov = fov;
             _aspectRatio = aspectRatio;
+            _projective = true;
             RecalculateFrustum();
         }
 
@@ -111,6 +114,14 @@ namespace CMineNew.Render{
             }
         }
 
+        public bool Projective {
+            get => _projective;
+            set {
+                _projective = value;
+                GenerateMatrix();
+            }
+        }
+
         public Matrix4 Matrix => _matrix;
 
         public Plane[] Planes => _planes;
@@ -125,17 +136,27 @@ namespace CMineNew.Render{
             _planes = new Plane[6];
         }
 
-        private void  RecalculateAspectRatioAndFov() {
+        private void RecalculateAspectRatioAndFov() {
             _aspectRatio = (_right - _left) / (_top - _bottom);
             _fov = (float) Math.Atan(_top / _near) / Pi360;
         }
 
         public void GenerateMatrix() {
-            _matrix = new Matrix4(2 * _near / (_right - _left), 0, 0, 0,
-                0, 2 * _near / (_top - _bottom), 0, 0,
-                (_right + _left) / (_right - _left), (_top + _bottom) / (_top - _bottom),
-                -(_far + _near) / (_far - _near), -1,
-                0, 0, -2 * _far * _near / (_far - _near), 0);
+            if (_projective) {
+                _matrix = new Matrix4(2 * _near / (_right - _left), 0, 0, 0,
+                    0, 2 * _near / (_top - _bottom), 0, 0,
+                    (_right + _left) / (_right - _left), (_top + _bottom) / (_top - _bottom),
+                    -(_far + _near) / (_far - _near), -1,
+                    0, 0, -2 * _far * _near / (_far - _near), 0);
+            }
+            else {
+                _matrix = new Matrix4(2 / (_right - _left), 0, 0, 0,
+                    0, 2 / (_top - _bottom), 0, 0,
+                    0, 0, -2 / (_far - _near), 0,
+                    -(_right + _left) / (_right - _left), -(_top + _bottom) / (_top - _bottom),
+                    -(_far + _near) / (_far - _near), 1);
+            }
+
             GeneratePlanes();
             _camera.GenerateViewProjectionMatrix();
         }

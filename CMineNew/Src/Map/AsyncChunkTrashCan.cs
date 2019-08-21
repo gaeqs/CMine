@@ -6,21 +6,18 @@ using CMineNew.Geometry;
 namespace CMineNew.Map{
     public class AsyncChunkTrashCan{
         private readonly World _world;
-        private readonly EDynamicPriorityQueue<Chunk> _queue;
+        private readonly EConcurrentLinkedQueue<Chunk> _queue;
         private Thread _thread;
         private bool _alive;
-        private Vector3i _playerPosition;
 
         public AsyncChunkTrashCan(World world) {
             _world = world;
-            _queue = new EDynamicPriorityQueue<Chunk>(Comparer<Chunk>
-                .Create((o1, o2) => (o2.Position - _playerPosition).Mul(1, 2, 1).LengthSquared() -
-                                    (o1.Position - _playerPosition).Mul(1, 2, 1).LengthSquared()));
+            _queue = new EConcurrentLinkedQueue<Chunk>();
             _thread = null;
             _alive = false;
         }
 
-        public EDynamicPriorityQueue<Chunk> Queue {
+        public EConcurrentLinkedQueue<Chunk> Queue {
             get {
                 lock (_queue) {
                     return _queue;
@@ -45,8 +42,7 @@ namespace CMineNew.Map{
             while (_alive) {
                 Chunk chunk;
                 lock (_queue) {
-                    if (_queue.Size() < 10) continue;
-                    _playerPosition = new Vector3i(_world.Player.Position) >> 4;
+                    if (_queue.IsEmpty()) continue;
                     chunk = _queue.Pop();
                 }
 

@@ -85,23 +85,27 @@ namespace CMineNew.Map{
             const int chunkRadius = 8;
             const int chunkRadiusSquared = chunkRadius * chunkRadius;
             var regions = _world.ChunkRegions;
+            var regionsLock = _world.RegionsLock;
             var trashQueue = _world.AsyncChunkTrashCan.Queue;
-            foreach (var region in regions.Values) {
-                var chunks = region.Chunks;
-                lock (region) {
-                    for (var x = 0; x < 4; x++) {
-                        for (var y = 0; y < 4; y++) {
-                            for (var z = 0; z < 4; z++) {
-                                var chunk = chunks[x, y, z];
-                                if (chunk == null) continue;
-                                if ((chunk.Position - _playerPosition).LengthSquared() <= chunkRadiusSquared) continue;
-                                chunks[x, y, z] = null;
-                                trashQueue.Push(chunk);
+            lock (regionsLock) {
+                foreach (var region in regions.Values) {
+                    var chunks = region.Chunks;
+                    lock (region) {
+                        for (var x = 0; x < 4; x++) {
+                            for (var y = 0; y < 4; y++) {
+                                for (var z = 0; z < 4; z++) {
+                                    var chunk = chunks[x, y, z];
+                                    if (chunk == null) continue;
+                                    if ((chunk.Position - _playerPosition).LengthSquared() <= chunkRadiusSquared)
+                                        continue;
+                                    chunks[x, y, z] = null;
+                                    trashQueue.Push(chunk);
+                                }
                             }
                         }
-                    }
 
-                    _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
+                        _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
+                    }
                 }
             }
 

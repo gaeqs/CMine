@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CMineNew.Exception.Shader;
@@ -131,12 +130,13 @@ namespace CMineNew.Render.Object{
         public void SetUMatrix(string name, Matrix4 value) {
             GL.UniformMatrix4(GetUniformLocation(name), false, ref value);
         }
-        
+
         public void SetupForPostRender() {
             Use();
             SetUInt("gAmbient", 0);
             SetUInt("gDiffuse", 1);
             SetUInt("gSpecular", 2);
+            SetUInt("gPosition", 3);
         }
     }
 }

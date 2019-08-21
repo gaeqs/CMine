@@ -37,6 +37,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void RemoveFromRender() {
+            if (_chunk.Region.Deleted) return;
             _chunk.Region.Render.RemoveData(0, this);
         }
     }
