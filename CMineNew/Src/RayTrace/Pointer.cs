@@ -9,10 +9,10 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.RayTrace{
     public class Pointer{
         private static readonly Vertex[] Vertices = {
-            new Vertex(-0.005f, -0.005f, 0, 0, 0, 0, 0, 1),
-            new Vertex(-0.005f, 0.005f, 0, 0, 0, 0, 0, 0),
-            new Vertex(0.005f, -0.005f, 0, 0, 0, 0, 1, 1),
-            new Vertex(0.005f, 0.005f, 0, 0, 0, 0, 1, 0)
+            new Vertex(-0.005f, -0.005f, 0, 0, 0, 0, 0, 0),
+            new Vertex(-0.005f, 0.005f, 0, 0, 0, 0, 0, 1),
+            new Vertex(0.005f, -0.005f, 0, 0, 0, 0, 1, 0),
+            new Vertex(0.005f, 0.005f, 0, 0, 0, 0, 1, 1)
         };
 
         private static readonly int[] Indices = {0, 2, 3, 0, 1, 3};

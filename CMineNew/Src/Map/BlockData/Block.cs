@@ -1,6 +1,7 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
     public abstract class Block{
@@ -11,14 +12,17 @@ namespace CMineNew.Map.BlockData{
         protected Vector3i _position;
         protected bool _passable;
         protected readonly bool[] _collidableFaces;
+        protected Color4 _textureFilter;
 
-        public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position, bool passable = false) {
+        public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
+            Color4 textureFilter, bool passable = false) {
             _id = id;
             _blockModel = blockModel;
             _chunk = chunk;
             _position = position;
             _passable = passable;
             _collidableFaces = new bool[6];
+            _textureFilter = textureFilter;
         }
 
         public string Id => _id;
@@ -40,6 +44,11 @@ namespace CMineNew.Map.BlockData{
         public bool Passable => _passable;
 
         public bool[] CollidableFaces => _collidableFaces;
+
+        public Color4 TextureFilter {
+            get => _textureFilter;
+            set => _textureFilter = value;
+        }
 
         public void OnPlace0(Block oldBlock, Block[] neighbours) {
             for (var i = 0; i < neighbours.Length; i++) {

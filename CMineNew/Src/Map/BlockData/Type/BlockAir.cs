@@ -1,10 +1,11 @@
 using CMineNew.Geometry;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockAir : Block{
         public BlockAir(Chunk chunk, Vector3i position)
-            : base("default:air", null, chunk, position, true) {
+            : base("default:air", null, chunk, position, Color4.Transparent, true) {
         }
 
         public override void OnPlace(Block oldBlock, Block[] neighbours) {

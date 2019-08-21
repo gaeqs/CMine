@@ -8,6 +8,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
+using CMineNew.Map.Task;
 using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Text;
@@ -24,6 +25,7 @@ namespace CMineNew.Map{
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
         private readonly AsyncChunkTrashCan _asyncChunkTrashCan;
+        private readonly WorldTaskManager _worldTaskManager;
 
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
 
@@ -49,6 +51,7 @@ namespace CMineNew.Map{
 
             _staticTexts = new Collection<StaticText>();
 
+            _worldTaskManager = new WorldTaskManager();
             _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
             _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
             _asyncChunkTrashCan.StartThread();
@@ -65,6 +68,8 @@ namespace CMineNew.Map{
         public AsyncChunkGenerator AsyncChunkGenerator => _asyncChunkGenerator;
 
         public AsyncChunkTrashCan AsyncChunkTrashCan => _asyncChunkTrashCan;
+
+        public WorldTaskManager WorldTaskManager => _worldTaskManager;
 
         public Dictionary<Vector3i, ChunkRegion> ChunkRegions {
             get {
@@ -157,6 +162,7 @@ namespace CMineNew.Map{
         }
 
         public override void Tick(long delay) {
+            _worldTaskManager.Tick(delay);
             foreach (var entity in _entities) {
                 entity.Tick(delay);
             }
@@ -218,11 +224,12 @@ namespace CMineNew.Map{
             }
 
             //Draws front data
-            
+
             GL.Disable(EnableCap.DepthTest);
             foreach (var staticText in _staticTexts) {
                 staticText.Draw();
             }
+
             Pointer.Draw(_camera);
         }
 
@@ -273,6 +280,12 @@ namespace CMineNew.Map{
         public override void Close() {
             _asyncChunkGenerator.Kill();
             _asyncChunkTrashCan.Kill();
+            lock (_regionsLock) {
+                foreach (var region in _chunkRegions.Values) {
+                    region.Delete();
+                }
+                _chunkRegions.Clear();
+            }
         }
     }
 }

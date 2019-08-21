@@ -1,10 +1,11 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockStone : TexturedCubicBlock{
         public BlockStone(Chunk chunk, Vector3i position)
-            : base("default:stone", chunk, position, "default:stone") {
+            : base("default:stone", chunk, position, "default:stone", Color4.Transparent) {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

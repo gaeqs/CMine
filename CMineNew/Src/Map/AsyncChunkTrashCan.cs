@@ -20,7 +20,13 @@ namespace CMineNew.Map{
             _alive = false;
         }
 
-        public EDynamicPriorityQueue<Chunk> Queue => _queue;
+        public EDynamicPriorityQueue<Chunk> Queue {
+            get {
+                lock (_queue) {
+                    return _queue;
+                }
+            }
+        }
 
         public void StartThread() {
             if (_thread != null) return;
@@ -39,7 +45,7 @@ namespace CMineNew.Map{
             while (_alive) {
                 Chunk chunk;
                 lock (_queue) {
-                    if (_queue.Size() < 500) continue;
+                    if (_queue.Size() < 10) continue;
                     _playerPosition = new Vector3i(_world.Player.Position) >> 4;
                     chunk = _queue.Pop();
                 }

@@ -117,6 +117,9 @@
     <Compile Include="Src\Map\Generator\Noise\SimplexNoiseGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\SimplexOctaveGenerator.cs" />
     <Compile Include="Src\Map\Generator\WorldGenerator.cs" />
+    <Compile Include="Src\Map\Task\WorldTask.cs" />
+    <Compile Include="Src\Map\Task\WorldTaskManager.cs" />
+    <Compile Include="Src\Map\Task\WorldTaskRegionDelete.cs" />
     <Compile Include="Src\Map\World.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />

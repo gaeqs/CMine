@@ -86,6 +86,7 @@ namespace CMineNew.Map{
         }
 
         public void RemoveAllBlockFacesFromRender() {
+            if (Region.Deleted) return;
             for (var x = 0; x < 16; x++) {
                 for (var y = 0; y < 16; y++) {
                     for (var z = 0; z < 16; z++) {

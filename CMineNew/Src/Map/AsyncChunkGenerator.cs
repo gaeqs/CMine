@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using CMine.DataStructure.Queue;
 using CMineNew.Geometry;
+using CMineNew.Map.Task;
 
 namespace CMineNew.Map{
     public class AsyncChunkGenerator{
@@ -100,14 +101,14 @@ namespace CMineNew.Map{
                         }
                     }
 
-                    region.DeleteIfEmpty();
+                    _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
                 }
             }
 
             lock (_queueLock) {
                 _chunksToGenerate.RemoveIf(pos => (pos - _playerPosition).LengthSquared() > chunkRadiusSquared);
                 for (var x = -chunkRadius; x <= chunkRadius; x++) {
-                    for (var y = -chunkRadius; y <= chunkRadius; y++) {
+                    for (var y = -2; y <= 2; y++) {
                         for (var z = -chunkRadius; z <= chunkRadius; z++) {
                             var chunkPos = new Vector3i(x, y, z);
                             var wChunkPos = chunkPos + _playerPosition;

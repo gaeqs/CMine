@@ -7,8 +7,8 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class CrossBlockRender : BlockRender{
-        private const int MaxBlocks = 4 * 4 * 4 * 4;
-        private const int InstanceDataLength = 3 + 4;
+        private const int MaxBlocks = 4 * 4 * 4 * 16;
+        private const int InstanceDataLength = 3 + 4 + 4;
         private const int InstanceFloatDataLength = InstanceDataLength * sizeof(float);
 
         public static readonly Vertex[] Vertices = {
@@ -42,9 +42,13 @@ namespace CMineNew.Map.BlockData.Render{
         public override void AddData(int mapperIndex, Block block) {
             if (!(block is CrossBlock crossBlock)) return;
             var pos = block.Position;
+            var filter = block.TextureFilter;
             var area = crossBlock.TextureArea;
             _mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
-                new[] {pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY}, 0));
+                new[] {
+                    pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
+                    filter.R, filter.G, filter.B, filter.A
+                }, 0));
         }
 
         public override void RemoveData(int mapperIndex, Block block) {
@@ -71,7 +75,7 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         public override void CleanUp() {
-            _vao.CleanUp();
+            _vao?.CleanUp();
         }
 
         private void Generate() {
@@ -82,9 +86,11 @@ namespace CMineNew.Map.BlockData.Render{
             _dataBuffer = new VertexBufferObject();
             _vao.LinkBuffer(_dataBuffer);
             _dataBuffer.Bind(BufferTarget.ArrayBuffer);
-            _dataBuffer.SetData(BufferTarget.ArrayBuffer, MaxBlocks * InstanceFloatDataLength, BufferUsageHint.StreamDraw);
+            _dataBuffer.SetData(BufferTarget.ArrayBuffer, MaxBlocks * InstanceFloatDataLength,
+                BufferUsageHint.StreamDraw);
             var builder = new AttributePointerBuilder(_vao, InstanceDataLength, 3);
             builder.AddPointer(3, true);
+            builder.AddPointer(4, true);
             builder.AddPointer(4, true);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
             VertexArrayObject.Unbind();
@@ -102,6 +108,7 @@ namespace CMineNew.Map.BlockData.Render{
             newBuffer.Bind(BufferTarget.ArrayBuffer);
             var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
             builder.AddPointer(3, true);
+            builder.AddPointer(4, true);
             builder.AddPointer(4, true);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }

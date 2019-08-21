@@ -62,6 +62,10 @@ namespace CMineNew.Map{
         public void DeleteIfEmpty() {
             if (_deleted) return;
             if (_chunks.Cast<Chunk>().Any(chunk => chunk != null)) return;
+            Delete();
+        }
+        
+        public void Delete() {
             _deleted = true;
             _render.CleanUp();
         }

@@ -2,6 +2,7 @@
 
 in vec3 fragPos, fragNormal;
 in vec2 fragTexCoord;
+in vec4 fragColorFilter;
 
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec4 gNormal;
@@ -13,7 +14,12 @@ uniform sampler2D sampler;
 
 void main() {
     vec4 texture = texture(sampler, fragTexCoord);
-    if(texture.w < 0.1) discard;
+    if (texture.w < 0.1) discard;
+
+    if (texture.r == texture.g && texture.r == texture.b && fragColorFilter.a > 0.5) {
+        texture = fragColorFilter * texture.r;
+    }
+
     gAmbient = vec4(texture.rgb, 1);
     gDiffuse = vec4(0, 0, 0, 1);
     gSpecular = vec4(0, 0, 0, 1);

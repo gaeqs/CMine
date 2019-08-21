@@ -9,6 +9,7 @@ namespace CMineNew.Map{
         private readonly Dictionary<string, BlockRender> _renders;
 
         private readonly object _lock = new object();
+        private bool _deleted;
 
 
         public ChunkRegionRender(ChunkRegion chunkRegion) {
@@ -16,19 +17,28 @@ namespace CMineNew.Map{
             lock (_lock) {
                 _renders = new Dictionary<string, BlockRender>();
             }
+
+            _deleted = false;
         }
 
         public ChunkRegion ChunkRegion => _chunkRegion;
 
         public void AddData(int mapper, Block block) {
+            lock (_lock) {
+                _deleted = false;
+            }
             GetOrCreateRender(block.BlockModel).AddData(mapper, block);
         }
 
         public void RemoveData(int mapper, Block block) {
+            lock (_lock) {
+                _deleted = false;
+            }
             GetOrCreateRender(block.BlockModel).RemoveData(mapper, block);
         }
 
         public void Draw() {
+            if(_deleted) return;
             lock (_lock) {
                 foreach (var render in _renders.Values) {
                     render.Draw();
@@ -37,6 +47,7 @@ namespace CMineNew.Map{
         }
 
         public void DrawAfterPostRender() {
+            if(_deleted) return;
             lock (_lock) {
                 foreach (var render in _renders.Values) {
                     render.DrawAfterPostRender();
@@ -45,6 +56,7 @@ namespace CMineNew.Map{
         }
 
         public void FlushInBackground() {
+            if(_deleted) return;
             lock (_lock) {
                 foreach (var render in _renders.Values) {
                     render.FlushInBackground();
@@ -53,17 +65,19 @@ namespace CMineNew.Map{
         }
 
         public void CleanUp() {
+            if(_deleted) return;
+            _deleted = true;
             lock (_lock) {
                 foreach (var render in _renders.Values) {
                     render.CleanUp();
                 }
+                _renders.Clear();
             }
-
-            _renders.Clear();
         }
 
         private BlockRender GetOrCreateRender(BlockModel model) {
             lock (_lock) {
+                if(_deleted) return null;
                 var modelId = model.Id;
                 if (_renders.TryGetValue(modelId, out var render)) {
                     return render;

@@ -4,6 +4,10 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Object{
     public class VertexBufferObject{
+        private static int BuffersCount;
+
+        public static int Buffers => BuffersCount;
+
         public static void Unbind(BufferTarget target) {
             GL.BindBuffer(target, 0);
         }
@@ -20,6 +24,8 @@ namespace CMineNew.Render.Object{
                 throw new System.Exception("Couldn't create VBO. ID is 0.");
             }
 
+            BuffersCount++;
+            
             _mapping = false;
         }
 
@@ -30,6 +36,7 @@ namespace CMineNew.Render.Object{
         public bool Mapping => _mapping;
 
         public void Bind(BufferTarget target) {
+            GL.GetError();
             GL.BindBuffer(target, _id);
             var error = GL.GetError();
             if (error != ErrorCode.NoError) {
@@ -54,7 +61,10 @@ namespace CMineNew.Render.Object{
         }
 
         public void CleanUp() {
+            FinishMapping();
             GL.DeleteBuffer(_id);
+            Console.WriteLine("Deleting VBO " + _id);
+            BuffersCount--;
         }
 
         #region mapping
@@ -64,7 +74,7 @@ namespace CMineNew.Render.Object{
                 if (_mapping) return;
                 Bind(BufferTarget.ArrayBuffer);
                 unsafe {
-                    var old = _pointer;
+                    GL.GetError();
                     _pointer = (float*) GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite).ToPointer();
                     var error = GL.GetError();
                     if (error != ErrorCode.NoError) {
@@ -84,10 +94,20 @@ namespace CMineNew.Render.Object{
             lock (_lock) {
                 unsafe {
                     if (!_mapping) return;
+                    GL.GetError();
                     Bind(BufferTarget.ArrayBuffer);
                     GL.UnmapBuffer(BufferTarget.ArrayBuffer);
                     _pointer = null;
                     _mapping = false;
+
+                    var error = GL.GetError();
+                    if (error != ErrorCode.NoError) {
+                        Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
+                        Console.WriteLine("VBO: " + _id);
+                        Console.WriteLine(error);
+                        Console.WriteLine("---------------------------");
+                        throw new System.Exception("Error while mapping VBO.");
+                    }
                 }
             }
         }

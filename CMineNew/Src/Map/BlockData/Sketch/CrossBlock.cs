@@ -1,11 +1,13 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CrossBlock : Block{
-        public CrossBlock(string id, Chunk chunk, Vector3i position, bool passable = false)
-            : base(id, BlockModelManager.GetModelOrNull(CrossBlockModel.Key), chunk, position, passable) {
+        public CrossBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false)
+            : base(id, BlockModelManager.GetModelOrNull(CrossBlockModel.Key), chunk, position, textureFilter,
+                passable) {
         }
 
         public abstract Area2d TextureArea { get; }

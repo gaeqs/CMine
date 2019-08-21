@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using CMineNew.Map;
 using CMineNew.Render;
+using CMineNew.Render.Object;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
@@ -22,10 +23,8 @@ namespace CMineNew.Test{
 
             var memory = GC.GetTotalMemory(false) * 100 / MaxMemory;
             var chunks = 0;
-            var unloadedChunks = 0;
             if (CMine.Window.Room is World world) {
                 chunks = world.AsyncChunkGenerator.ChunksToGenerateSize;
-                unloadedChunks = world.AsyncChunkTrashCan.Queue.Size();
             }
 
             var chunkVelocity = (_lastChunks - chunks) * 10;
@@ -34,7 +33,7 @@ namespace CMineNew.Test{
 
             var fps = Math.Ceiling(CMine.TicksPerSecond / (float) dif).ToString(CultureInfo.InvariantCulture);
 
-            Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] (" + unloadedChunks + ")" + fps;
+            Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] (" +  VertexBufferObject.Buffers + ")" + fps;
             _ticks = 0;
         }
     }
