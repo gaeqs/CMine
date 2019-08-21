@@ -2,7 +2,7 @@ using CMine.DataStructure.List;
 
 namespace CMineNew.Map.Task{
     public class WorldTaskManager{
-        private ELinkedList<WorldTask> _tasks;
+        private readonly ELinkedList<WorldTask> _tasks;
 
         public WorldTaskManager() {
             _tasks = new ELinkedList<WorldTask>();
