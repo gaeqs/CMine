@@ -75,7 +75,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void CleanUp() {
             foreach (var vertexArrayObject in _vaos) {
-                vertexArrayObject.CleanUp();
+                vertexArrayObject?.CleanUp();
             }
         }
 

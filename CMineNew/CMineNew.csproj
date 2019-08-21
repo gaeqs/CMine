@@ -120,6 +120,7 @@
     <Compile Include="Src\Map\World.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
+    <Compile Include="Src\RayTrace\Pointer.cs" />
     <Compile Include="Src\Render\Camera.cs" />
     <Compile Include="Src\Render\Frustum.cs" />
     <Compile Include="Src\Render\Mapper\VboMapper.cs" />
@@ -161,6 +162,8 @@
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />
     <Content Include="Resources\Shaders\Block\vertex.vert" />
+    <Content Include="Resources\Shaders\Pointer\fragment.frag" />
+    <Content Include="Resources\Shaders\Pointer\vertex.vert" />
     <Content Include="Resources\Shaders\PostRender\fragment.frag" />
     <Content Include="Resources\Shaders\PostRender\vertex.vert" />
     <Content Include="Resources\Shaders\StaticText\fragment.frag" />
@@ -168,6 +171,7 @@
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />
     <Content Include="Resources\Textures\grass_top.png" />
+    <Content Include="Resources\Textures\pointer.png" />
     <Content Include="Resources\Textures\stone.png" />
     <Content Include="Resources\Textures\tall_grass.png" />
     <Content Include="Resources\Textures\water.png" />

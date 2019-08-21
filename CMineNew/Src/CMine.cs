@@ -5,6 +5,7 @@ using CMineNew.Map;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
+using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Test;
 using CMineNew.Text;
@@ -24,8 +25,9 @@ namespace CMineNew{
                 GameWindowFlags.Fullscreen, false, (window, args) => {
                     Textures = new TextureMap();
                     BlockModelManager.Load();
+                    Pointer.Load();
                     var world = new World("test");
-                    
+
                     //var generator = new DefaultWorldGenerator(world, new Random().Next());
                     //var i = 0;
                     //var now = DateTime.Now.Ticks;

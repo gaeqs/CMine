@@ -116,11 +116,11 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D sampler;
         ///
         ///void main() {
-        ///    gAmbient = vec4(texture(sampler, fragTexCoord).rgb, 1);
+        ///    vec4 texture = texture(sampler, fragTexCoord);
+        ///    if(texture.w &lt; 0.1) discard;
+        ///    gAmbient = vec4(texture.rgb, 1);
         ///    gDiffuse = vec4(0, 0, 0, 1);
-        ///    gSpecular = vec4(0, 0, 0, 1);
-        ///    gPosition = fragPos;
-        ///    gNormal = vec4(fra [rest of string was truncated]&quot;;.
+        ///    gSpecular = vec4 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -199,6 +199,50 @@ namespace CMineNew.Resources.Shaders {
         internal static string block_vertex {
             get {
                 return ResourceManager.GetString("block_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///in vec3 fragPos;
+        ///in vec2 fragTexCoord;
+        ///
+        ///out vec4 FragColor;
+        ///
+        ///void main() {
+        ///    vec4 texture = texture(sampler, fragTexCoord);
+        ///    if(texture.w &lt; 0.1) discard;
+        ///    FragColor = vec4(0, 0, 0, 0);
+        ///}.
+        /// </summary>
+        internal static string pointer_fragment {
+            get {
+                return ResourceManager.GetString("pointer_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///
+        ///out vec3 fragPos;
+        ///out vec2 fragTexCoord;
+        ///
+        ///uniform mat4 viewProjection;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position, 1);
+        ///    fragTexCoord = texturePosition;
+        ///}
+        ///.
+        /// </summary>
+        internal static string pointer_vertex {
+            get {
+                return ResourceManager.GetString("pointer_vertex", resourceCulture);
             }
         }
         

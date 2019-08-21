@@ -63,4 +63,12 @@
     <data name="static_text_fragment" type="System.Resources.ResXFileRef">
         <value>StaticText/fragment.frag;System.String</value>
     </data>
+
+    <data name="pointer_vertex" type="System.Resources.ResXFileRef">
+        <value>Pointer/vertex.vert;System.String</value>
+    </data>
+
+    <data name="pointer_fragment" type="System.Resources.ResXFileRef">
+        <value>Pointer/fragment.frag;System.String</value>
+    </data>
 </root>

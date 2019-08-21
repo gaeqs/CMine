@@ -8,6 +8,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
+using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Text;
 using OpenTK;
@@ -60,7 +61,7 @@ namespace CMineNew.Map{
         public Camera Camera => _camera;
 
         public WorldGenerator WorldGenerator => _worldGenerator;
-        
+
         public AsyncChunkGenerator AsyncChunkGenerator => _asyncChunkGenerator;
 
         public AsyncChunkTrashCan AsyncChunkTrashCan => _asyncChunkTrashCan;
@@ -206,6 +207,7 @@ namespace CMineNew.Map{
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
@@ -216,11 +218,12 @@ namespace CMineNew.Map{
             }
 
             //Draws front data
-
+            
             GL.Disable(EnableCap.DepthTest);
             foreach (var staticText in _staticTexts) {
                 staticText.Draw();
             }
+            Pointer.Draw(_camera);
         }
 
         private void DrawSelectedBlock() {

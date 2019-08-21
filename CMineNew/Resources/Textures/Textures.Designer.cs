@@ -93,6 +93,16 @@ namespace CMineNew.Resources.Textures {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] pointer {
+            get {
+                object obj = ResourceManager.GetObject("pointer", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] stone {
             get {
                 object obj = ResourceManager.GetObject("stone", resourceCulture);

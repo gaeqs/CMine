@@ -63,14 +63,16 @@ namespace CMineNew.Map{
         }
 
         private BlockRender GetOrCreateRender(BlockModel model) {
-            var modelId = model.Id;
-            if (_renders.TryGetValue(modelId, out var render)) {
+            lock (_lock) {
+                var modelId = model.Id;
+                if (_renders.TryGetValue(modelId, out var render)) {
+                    return render;
+                }
+
+                render = model.CreateBlockRender(_chunkRegion);
+                _renders.Add(modelId, render);
                 return render;
             }
-
-            render = model.CreateBlockRender(_chunkRegion);
-            _renders.Add(modelId, render);
-            return render;
         }
     }
 }
