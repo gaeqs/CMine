@@ -266,5 +266,10 @@ namespace CMineNew.Map{
         public override void MouseMove(MouseMoveEventArgs args) {
             _player.Controller?.HandleMouseMove(args);
         }
+
+        public override void Close() {
+            _asyncChunkGenerator.Kill();
+            _asyncChunkTrashCan.Kill();
+        }
     }
 }
