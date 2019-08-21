@@ -1,4 +1,6 @@
 using System;
+using CMineNew.Map;
+using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Render;
 using OpenTK;
 using OpenTK.Input;
@@ -98,29 +100,21 @@ namespace CMineNew.Entities.Controller{
         }
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
-            //if (args.Button == MouseButton.Right) {
-            //    var matInstance = Game.Instance.Materials.GetMaterial("default:grass");
-            //    if (_player.World.BlockRayTracer.Result == null) return;
-            //    var result = _player.World.BlockRayTracer.Result;
-            //    var position = result.Position + BlockFaceMethods.GetRelative(_player.World.BlockRayTracer.Face);
-            //    if (_player.CollisionBox.Collides(matInstance.BlockModel.AabbCollision, _player.Position,
-            //            position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-            //    _player.World.SetMaterial(matInstance, position);
-            //}
-            //else if (args.Button == MouseButton.Left) {
-            //    if (_player.World.BlockRayTracer.Result == null) return;
-            //    _player.World.BlockRayTracer.Result.Break();
-            //}
-            //else if (args.Button == MouseButton.Middle) {
-            //    var matInstance = Game.Instance.Materials.GetMaterial("default:water");
-            //    if (_player.World.BlockRayTracer.Result == null) return;
-            //    var result = _player.World.BlockRayTracer.Result;
-            //    var position = result.Position + BlockFaceMethods.GetRelative(_player.World.BlockRayTracer.Face);
-            //    ((MaterialWater) matInstance).SetAsWaterGenerator(position);
-            //    if (_player.CollisionBox.Collides(matInstance.BlockModel.AabbCollision, _player.Position,
-            //            position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-            //    _player.World.SetMaterial(matInstance, position);
-            //}
+            if (args.Button == MouseButton.Right) {
+                var matInstance = new BlockSnapshotTallGrass();
+                if (_player.BlockRayTracer.Result == null) return;
+                var result = _player.BlockRayTracer.Result;
+                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                if (!matInstance.CanBePlaced(position, _player.World)) return;
+                if (!matInstance.Passable &&
+                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
+                _player.World.SetBlock(matInstance, position);
+            }
+            else if (args.Button == MouseButton.Left) {
+                if (_player.BlockRayTracer.Result == null) return;
+                _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
+            }
         }
 
         public override void HandleMouseRelease(MouseButtonEventArgs args) {

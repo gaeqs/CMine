@@ -12,17 +12,15 @@ namespace CMineNew.Map.BlockData.Render{
         private const int InstanceDataLength = 3 + 4;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
-        private ChunkRegion _chunkRegion;
-        private readonly ShaderProgram _shader;
+        private readonly ChunkRegion _chunkRegion;
+        private ShaderProgram _shader;
         private readonly VertexArrayObject[] _vaos;
-        private VertexBufferObject[] _dataBuffers;
-        private VboMapper<Vector3i>[] _mappers;
+        private readonly VertexBufferObject[] _dataBuffers;
+        private readonly VboMapper<Vector3i>[] _mappers;
         private bool _generated;
 
         public CubicBlockRender(ChunkRegion chunkRegion) {
             _chunkRegion = chunkRegion;
-
-            _shader = new ShaderProgram(Shaders.block_vertex, Shaders.block_fragment);
 
             _vaos = new VertexArrayObject[6];
             _dataBuffers = new VertexBufferObject[6];
@@ -81,14 +79,15 @@ namespace CMineNew.Map.BlockData.Render{
             }
         }
 
-        private void GenerateVbos() {
+        private void Generate() {
+            _shader = new ShaderProgram(Shaders.block_vertex, Shaders.block_fragment);
             foreach (var face in BlockFaceMethods.All) {
                 var vao = BlockFaceVertices.CreateVao(face);
                 vao.Bind();
                 var vbo = new VertexBufferObject();
                 vao.LinkBuffer(vbo);
                 vbo.Bind(BufferTarget.ArrayBuffer);
-                vbo.SetData(BufferTarget.ArrayBuffer, MaxFaces * InstanceDataLength, BufferUsageHint.StreamDraw);
+                vbo.SetData(BufferTarget.ArrayBuffer, MaxFaces * InstanceFloatDataLength, BufferUsageHint.StreamDraw);
                 var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
                 builder.AddPointer(3, true);
                 builder.AddPointer(4, true);
@@ -120,7 +119,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         private void CheckVbos() {
             if (!_generated) {
-                GenerateVbos();
+                Generate();
                 _generated = true;
             }
         }

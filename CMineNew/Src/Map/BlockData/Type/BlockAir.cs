@@ -27,5 +27,8 @@ namespace CMineNew.Map.BlockData.Type{
         public override bool IsFaceOpaque(BlockFace face) {
             return false;
         }
+
+        public override void RemoveFromRender() {
+        }
     }
 }

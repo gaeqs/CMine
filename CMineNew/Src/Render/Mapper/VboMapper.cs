@@ -17,7 +17,7 @@ namespace CMineNew.Render.Mapper{
         private int _maximumAmount;
 
         private int _updates;
-        private bool _onBackground;
+        private volatile bool _onBackground;
 
 
         private readonly EConcurrentLinkedQueue<VboMapperTask<TKey>> _tasks;
@@ -76,14 +76,10 @@ namespace CMineNew.Render.Mapper{
 
 
         public void AddTask(VboMapperTask<TKey> task) {
-            if (_onBackground || _vbo == null) {
-                _tasks.Push(task);
-                return;
-            }
-
             lock (_backgroundLock) {
-                if (!_vbo.Mapping) {
-                    _vbo.StartMapping();
+                if (_onBackground || _vbo == null || !_vbo.Mapping) {
+                    _tasks.Push(task);
+                    return;
                 }
 
                 ExecuteTask(task);

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 namespace CMineNew.Map.BlockData.Model{
     public class BlockModelManager{
         private static Dictionary<string, BlockModel> _models = new Dictionary<string, BlockModel>();
-        private static bool _loaded = false;
+        private static bool _loaded;
 
+        
         public static void Load() {
             if (_loaded) return;
             _models.Add(CubicBlockModel.Key, new CubicBlockModel());
+            _models.Add(CrossBlockModel.Key, new CrossBlockModel());
             _loaded = true;
         }
 

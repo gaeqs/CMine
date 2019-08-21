@@ -38,4 +38,8 @@
     <data name="water" type="System.Resources.ResXFileRef">
         <value>water.png;System.Byte[]</value>
     </data>
+
+    <data name="tall_grass" type="System.Resources.ResXFileRef">
+        <value>tall_grass.png;System.Byte[]</value>
+    </data>
 </root>

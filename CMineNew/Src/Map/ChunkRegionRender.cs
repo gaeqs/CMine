@@ -1,17 +1,21 @@
-using System;
 using System.Collections.Generic;
+using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Render;
 
-namespace CMineNew.Map.BlockData{
+namespace CMineNew.Map{
     public class ChunkRegionRender{
         private readonly ChunkRegion _chunkRegion;
         private readonly Dictionary<string, BlockRender> _renders;
 
+        private readonly object _lock = new object();
+
 
         public ChunkRegionRender(ChunkRegion chunkRegion) {
             _chunkRegion = chunkRegion;
-            _renders = new Dictionary<string, BlockRender>();
+            lock (_lock) {
+                _renders = new Dictionary<string, BlockRender>();
+            }
         }
 
         public ChunkRegion ChunkRegion => _chunkRegion;
@@ -23,29 +27,38 @@ namespace CMineNew.Map.BlockData{
         public void RemoveData(int mapper, Block block) {
             GetOrCreateRender(block.BlockModel).RemoveData(mapper, block);
         }
-        
+
         public void Draw() {
-            foreach (var render in _renders.Values) {
-                render.Draw();
+            lock (_lock) {
+                foreach (var render in _renders.Values) {
+                    render.Draw();
+                }
             }
         }
 
         public void DrawAfterPostRender() {
-            foreach (var render in _renders.Values) {
-                render.DrawAfterPostRender();
+            lock (_lock) {
+                foreach (var render in _renders.Values) {
+                    render.DrawAfterPostRender();
+                }
             }
         }
 
         public void FlushInBackground() {
-            foreach (var render in _renders.Values) {
-                render.FlushInBackground();
+            lock (_lock) {
+                foreach (var render in _renders.Values) {
+                    render.FlushInBackground();
+                }
             }
         }
 
         public void CleanUp() {
-            foreach (var render in _renders.Values) {
-                render.CleanUp();
+            lock (_lock) {
+                foreach (var render in _renders.Values) {
+                    render.CleanUp();
+                }
             }
+
             _renders.Clear();
         }
 

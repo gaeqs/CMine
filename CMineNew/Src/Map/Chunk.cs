@@ -1,5 +1,7 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
+using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map{
     public class Chunk{
@@ -37,16 +39,13 @@ namespace CMineNew.Map{
             return GetBlock(worldPosition - (_position << WorldPositionShift));
         }
 
-        public void SetBlock(Block block, Vector3i chunkPosition) {
+        public void SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition) {
+            var position = (_position << WorldPositionShift) + chunkPosition;
+            var block = snapshot.ToBlock(this, position);
             var old = _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
             _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
-            var position = (_position << WorldPositionShift) + chunkPosition;
-            if (block != null) {
-                block.Chunk = this;
-                block.Position = position;
-            }
 
-            var neighbours = GetNeighbourBlocks(position, chunkPosition);
+            var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
 
             old?.OnRemove(block);
             block?.OnPlace0(old, neighbours);
@@ -56,12 +55,47 @@ namespace CMineNew.Map{
             }
         }
 
-        public void SetBlockFromWorldPosition(Block block, Vector3i worldPosition) {
-            SetBlock(block, worldPosition - (_position << WorldPositionShift));
+        public void SetBlockFromWorldPosition(BlockSnapshot snapshot, Vector3i worldPosition) {
+            SetBlock(snapshot, worldPosition - (_position << WorldPositionShift));
         }
 
-        private Block[] GetNeighbourBlocks(Vector3i position, Vector3i chunkPosition) {
+        public void FillWithBlocks(BlockSnapshot[,,] snapshots, bool empty) {
+            var pos = _position << WorldPositionShift;
+            for (var x = 0; x < ChunkLength; x++) {
+                for (var y = 0; y < ChunkLength; y++) {
+                    for (var z = 0; z < ChunkLength; z++) {
+                        var snapshot = snapshots[x, y, z];
+                        var blockPos = pos + new Vector3i(x, y, z);
+                        var block = snapshot == null ? new BlockAir(this, blockPos) : snapshot.ToBlock(this, blockPos);
+                        _blocks[x, y, z] = block;
+                    }
+                }
+            }
+
+            if (empty) return;
             var blocks = new Block[6];
+            for (var x = 0; x < ChunkLength; x++) {
+                for (var y = 0; y < ChunkLength; y++) {
+                    for (var z = 0; z < ChunkLength; z++) {
+                        var block = _blocks[x, y, z];
+                        GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
+                        block.OnPlace0(null, blocks);
+                    }
+                }
+            }
+        }
+
+        public void RemoveAllBlockFacesFromRender() {
+            for (var x = 0; x < 16; x++) {
+                for (var y = 0; y < 16; y++) {
+                    for (var z = 0; z < 16; z++) {
+                        _blocks[x, y, z]?.RemoveFromRender();
+                    }
+                }
+            }
+        }
+
+        private Block[] GetNeighbourBlocks(Block[] blocks, Vector3i position, Vector3i chunkPosition) {
             //East block
             blocks[(int) BlockFace.East] = chunkPosition.X == 15
                 ? World.GetBlock(position + new Vector3i(1, 0, 0))

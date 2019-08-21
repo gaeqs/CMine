@@ -52,7 +52,7 @@ namespace CMineNew.Entities{
         public override void UpdatePosition(Vector3 old) {
             var positionI = new Vector3i(_position) >> 4;
             if (new Vector3i(old) >> 4 != positionI) {
-                //_world.AsyncChunkGenerator.GenerateChunkArea = true;
+                _world.AsyncChunkGenerator.GenerateChunkArea = true;
             }
         }
     }

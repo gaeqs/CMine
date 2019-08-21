@@ -2,7 +2,9 @@ using System;
 using System.Drawing;
 using CMineNew.Geometry;
 using CMineNew.Map;
-using CMineNew.Map.BlockData.Type;
+using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.Generator;
 using CMineNew.Render;
 using CMineNew.Test;
 using CMineNew.Text;
@@ -21,21 +23,30 @@ namespace CMineNew{
             Window = new Window(1920, 1080,
                 GameWindowFlags.Fullscreen, false, (window, args) => {
                     Textures = new TextureMap();
+                    BlockModelManager.Load();
                     var world = new World("test");
+                    
+                    //var generator = new DefaultWorldGenerator(world, new Random().Next());
+                    //var i = 0;
+                    //var now = DateTime.Now.Ticks;
+                    //for (var x = -2; x < 2; x++) {
+                    //    for (var z = -2; z < 2; z++) {
+                    //        for (var y = -3; y < 7; y++) {
+                    //            var chunk = world.CreateChunk(new Vector3i(x, y, z));
+                    //            generator.GenerateChunkData(chunk);
+                    //            i++;
+                    //        }
+                    //    }
+                    //}
 
-                    for (var x = 0; x < 100; x++) {
-                        Console.WriteLine();
-                        for (var z = 0; z < 100; z++) {
-                            for (var y = 80; y < 90 + x / 2; y++) {
-                                world.SetBlock(new BlockGrass(null, Vector3i.Zero), new Vector3i(x, y, z));
-                            }
-                        }
-                    }
+                    //var delay = (DateTime.Now.Ticks - now) / TicksPerSecondF;
+                    //Console.WriteLine(i + " chunks created in " + delay + " seconds. (" + i * Chunk.ChunkVolume +
+                    //                  " blocks updated.)");
 
                     var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 10));
                     world.StaticTexts.Add(new PositionViewer(ttf));
 
-                    world.StaticTexts.Add(new FPSViewer(ttf));
+                    world.StaticTexts.Add(new FpsViewer(ttf));
 
                     Window.Room = world;
                 });

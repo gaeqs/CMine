@@ -7,8 +7,8 @@ namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
         private bool[] _visibleFaces;
 
-        public CubicBlock(string id, Chunk chunk, Vector3i position)
-            : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position) {
+        public CubicBlock(string id, Chunk chunk, Vector3i position, bool passable = false)
+            : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position, passable) {
             _visibleFaces = new bool[6];
         }
 
@@ -56,6 +56,11 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public abstract Area2d GetTextureArea(BlockFace face);
+
+        public override void RemoveFromRender() {
+             var render = _chunk.Region.Render;
+            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+        }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {
             for (var i = 0; i < _visibleFaces.Length; i++) {

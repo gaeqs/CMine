@@ -64,5 +64,7 @@ namespace CMineNew.Map.BlockData{
         public abstract bool Collides(Vector3 origin, Vector3 direction);
 
         public abstract bool IsFaceOpaque(BlockFace face);
+
+        public abstract void RemoveFromRender();
     }
 }

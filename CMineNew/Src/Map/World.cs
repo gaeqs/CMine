@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
-using CMineNew.RayTrace;
+using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.Generator;
 using CMineNew.Render;
 using CMineNew.Text;
 using OpenTK;
@@ -18,12 +20,18 @@ namespace CMineNew.Map{
         private readonly Camera _camera;
         private readonly WorldGBuffer _gBuffer;
 
+        private readonly WorldGenerator _worldGenerator;
+        private readonly AsyncChunkGenerator _asyncChunkGenerator;
+        private readonly AsyncChunkTrashCan _asyncChunkTrashCan;
+
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
 
         private readonly HashSet<Entity> _entities;
         private readonly Player _player;
 
         private readonly Collection<StaticText> _staticTexts;
+
+        private readonly object _regionsLock = new object();
 
         public World(string name) : base(name) {
             Background = Color4.Aqua;
@@ -39,11 +47,31 @@ namespace CMineNew.Map{
             _entities.Add(_player);
 
             _staticTexts = new Collection<StaticText>();
+
+            _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
+            _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
+            _asyncChunkTrashCan.StartThread();
+            _asyncChunkGenerator = new AsyncChunkGenerator(this);
+            _asyncChunkGenerator.StartThread();
+
+            _asyncChunkGenerator.GenerateChunkArea = true;
         }
 
         public Camera Camera => _camera;
 
-        public Dictionary<Vector3i, ChunkRegion> ChunkRegions => _chunkRegions;
+        public WorldGenerator WorldGenerator => _worldGenerator;
+        
+        public AsyncChunkGenerator AsyncChunkGenerator => _asyncChunkGenerator;
+
+        public AsyncChunkTrashCan AsyncChunkTrashCan => _asyncChunkTrashCan;
+
+        public Dictionary<Vector3i, ChunkRegion> ChunkRegions {
+            get {
+                lock (_regionsLock) {
+                    return _chunkRegions;
+                }
+            }
+        }
 
         public WorldGBuffer GBuffer => _gBuffer;
 
@@ -54,37 +82,47 @@ namespace CMineNew.Map{
         public Collection<StaticText> StaticTexts => _staticTexts;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
-            return ChunkRegions.TryGetValue(position, out var region) ? region : null;
+            lock (_regionsLock) {
+                return _chunkRegions.TryGetValue(position, out var region) ? region : null;
+            }
         }
 
         public ChunkRegion GetChunkRegionFromWorldPosition(Vector3i position) {
-            return ChunkRegions.TryGetValue(position >> 6, out var region) ? region : null;
+            lock (_regionsLock) {
+                return _chunkRegions.TryGetValue(position >> 6, out var region) ? region : null;
+            }
         }
 
         public Chunk GetChunk(Vector3i position) {
-            return ChunkRegions.TryGetValue(position >> 2, out var region)
-                ? region.GetChunkFromChunkPosition(position)
-                : null;
+            lock (_regionsLock) {
+                return _chunkRegions.TryGetValue(position >> 2, out var region)
+                    ? region.GetChunkFromChunkPosition(position)
+                    : null;
+            }
         }
 
         public Chunk GetChunkFromWorldPosition(Vector3i position) {
-            return ChunkRegions.TryGetValue(position >> 6, out var region)
-                ? region.GetChunkFromChunkPosition(position >> 4)
-                : null;
+            lock (_regionsLock) {
+                return _chunkRegions.TryGetValue(position >> 6, out var region)
+                    ? region.GetChunkFromChunkPosition(position >> 4)
+                    : null;
+            }
         }
 
         public Block GetBlock(Vector3i position) {
             return GetChunkFromWorldPosition(position)?.GetBlockFromWorldPosition(position);
         }
 
-        public void SetBlock(Block block, Vector3i position) {
+        public void SetBlock(BlockSnapshot snapshot, Vector3i position) {
             var regionPosition = position >> 6;
             var chunkPosition = position >> 4;
 
             var region = GetChunkRegion(regionPosition);
-            if (region == null) {
-                region = new ChunkRegion(this, regionPosition);
-                ChunkRegions[regionPosition] = region;
+            lock (_regionsLock) {
+                if (region == null) {
+                    region = new ChunkRegion(this, regionPosition);
+                    _chunkRegions[regionPosition] = region;
+                }
             }
 
             var chunk = region.GetChunkFromChunkPosition(chunkPosition);
@@ -93,7 +131,28 @@ namespace CMineNew.Map{
                 region.SetChunk(chunk, chunkPosition - (regionPosition << 2));
             }
 
-            chunk.SetBlockFromWorldPosition(block, position);
+            chunk.SetBlockFromWorldPosition(snapshot, position);
+        }
+
+        public Chunk CreateChunk(Vector3i position) {
+            var regionPosition = position >> 2;
+
+            var region = GetChunkRegion(regionPosition);
+            lock (_regionsLock) {
+                if (region == null) {
+                    region = new ChunkRegion(this, regionPosition);
+                    _chunkRegions[regionPosition] = region;
+                }
+            }
+
+            var chunk = region.GetChunkFromChunkPosition(position);
+            if (chunk == null) {
+                chunk = new Chunk(region, position);
+                _worldGenerator.GenerateChunkData(chunk);
+                region.SetChunk(chunk, position - (regionPosition << 2));
+            }
+
+            return chunk;
         }
 
         public override void Tick(long delay) {
@@ -124,9 +183,8 @@ namespace CMineNew.Map{
             GL.Enable(EnableCap.DepthTest);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
-            lock (_chunkRegions) {
-                foreach (var region in _chunkRegions.Values) {
-                    if (region.Deleted) continue;
+            lock (_regionsLock) {
+                foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
                     if (_camera.IsVisible(region)) {
                         region.Render.Draw();
                     }
@@ -151,7 +209,7 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            lock (_chunkRegions) {
+            lock (_regionsLock) {
                 foreach (var region in _chunkRegions.Values) {
                     region.Render.DrawAfterPostRender();
                 }
@@ -177,6 +235,17 @@ namespace CMineNew.Map{
                 case Key.R:
                     _player.Position = new Vector3(20, 100, 20);
                     _player.Velocity = Vector3.Zero;
+                    break;
+                case Key.K:
+                    var snapshot = new BlockSnapshotStone();
+                    for (var x = -10; x < 10; x++) {
+                        for (var y = -15; y < -2; y++) {
+                            for (var z = -10; z < 10; z++) {
+                                SetBlock(snapshot, new Vector3i(_player.Position) + new Vector3i(x, y, z));
+                            }
+                        }
+                    }
+
                     break;
             }
         }

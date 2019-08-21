@@ -12,7 +12,9 @@ layout (location = 4) out vec4 gSpecular;
 uniform sampler2D sampler;
 
 void main() {
-    gAmbient = vec4(texture(sampler, fragTexCoord).rgb, 1);
+    vec4 texture = texture(sampler, fragTexCoord);
+    if(texture.w < 0.1) discard;
+    gAmbient = vec4(texture.rgb, 1);
     gDiffuse = vec4(0, 0, 0, 1);
     gSpecular = vec4(0, 0, 0, 1);
     gPosition = fragPos;

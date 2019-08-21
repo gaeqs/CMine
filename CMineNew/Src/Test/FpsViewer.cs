@@ -7,36 +7,35 @@ using OpenTK;
 using OpenTK.Graphics;
 
 namespace CMineNew.Test{
-    public class FPSViewer : StaticText{
+    public class FpsViewer : StaticText{
         private static readonly long MaxMemory = (long) Math.Pow(2, 32);
 
-        private long ticks;
-        private int lastChunks;
+        private long _ticks;
+        private int _lastChunks;
 
-        public FPSViewer(TrueTypeFont font) : base(font, "INIT", new Vector2(-1, 0.9f), Color4.White) {
+        public FpsViewer(TrueTypeFont font) : base(font, "INIT", new Vector2(-1, 0.9f), Color4.White) {
         }
 
         public override void Tick(long dif, Room room) {
-            ticks += dif;
-            if (!(ticks > CMine.TicksPerSecond * 0.1f)) return;
+            _ticks += dif;
+            if (!(_ticks > CMine.TicksPerSecond * 0.1f)) return;
 
             var memory = GC.GetTotalMemory(false) * 100 / MaxMemory;
             var chunks = 0;
             var unloadedChunks = 0;
-            //if (CMine.Window.Room is World world) {
-            //    chunks = world.AsyncChunkGenerator.ChunksToGenerate.Size();
-            //    unloadedChunks = world.AsyncChunkTrashCan.Queue.Size();
-            //}
+            if (CMine.Window.Room is World world) {
+                chunks = world.AsyncChunkGenerator.ChunksToGenerateSize;
+                unloadedChunks = world.AsyncChunkTrashCan.Queue.Size();
+            }
 
-
-            var chunkVelocity = (lastChunks - chunks) * 10;
-            lastChunks = chunks;
+            var chunkVelocity = (_lastChunks - chunks) * 10;
+            _lastChunks = chunks;
 
 
             var fps = Math.Ceiling(CMine.TicksPerSecond / (float) dif).ToString(CultureInfo.InvariantCulture);
 
             Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] (" + unloadedChunks + ")" + fps;
-            ticks = 0;
+            _ticks = 0;
         }
     }
 }
