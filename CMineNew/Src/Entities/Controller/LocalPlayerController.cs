@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
@@ -11,7 +12,7 @@ namespace CMineNew.Entities.Controller{
     public class LocalPlayerController : PlayerController{
         private const float RotationVelocity = 180;
 
-        private Player _player;
+        private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
         private float _toPitch, _toYaw;
@@ -26,6 +27,7 @@ namespace CMineNew.Entities.Controller{
         }
 
         public override void Tick(long dif) {
+            HandleMouseMove();
             var force = Vector3.Zero;
             if (_w && !_s) force += (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
             if (_s && !_w) force -= (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
@@ -162,7 +164,7 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMouseRelease(MouseButtonEventArgs args) {
         }
 
-        public override void HandleMouseMove(MouseMoveEventArgs args) {
+        public void HandleMouseMove() {
             GameWindow window = CMine.Window;
             if (window.Focused) {
                 var deltaX = Mouse.GetCursorState().X - (window.X + window.Width / 2);

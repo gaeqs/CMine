@@ -76,7 +76,14 @@ namespace CMineNew.Map{
             _postRenderShader.SetUVector("cameraPosition", cameraPosition);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
             _postRenderShader.SetUFloat("ambientStrength", ambientStrength);
+
+            const int min = (CMine.ChunkRadius - 2) << 4;
+            const int max = (CMine.ChunkRadius - 1) << 4;
             _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
+            _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
+            _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
+            _postRenderShader.SetUVector("fogColor", new Vector4(0, 1, 1, 1));
+
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _ambientTexture);
@@ -86,6 +93,8 @@ namespace CMineNew.Map{
             GL.BindTexture(TextureTarget.Texture2D, _specularTexture);
             GL.ActiveTexture(TextureUnit.Texture3);
             GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
+            GL.ActiveTexture(TextureUnit.Texture4);
+            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
             DrawQuad();
         }
 

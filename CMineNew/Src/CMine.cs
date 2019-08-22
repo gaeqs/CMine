@@ -17,6 +17,9 @@ namespace CMineNew{
         public const int TicksPerSecond = 10000000;
         public const float TicksPerSecondF = 10000000f;
 
+        //Temporary constant.
+        public const int ChunkRadius = 8;
+
         public static Window Window;
         public static TextureMap Textures;
 

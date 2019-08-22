@@ -4,6 +4,7 @@ using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -64,7 +65,15 @@ namespace CMineNew.Map.BlockData.Render{
             _shader.Use();
             _shader.SetUMatrix("viewProjection", camera.ViewProjection);
             _shader.SetUVector("cameraPosition", camera.Position);
+            
+            const int min = (CMine.ChunkRadius - 2) << 4;
+            const int max = (CMine.ChunkRadius - 1) << 4;
+            _shader.SetUFloat("viewDistanceSquared", min * min);
+            _shader.SetUFloat("viewDistanceOffsetSquared", max * max);
+            _shader.SetUVector("fogColor", new Vector4(0, 1, 1, 1));
+            
             _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
+            
             foreach (var face in BlockFaceMethods.All) {
                 var vao = _vaos[(int) face];
                 var mapper = _mappers[(int) face];

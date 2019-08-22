@@ -9,7 +9,7 @@ layout (location = 5) in vec4 blockColorFilter;
 layout (location = 6) in vec4 waterLevels;
 
 out vec3 fragPos, fragNormal;
-out vec2 fragTexCoord;
+out vec2 fragTexCoords;
 out vec4 fragColorFilter;
 
 uniform mat4 viewProjection;
@@ -40,6 +40,6 @@ void main () {
 
     fragPos = modelPosition.xyz;
     fragNormal = mat3(transpose(inverse(model))) * normal;
-    fragTexCoord = vec2(texturePosition.x > 0 ? textureArea.x : textureArea.z, texturePosition.y > 0 ? textureArea.w : textureArea.y);
+    fragTexCoords = vec2(texturePosition.x > 0 ? textureArea.x : textureArea.z, texturePosition.y > 0 ? textureArea.w : textureArea.y);
     fragColorFilter = blockColorFilter;
 }

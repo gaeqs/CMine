@@ -137,6 +137,7 @@ namespace CMineNew.Render.Object{
             SetUInt("gDiffuse", 1);
             SetUInt("gSpecular", 2);
             SetUInt("gPosition", 3);
+            SetUInt("gNormal", 4);
         }
     }
 }

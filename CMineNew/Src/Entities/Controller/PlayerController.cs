@@ -19,7 +19,5 @@ namespace CMineNew.Entities.Controller{
         public abstract void HandleMousePush(MouseButtonEventArgs args);
 
         public abstract void HandleMouseRelease(MouseButtonEventArgs args);
-
-        public abstract void HandleMouseMove(MouseMoveEventArgs args);
     }
 }

@@ -14,21 +14,18 @@ uniform sampler2D gSpecularBrightness;
 uniform vec3 cameraPosition;
 uniform float ambientStrength;
 uniform vec3 ambientColor;
-uniform float waterShader;
+
+uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+uniform vec4 fogColor;
 
 vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
     return ambientStrength * ambientColor * modelAmbientColor;
 }
 
-vec3 toLdr (vec3 color) {
-    float exposure = 1;
-    float gamma = 1; 
-    return pow(vec3(1) - exp(-color * exposure), vec3(1/gamma));
-}
-
 void main() {
     vec4 ambientFull = texture2D(gAmbient, fragTexCoords);
     vec3 modelAmbientColor = ambientFull.rgb;
+    
     float opacity = ambientFull.a;
 
     vec3 diffuseColor = texture2D(gDiffuse, fragTexCoords).rgb;
@@ -40,10 +37,23 @@ void main() {
     vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * ambientBrightness +
     diffuseColor * diffuseBrigtness + specularColor * specularBrightness;
 
-    FragColor = vec4(toLdr(result), 1);
-    if (waterShader > 0.5) {
-        vec3 position = texture2D(gPosition, fragTexCoords).rgb;
-        float length = 1 - length(position - cameraPosition) / 10;
-        FragColor *= vec4(0.5, 0.5, 1, 1) * length;
+    FragColor = vec4(result, 1);
+
+    vec3 position = texture2D(gPosition, fragTexCoords).rgb;
+    vec3 distance = position - cameraPosition;
+    float lengthSquared = dot(distance, distance);
+    
+    if(waterShader > 0.5) {
+        float length = 1 - lengthSquared / 100;
+        FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
+    }
+    else if (lengthSquared > viewDistanceSquared) {
+        if (lengthSquared > viewDistanceOffsetSquared) {
+            FragColor = fogColor;
+        }
+        else {
+            float a = 1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared);
+            FragColor = mix(FragColor, fogColor, a);
+        }
     }
 }

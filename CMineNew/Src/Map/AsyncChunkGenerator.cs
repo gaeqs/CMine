@@ -82,7 +82,7 @@ namespace CMineNew.Map{
         }
 
         private void TriggerGenerateChunkArea() {
-            const int chunkRadius = 8;
+            const int chunkRadius = CMine.ChunkRadius;
             const int chunkRadiusSquared = chunkRadius * chunkRadius;
             var regions = _world.ChunkRegions;
             var regionsLock = _world.RegionsLock;

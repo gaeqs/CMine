@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using CMine.DataStructure.List;
 using CMineNew.Entities;
@@ -223,7 +222,7 @@ namespace CMineNew.Map{
             DrawSelectedBlock();
 
             //Draws GBuffer squad.
-            _gBuffer.Draw(_camera.Position, Vector3.One, 0.5f, _player.EyesOnWater);
+            _gBuffer.Draw(_camera.Position, Vector3.One, 1f, _player.EyesOnWater);
 
             //Transfers depth buffer to main FBO.
             _gBuffer.TransferDepthBufferToMainFbo();
@@ -290,10 +289,6 @@ namespace CMineNew.Map{
 
         public override void MouseRelease(MouseButtonEventArgs args) {
             _player.Controller?.HandleMouseRelease(args);
-        }
-
-        public override void MouseMove(MouseMoveEventArgs args) {
-            _player.Controller?.HandleMouseMove(args);
         }
 
         public override void Close() {

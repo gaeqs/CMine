@@ -65,9 +65,9 @@ namespace CMineNew.Map{
         }
 
         public void CleanUp() {
-            if(_deleted) return;
-            _deleted = true;
             lock (_lock) {
+                if(_deleted) return;
+                _deleted = true;
                 foreach (var render in _renders.Values) {
                     render.CleanUp();
                 }

@@ -20,6 +20,8 @@ namespace CMineNew.Map{
 
         private ChunkRegionRender _render;
         private bool _deleted;
+        
+        private object _deletionLock = new object();
 
         public ChunkRegion(World world, Vector3i position) {
             _world = world;
@@ -49,13 +51,15 @@ namespace CMineNew.Map{
         }
 
         public void SetChunk(Chunk chunk, Vector3i regionPosition) {
-            if (chunk != null) {
-                chunk.Position = (_position << ChunkPositionShift) + regionPosition;
-            }
+            lock (_deletionLock) {
+                if (chunk != null) {
+                    chunk.Position = (_position << ChunkPositionShift) + regionPosition;
+                }
 
-            _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
-            if (!_deleted || chunk == null) return;
-            _deleted = false;
+                _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
+                if (!_deleted || chunk == null) return;
+                _deleted = false;
+            }
         }
 
         public void DeleteIfEmpty() {
@@ -65,8 +69,10 @@ namespace CMineNew.Map{
         }
 
         public void Delete() {
-            _deleted = true;
-            _render.CleanUp();
+            lock (_deletionLock) {
+                _deleted = true;
+                _render.CleanUp();
+            }
         }
 
         public void Tick(long delay) {
