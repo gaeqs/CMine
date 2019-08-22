@@ -41,11 +41,12 @@ namespace CMineNew.Map.BlockData.Render{
             var filter = block.TextureFilter;
             var area = BlockWater.TextureArea;
             var levels = water.VertexWaterLevel;
+            var t = water.HasWaterOnTop;
             mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
                     filter.R, filter.G, filter.B, filter.A,
-                    levels[0], levels[1], levels[2], levels[3]
+                    t ? 8 : levels[0], t ? 8 : levels[1], t ? 8 : levels[2], t ? 8 : levels[3]
                 }, 0));
         }
 
@@ -62,8 +63,8 @@ namespace CMineNew.Map.BlockData.Render{
             CheckVbos();
             _shader.Use();
             _shader.SetUMatrix("viewProjection", camera.ViewProjection);
-            _shader.SetUVector("cameraPosition",  camera.Position);
-            _shader.SetUFloat("waterShader",  _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
+            _shader.SetUVector("cameraPosition", camera.Position);
+            _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
             foreach (var face in BlockFaceMethods.All) {
                 var vao = _vaos[(int) face];
                 var mapper = _mappers[(int) face];

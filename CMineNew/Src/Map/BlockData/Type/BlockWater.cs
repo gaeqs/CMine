@@ -47,6 +47,7 @@ namespace CMineNew.Map.BlockData.Type{
         public bool HasWaterOnTop => _hasWaterOnTop;
 
         public override void OnPlace(Block oldBlock, Block[] neighbours) {
+            _hasWaterOnTop = neighbours[(int) BlockFace.Up] is BlockWater;
             for (var i = 0; i < neighbours.Length; i++) {
                 var block = neighbours[i];
                 if (i == (int) BlockFace.Up) {
@@ -58,7 +59,6 @@ namespace CMineNew.Map.BlockData.Type{
                                        && !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 }
             }
-            _hasWaterOnTop = neighbours[(int) BlockFace.Up] is BlockWater;
 
             UpdateWaterVertices(true, true, true, true, true);
             _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
