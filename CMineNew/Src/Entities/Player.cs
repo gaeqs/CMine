@@ -87,7 +87,7 @@ namespace CMineNew.Entities{
             }
             else {
                 if (_wasOnWater) {
-                    var impulse = BlockWater.MaxWaterLevel - _waterBlock.WaterLevel;
+                    var impulse = Math.Max(BlockWater.MaxWaterLevel - _waterBlock.WaterLevel, 1);
                     _velocity += new Vector3(0, impulse / 1.5f, 0);
                 }
                 else {

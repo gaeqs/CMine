@@ -79,6 +79,16 @@ namespace CMineNew.Map.BlockData.Type{
                 }
             }
 
+            if (neighbours.Sum(target => target is BlockWater water && water.Parent == water.Position ? 1 : 0) > 1) {
+                var parentBlock = World.GetBlock(_parent);
+                if (parentBlock is BlockWater parentWater) {
+                    parentWater.Children.Remove(_position);
+                }
+
+                _parent = _position;
+                _waterLevel = MaxWaterLevel;
+            }
+
             UpdateWaterVertices(true, true, true, true, true);
             if (triggerWorldUpdates) {
                 _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
@@ -91,7 +101,7 @@ namespace CMineNew.Map.BlockData.Type{
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
             UpdateWaterVertices(false, true, true, true, true);
-            
+
             foreach (var child in _children) {
                 var chunk = World.GetChunkFromWorldPosition(child);
                 var block = chunk.GetBlockFromWorldPosition(child);
@@ -146,7 +156,7 @@ namespace CMineNew.Map.BlockData.Type{
             return new BlockWater(chunk, position, _waterLevel);
         }
 
-        public override bool Collides(Vector3 origin, Vector3 direction) {
+        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
             return true;
         }
 

@@ -21,7 +21,7 @@ namespace CMineNew.Map.BlockData.Type{
             return new BlockAir(chunk, position);
         }
 
-        public override bool Collides(Vector3 origin, Vector3 direction) {
+        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
             return false;
         }
 

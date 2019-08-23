@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using CMineNew.Map;
 using OpenTK;
@@ -26,6 +27,10 @@ namespace CMine.Collision{
         public float Height => _height;
 
         public float Depth => _depth;
+
+        public Vector3 Min => new Vector3(_x, _y, _z);
+
+        public Vector3 Max => new Vector3(_x + _width, _y + _height, _z + _depth);
 
         public bool Collides(Vector3 point, Vector3 thisPosition) {
             var tx = _x + thisPosition.X;
@@ -95,6 +100,41 @@ namespace CMine.Collision{
 
             data = new CollisionData(face, distance);
             return faces == null || faces[(int) face];
+        }
+
+        public bool CollidesSegment(Vector3 boxPosition, Vector3 min, Vector3 max) {
+            float low = 0;
+            float high = 1;
+
+            var boxMin = Min + boxPosition;
+            var boxMax = Max + boxPosition;
+
+            //Test all three dimensions.
+            for (var i = 0; i < 3; i++) {
+                if (!ClipLine(i, ref boxMin, ref boxMax, ref min, ref max, ref low, ref high)) return false;
+            }
+
+            return true;
+        }
+
+        private bool ClipLine(int dimension, ref Vector3 boxMin, ref Vector3 boxMax, ref Vector3 min, ref Vector3 max,
+            ref float low, ref float high) {
+            var maxMin = max[dimension] - min[dimension];
+            var dimLow = (boxMin[dimension] - min[dimension]) / maxMin;
+            var dimHigh = (boxMax[dimension] - min[dimension]) / maxMin;
+
+            if (dimLow > dimHigh) {
+                var aux = dimLow;
+                dimLow = dimHigh;
+                dimHigh = aux;
+            }
+
+            if (dimHigh < low) return false;
+            if (dimLow > high) return false;
+            low = Math.Max(dimLow, low);
+            high = Math.Min(dimHigh, high);
+
+            return low <= high;
         }
     }
 }

@@ -70,7 +70,7 @@ namespace CMineNew.Map.BlockData{
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);
         public abstract Block Clone(Chunk chunk, Vector3i position);
 
-        public abstract bool Collides(Vector3 origin, Vector3 direction);
+        public abstract bool Collides(Vector3 current, Vector3 origin, Vector3 direction);
 
         public abstract bool IsFaceOpaque(BlockFace face);
 

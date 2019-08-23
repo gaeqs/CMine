@@ -25,7 +25,7 @@ namespace CMineNew.Map.BlockData.Model{
 
         private readonly LineVertexArrayObject _lineVao;
 
-        public CrossBlockModel() : base(Key, new Aabb(0, 0, 0, 1, 1, 1)) {
+        public CrossBlockModel() : base(Key, new Aabb(0.1f, 0, 0.1f, 0.8f, 0.7f, 0.8f)) {
             _lineVao = new LineVertexArrayObject(Vertices, ModelLinesUtil.CalculateLinesIndices(Vertices));
         }
 

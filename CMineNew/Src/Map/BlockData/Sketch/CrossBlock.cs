@@ -27,9 +27,8 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
         }
 
-        public override bool Collides(Vector3 origin, Vector3 direction) {
-            //TODO
-            return true;
+        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
+            return _blockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

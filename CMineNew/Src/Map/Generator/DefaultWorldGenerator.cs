@@ -36,7 +36,7 @@ namespace CMineNew.Map.Generator{
                                                 x + chunkWorldPosition.X, z + chunkWorldPosition.Z) * 20 + 50);
 
                         var grass = tallGrassGenerator.Noise(0.2f, 1, true,
-                                        x + chunkWorldPosition.X, z + chunkWorldPosition.Z) > 0.4f;
+                                        x + chunkWorldPosition.X, z + chunkWorldPosition.Z) > 0.3f;
 
                         if (wy > noiseY + 1) {
                             Buffer[x, y, z] = wy > 45 ? Air : Water;

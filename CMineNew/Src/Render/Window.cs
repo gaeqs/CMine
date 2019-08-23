@@ -22,6 +22,8 @@ namespace CMineNew.Render{
             _unitsPerPixel = new Vector2(2f / width, 2f / height);
             VSync = vSync ? VSyncMode.On : VSyncMode.Off;
 
+            X += 1920;
+
             _room = null;
         }
 
@@ -66,18 +68,18 @@ namespace CMineNew.Render{
             int length, IntPtr message, IntPtr userParam) {
             unsafe {
                 Console.WriteLine("--- DEBUG ---");
-                Console.WriteLine(new string((sbyte*)message.ToPointer(), 0, length, Encoding.ASCII));
-                Console.WriteLine("Source: "+source);
-                Console.WriteLine("Type: "+type);
-                Console.WriteLine("Id: "+id);
-                Console.WriteLine("Severity: "+severity);
+                Console.WriteLine(new string((sbyte*) message.ToPointer(), 0, length, Encoding.ASCII));
+                Console.WriteLine("Source: " + source);
+                Console.WriteLine("Type: " + type);
+                Console.WriteLine("Id: " + id);
+                Console.WriteLine("Severity: " + severity);
                 Console.WriteLine("-------------");
             }
         }
 
         protected override void OnRenderFrame(FrameEventArgs e) {
             var now = DateTime.Now.Ticks;
-            _delay = Math.Min(now -_lastTick, CMine.TicksPerSecond / 30);
+            _delay = Math.Min(now - _lastTick, CMine.TicksPerSecond / 30);
             _lastTick = now;
 
             if (_room != null) {

@@ -48,7 +48,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             }
         }
 
-        public override bool Collides(Vector3 origin, Vector3 direction) {
+        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
             return true;
         }
 
