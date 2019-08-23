@@ -124,7 +124,7 @@ namespace CMineNew.Map{
             return GetChunkFromWorldPosition(position)?.GetBlockFromWorldPosition(position);
         }
 
-        public void SetBlock(BlockSnapshot snapshot, Vector3i position) {
+        public Block SetBlock(BlockSnapshot snapshot, Vector3i position) {
             var regionPosition = position >> 6;
             var chunkPosition = position >> 4;
 
@@ -143,7 +143,7 @@ namespace CMineNew.Map{
                 //TODO ASYNC CHUNK GENERATOR
             }
 
-            chunk.SetBlockFromWorldPosition(snapshot, position);
+            return chunk.SetBlockFromWorldPosition(snapshot, position);
         }
 
         public Chunk CreateChunk(Vector3i position) {

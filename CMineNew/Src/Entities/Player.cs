@@ -83,7 +83,6 @@ namespace CMineNew.Entities{
             if (_onWater) {
                 if (_velocity.Y < MaxWaterUpVelocity) {
                     _force += OnWaterUpForce;
-                    Console.WriteLine(_waterBlock.WaterLevel);
                 }
             }
             else {
@@ -104,8 +103,10 @@ namespace CMineNew.Entities{
             _blockRayTracer.Reset(_position + new Vector3(0, _eyesHeight, 0), _world.Camera.LookAt);
             _blockRayTracer.Run();
 
-            _eyesOnWater =
-                _world.GetBlock(new Vector3i(_position + new Vector3(0, _eyesHeight, 0), true)) is BlockWater;
+
+            var eyesPosition = _position + new Vector3(0, _eyesHeight, 0);
+            var eyesBlock = _world.GetBlock(new Vector3i(eyesPosition, true));
+            _eyesOnWater = eyesBlock is BlockWater water && water.WaterHeight - water.Position.Y > _eyesHeight;
         }
 
         public override void UpdatePosition(Vector3 old) {

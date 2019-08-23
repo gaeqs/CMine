@@ -1,3 +1,4 @@
+using System;
 using CMine.DataStructure.List;
 
 namespace CMineNew.Map.Task{
@@ -15,6 +16,10 @@ namespace CMineNew.Map.Task{
 
         public void Tick(long dif) {
             var enumerator = (ELinkedList<WorldTask>.ELinkedListEnumerator<WorldTask>) _tasks.GetEnumerator();
+            if (_tasks.Size() != 0) {
+                Console.WriteLine(_tasks.Size());
+            }
+
             while (enumerator.MoveNext()) {
                 var current = enumerator.Current;
                 if (current == null || !current.TryToExecute(dif)) continue;

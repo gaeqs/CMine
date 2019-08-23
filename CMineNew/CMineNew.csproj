@@ -124,6 +124,7 @@
     <Compile Include="Src\Map\Generator\Noise\SimplexOctaveGenerator.cs" />
     <Compile Include="Src\Map\Generator\WorldGenerator.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskExpandWater.cs" />
+    <Compile Include="Src\Map\Task\Type\WorldTaskRemoveWater.cs" />
     <Compile Include="Src\Map\Task\WorldTask.cs" />
     <Compile Include="Src\Map\Task\WorldTaskManager.cs" />
     <Compile Include="Src\Map\Task\WorldTaskRegionDelete.cs" />

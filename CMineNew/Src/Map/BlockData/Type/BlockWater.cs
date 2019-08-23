@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.Task.Type;
@@ -8,7 +10,8 @@ using OpenTK.Graphics;
 namespace CMineNew.Map.BlockData.Type{
     public class BlockWater : Block{
         public const int MaxWaterLevel = 7;
-        public const int ExpandTicks = CMine.TicksPerSecond / 5;
+        public const int ExpandTicks = CMine.TicksPerSecond / 3;
+        public const int RemoveTicks = CMine.TicksPerSecond / 7;
         protected const int NorthLeft = 0;
         protected const int NorthRight = 1;
         protected const int SouthLeft = 2;
@@ -20,6 +23,10 @@ namespace CMineNew.Map.BlockData.Type{
         protected int _waterLevel;
         protected bool _hasWaterOnTop;
 
+        private Vector3i _parent;
+        private List<Vector3i> _children;
+        private bool _removing;
+
 
         //0 = north-left, 1 = north-right, 2 = south-left, 3 = south-right
         private readonly float[] _vertexWaterLevel;
@@ -30,6 +37,9 @@ namespace CMineNew.Map.BlockData.Type{
             _visibleFaces = new bool[6];
             _waterLevel = level;
             _vertexWaterLevel = new float[4];
+            _parent = position;
+            _children = new List<Vector3i>(5);
+            _removing = false;
         }
 
         public int WaterLevel {
@@ -45,6 +55,15 @@ namespace CMineNew.Map.BlockData.Type{
         public float[] VertexWaterLevel => _vertexWaterLevel;
 
         public bool HasWaterOnTop => _hasWaterOnTop;
+
+        public Vector3i Parent {
+            get => _parent;
+            set => _parent = value;
+        }
+
+        public List<Vector3i> Children => _children;
+
+        public bool Removing => _removing;
 
         public override void OnPlace(Block oldBlock, Block[] neighbours) {
             _hasWaterOnTop = neighbours[(int) BlockFace.Up] is BlockWater;
@@ -70,10 +89,21 @@ namespace CMineNew.Map.BlockData.Type{
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
             UpdateWaterVertices(false, true, true, true, true);
+            
+            foreach (var child in _children) {
+                var chunk = World.GetChunkFromWorldPosition(child);
+                var block = chunk.GetBlockFromWorldPosition(child);
+                if (!(block is BlockWater water)) return;
+                water._removing = true;
+                if (!(newBlock is BlockWater)) {
+                    chunk.TaskManager.AddTask(new WorldTaskRemoveWater(World, child));
+                }
+            }
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
             var render = _chunk.Region.Render;
+
             if (relative == BlockFace.Up) {
                 if (to is BlockWater) {
                     if (_visibleFaces[(int) relative]) {
@@ -91,6 +121,10 @@ namespace CMineNew.Map.BlockData.Type{
                 }
             }
             else {
+                if (!(to is BlockWater)) {
+                    _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
+                }
+
                 var old = _visibleFaces[(int) relative];
                 var newData = to == null ||
                               !(to is BlockWater)
@@ -103,7 +137,6 @@ namespace CMineNew.Map.BlockData.Type{
                 else {
                     render.RemoveData((int) relative, this);
                 }
-                _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
             }
         }
 
@@ -181,7 +214,7 @@ namespace CMineNew.Map.BlockData.Type{
 
             if (_hasWaterOnTop || waterA != null && waterA._hasWaterOnTop ||
                 waterB != null && waterB._hasWaterOnTop || waterC != null && waterC._hasWaterOnTop) {
-                level = MaxWaterLevel;
+                level = MaxWaterLevel + 1;
                 amount = 1;
             }
             else {

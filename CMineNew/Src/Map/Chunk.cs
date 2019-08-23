@@ -44,7 +44,7 @@ namespace CMineNew.Map{
             return GetBlock(worldPosition - (_position << WorldPositionShift));
         }
 
-        public void SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition) {
+        public Block SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition) {
             var position = (_position << WorldPositionShift) + chunkPosition;
             var block = snapshot.ToBlock(this, position);
             var old = _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
@@ -58,10 +58,12 @@ namespace CMineNew.Map{
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
+
+            return block;
         }
 
-        public void SetBlockFromWorldPosition(BlockSnapshot snapshot, Vector3i worldPosition) {
-            SetBlock(snapshot, worldPosition - (_position << WorldPositionShift));
+        public Block SetBlockFromWorldPosition(BlockSnapshot snapshot, Vector3i worldPosition) {
+            return SetBlock(snapshot, worldPosition - (_position << WorldPositionShift));
         }
 
         public void FillWithBlocks(BlockSnapshot[,,] snapshots, bool empty) {

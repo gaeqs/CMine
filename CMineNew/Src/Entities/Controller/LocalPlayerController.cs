@@ -15,13 +15,10 @@ namespace CMineNew.Entities.Controller{
         private bool _w, _a, _s, _d, _control, _space;
         private float _toPitch, _toYaw;
 
-        private bool _wasOnWater;
-        private int _lastWaterLevel;
 
         public LocalPlayerController(Player player, Camera camera) : base(player) {
             _player = player;
             _camera = camera;
-            _wasOnWater = false;
         }
 
         public override void Tick(long dif) {
@@ -38,6 +35,7 @@ namespace CMineNew.Entities.Controller{
                 add.NormalizeFast();
                 direction += add;
             }
+
             if (_d && !_a) direction -= _camera.U;
             if (_a && !_d) direction += _camera.U;
 
@@ -64,8 +62,7 @@ namespace CMineNew.Entities.Controller{
         }
 
         private bool IsBelowBlockPassable() {
-            var block = _player.World.GetBlock(new Vector3i(_player.Position, true)
-                                               + new Vector3i(0, -1, 0));
+            var block = _player.World.GetBlock(new Vector3i(_player.Position, true) + new Vector3i(0, -1, 0));
             return block.Passable;
         }
 
@@ -154,8 +151,8 @@ namespace CMineNew.Entities.Controller{
                 var deltaY = Mouse.GetCursorState().Y - (window.Y + window.Height / 2);
 
                 if (deltaX == 0 && deltaY == 0) return;
-                _toPitch -= deltaY / 100f;
-                _toYaw += deltaX / 100f;
+                _toPitch -= deltaY / 200f;
+                _toYaw += deltaX / 200f;
 
                 if (_toPitch > Camera.ExtremePitch) _toPitch = Camera.ExtremePitch;
                 else if (_toPitch < -Camera.ExtremePitch) _toPitch = -Camera.ExtremePitch;
