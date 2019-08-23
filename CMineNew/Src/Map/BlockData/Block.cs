@@ -50,15 +50,15 @@ namespace CMineNew.Map.BlockData{
             set => _textureFilter = value;
         }
 
-        public void OnPlace0(Block oldBlock, Block[] neighbours) {
+        public void OnPlace0(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             for (var i = 0; i < neighbours.Length; i++) {
                 _collidableFaces[i] = neighbours[i] == null || neighbours[i]._passable;
             }
 
-            OnPlace(oldBlock, neighbours);
+            OnPlace(oldBlock, neighbours, triggerWorldUpdates);
         }
 
-        public abstract void OnPlace(Block oldBlock, Block[] neighbours);
+        public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates);
 
         public abstract void OnRemove(Block newBlock);
 

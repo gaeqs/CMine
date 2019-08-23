@@ -13,7 +13,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             _visibleFaces = new bool[6];
         }
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = neighbours[i];

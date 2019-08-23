@@ -8,7 +8,7 @@ namespace CMineNew.Map.BlockData.Type{
             : base("default:air", null, chunk, position, Color4.Transparent, true) {
         }
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
         }
 
         public override void OnRemove(Block newBlock) {

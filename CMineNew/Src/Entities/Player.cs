@@ -106,7 +106,7 @@ namespace CMineNew.Entities{
 
             var eyesPosition = _position + new Vector3(0, _eyesHeight, 0);
             var eyesBlock = _world.GetBlock(new Vector3i(eyesPosition, true));
-            _eyesOnWater = eyesBlock is BlockWater water && water.WaterHeight - water.Position.Y > _eyesHeight;
+            _eyesOnWater = eyesBlock is BlockWater water && water.WaterHeight + water.Position.Y - _position.Y >= _eyesHeight;
         }
 
         public override void UpdatePosition(Vector3 old) {

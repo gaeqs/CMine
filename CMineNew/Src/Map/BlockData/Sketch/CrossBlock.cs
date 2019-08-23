@@ -12,7 +12,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public abstract Area2d TextureArea { get; }
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
             render.AddData(0, this);
         }

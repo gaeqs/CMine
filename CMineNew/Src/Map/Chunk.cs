@@ -53,7 +53,7 @@ namespace CMineNew.Map{
             var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
 
             old?.OnRemove(block);
-            block?.OnPlace0(old, neighbours);
+            block?.OnPlace0(old, neighbours, true);
             for (var i = 0; i < neighbours.Length; i++) {
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
@@ -86,7 +86,7 @@ namespace CMineNew.Map{
                     for (var z = 0; z < ChunkLength; z++) {
                         var block = _blocks[x, y, z];
                         GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
-                        block.OnPlace0(null, blocks);
+                        block.OnPlace0(null, blocks, false);
                         if (x == 0) {
                             blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
                         }
