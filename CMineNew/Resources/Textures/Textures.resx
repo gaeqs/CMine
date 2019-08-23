@@ -46,4 +46,8 @@
     <data name="tall_grass" type="System.Resources.ResXFileRef">
         <value>tall_grass.png;System.Byte[]</value>
     </data>
+
+    <data name="bricks" type="System.Resources.ResXFileRef">
+        <value>bricks.png;System.Byte[]</value>
+    </data>
 </root>

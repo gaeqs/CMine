@@ -63,7 +63,6 @@ namespace CMineNew.Render.Object{
         public void CleanUp() {
             FinishMapping();
             GL.DeleteBuffer(_id);
-            Console.WriteLine("Deleting VBO " + _id);
             BuffersCount--;
         }
 

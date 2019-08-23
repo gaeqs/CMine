@@ -19,11 +19,12 @@ namespace CMineNew.Map.Generator{
         }
 
         public override bool GenerateChunkData(Chunk chunk) {
+            var caveGenerator = new SimplexOctaveGenerator(_seed, 4);
             var tallGrassGenerator = new SimplexOctaveGenerator(_seed, 1);
             var generator = new SimplexOctaveGenerator(_seed, 8);
             generator.SetScale(0.05);
-
             tallGrassGenerator.SetScale(1);
+            caveGenerator.SetScale(0.05f);
 
             var empty = true;
             var chunkWorldPosition = chunk.Position << 4;
@@ -53,7 +54,11 @@ namespace CMineNew.Map.Generator{
                         }
                         else {
                             empty = false;
-                            Buffer[x, y, z] = Stone;
+                            Buffer[x, y, z] = caveGenerator.Noise(1, 1, true,
+                                                  x + chunkWorldPosition.X, y + chunkWorldPosition.Y,
+                                                  z + chunkWorldPosition.Z) > 0.2f
+                                ? Air
+                                : Stone;
                         }
                     }
                 }

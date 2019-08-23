@@ -30,25 +30,8 @@ namespace CMineNew{
                     BlockModelManager.Load();
                     Pointer.Load();
                     var world = new World("test");
-
-                    //var generator = new DefaultWorldGenerator(world, new Random().Next());
-                    //var i = 0;
-                    //var now = DateTime.Now.Ticks;
-                    //for (var x = -2; x < 2; x++) {
-                    //    for (var z = -2; z < 2; z++) {
-                    //        for (var y = -3; y < 7; y++) {
-                    //            var chunk = world.CreateChunk(new Vector3i(x, y, z));
-                    //            generator.GenerateChunkData(chunk);
-                    //            i++;
-                    //        }
-                    //    }
-                    //}
-
-                    //var delay = (DateTime.Now.Ticks - now) / TicksPerSecondF;
-                    //Console.WriteLine(i + " chunks created in " + delay + " seconds. (" + i * Chunk.ChunkVolume +
-                    //                  " blocks updated.)");
-
-                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 10));
+                    
+                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 20));
                     world.StaticTexts.Add(new PositionViewer(ttf));
 
                     world.StaticTexts.Add(new FpsViewer(ttf));

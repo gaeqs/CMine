@@ -1,9 +1,7 @@
 using System;
-using System.Drawing;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Map.BlockData.Type;
 using CMineNew.Render;
 using OpenTK;
 using OpenTK.Input;
@@ -28,40 +26,25 @@ namespace CMineNew.Entities.Controller{
 
         public override void Tick(long dif) {
             HandleMouseMove();
-            var force = Vector3.Zero;
-            if (_w && !_s) force += (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
-            if (_s && !_w) force -= (_camera.LookAt * new Vector3(1, 0, 1)).Normalized();
-            if (_d && !_a) force += _camera.U;
-            if (_a && !_d) force -= _camera.U;
+            var direction = Vector3.Zero;
+            if (_w && !_s) {
+                var add = _camera.LookAt * new Vector3(1, 0, 1);
+                add.NormalizeFast();
+                direction -= add;
+            }
 
-            force *= _control && !_player.OnWater && _player.OnGround ? 180 : 100;
-            force *= _player.OnWater || _player.OnGround ? 1 : 0.1f;
+            if (_s && !_w) {
+                var add = _camera.LookAt * new Vector3(1, 0, 1);
+                add.NormalizeFast();
+                direction += add;
+            }
+            if (_d && !_a) direction -= _camera.U;
+            if (_a && !_d) direction += _camera.U;
 
-            var maximum = _control && !_player.OnWater ? 5 : 3;
-
-            var pVelocity = new Vector3(_player.Velocity.X, 0, _player.Velocity.Z);
-            if (pVelocity.LengthSquared < maximum * maximum)
-                _player.Force += force * PhysicEntity.Mass;
+            _player.Move(direction, _control);
 
             if (_space) {
-                if (_player.OnWater) {
-                    if (_player.Velocity.Y < 2.5f) {
-                        _player.Force += new Vector3(0, 15 * PhysicEntity.Mass, 0);
-                    }
-
-                    _wasOnWater = true;
-                    _lastWaterLevel = _player.BlockWater.WaterLevel;
-                }
-                else {
-                    if (_wasOnWater) {
-                        _player.Velocity += new Vector3(0, 2 + (BlockWater.MaxWaterLevel - _lastWaterLevel) / 3, 0);
-                    }
-                    else {
-                        _player.Jump();
-                    }
-
-                    _wasOnWater = false;
-                }
+                _player.ManageJump();
             }
 
             var rotation = _player.HeadRotation;
@@ -134,7 +117,7 @@ namespace CMineNew.Entities.Controller{
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotStone();
+                var matInstance = new BlockSnapshotBricks();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);

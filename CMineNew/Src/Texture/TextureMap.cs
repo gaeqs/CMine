@@ -23,6 +23,7 @@ namespace CMineNew.Texture{
             bitmaps.Add("default:grass_top", ToBitmap(Textures.grass_top));
             bitmaps.Add("default:water", ToBitmap(Textures.water));
             bitmaps.Add("default:tall_grass", ToBitmap(Textures.tall_grass));
+            bitmaps.Add("default:bricks", ToBitmap(Textures.bricks));
 
             CreateTextureMap(bitmaps);
         }

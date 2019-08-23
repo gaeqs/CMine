@@ -93,12 +93,14 @@
     <Compile Include="Src\Map\BlockData\Sketch\TexturedCubicBlock.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshot.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotAir.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotBricks.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotDirt.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotGrass.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotStone.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockBricks.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockDirt.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Src\Text\StaticText.cs" />
     <Compile Include="Src\Text\StaticTextRenderer.cs" />
     <Compile Include="Src\Text\TrueTypeFont.cs" />
+    <Compile Include="Src\Util\ForceUtils.cs" />
     <Compile Include="Src\Util\ModelLinesUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +181,7 @@
     <Content Include="Resources\Shaders\StaticText\vertex.vert" />
     <Content Include="Resources\Shaders\Water\fragment.frag" />
     <Content Include="Resources\Shaders\Water\vertex.vert" />
+    <Content Include="Resources\Textures\bricks.png" />
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />
     <Content Include="Resources\Textures\grass_top.png" />
