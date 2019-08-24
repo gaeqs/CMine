@@ -24,7 +24,7 @@ namespace CMineNew.Map.Generator{
             var generator = new SimplexOctaveGenerator(_seed, 8);
             generator.SetScale(0.05);
             tallGrassGenerator.SetScale(1);
-            caveGenerator.SetScale(0.05f);
+            caveGenerator.SetScale(0.1f);
 
             var empty = true;
             var chunkWorldPosition = chunk.Position << 4;
@@ -35,7 +35,11 @@ namespace CMineNew.Map.Generator{
                         var noiseY = (int) (generator.Noise(1, 0.5, true,
                                                 x + chunkWorldPosition.X, z + chunkWorldPosition.Z) * 20 + 50);
 
-                        var grass = tallGrassGenerator.Noise(0.2f, 1, true,
+                        var cave = caveGenerator.Noise(0.5f, 1, true,
+                                       x + chunkWorldPosition.X, y + chunkWorldPosition.Y,
+                                       z + chunkWorldPosition.Z) > 0.3f;
+
+                        var grass = !cave && tallGrassGenerator.Noise(0.2f, 1, true,
                                         x + chunkWorldPosition.X, z + chunkWorldPosition.Z) > 0.3f;
 
                         if (wy > noiseY + 1) {
@@ -46,19 +50,15 @@ namespace CMineNew.Map.Generator{
                         }
                         else if (wy == noiseY) {
                             empty = false;
-                            Buffer[x, y, z] = wy > 44 ? Grass : Dirt;
+                            Buffer[x, y, z] = wy > 44 ? cave && wy > 46 ? Air : Grass : Dirt;
                         }
                         else if (noiseY - wy < 4) {
                             empty = false;
-                            Buffer[x, y, z] = Dirt;
+                            Buffer[x, y, z] = cave && wy > 46 ? Air : Dirt;
                         }
                         else {
                             empty = false;
-                            Buffer[x, y, z] = caveGenerator.Noise(1, 1, true,
-                                                  x + chunkWorldPosition.X, y + chunkWorldPosition.Y,
-                                                  z + chunkWorldPosition.Z) > 0.2f
-                                ? Air
-                                : Stone;
+                            Buffer[x, y, z] = cave ? Air : Stone;
                         }
                     }
                 }

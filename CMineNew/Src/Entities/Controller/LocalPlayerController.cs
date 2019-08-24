@@ -114,7 +114,7 @@ namespace CMineNew.Entities.Controller{
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotBricks();
+                var matInstance = new BlockSnapshotBricksSlab();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);

@@ -13,9 +13,10 @@ namespace CMineNew.Map.BlockData{
         protected bool _passable;
         protected readonly bool[] _collidableFaces;
         protected Color4 _textureFilter;
+        protected float _blockHeight;
 
         public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
-            Color4 textureFilter, bool passable = false) {
+            Color4 textureFilter, bool passable = false, float blockHeight = 1) {
             _id = id;
             _blockModel = blockModel;
             _chunk = chunk;
@@ -23,6 +24,7 @@ namespace CMineNew.Map.BlockData{
             _passable = passable;
             _collidableFaces = new bool[6];
             _textureFilter = textureFilter;
+            _blockHeight = blockHeight;
         }
 
         public string Id => _id;
@@ -40,6 +42,8 @@ namespace CMineNew.Map.BlockData{
             get => _position;
             set => _position = value;
         }
+
+        public float BlockHeight => _blockHeight;
 
         public bool Passable => _passable;
 
@@ -63,7 +67,10 @@ namespace CMineNew.Map.BlockData{
         public abstract void OnRemove(Block newBlock);
 
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
-            _collidableFaces[(int) relative] = to == null || to._passable;
+
+            var sideAndHigher = relative != BlockFace.Up && relative != BlockFace.Down && _blockHeight > to._blockHeight;
+            
+            _collidableFaces[(int) relative] = to == null || to._passable || sideAndHigher;
             OnNeighbourBlockChange(from, to, relative);
         }
 

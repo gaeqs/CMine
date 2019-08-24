@@ -102,31 +102,33 @@ namespace CMineNew.Map{
             new Vector3(0, -1, 0)
         };
 
-        public static VertexArrayObject CreateVao(BlockFace face) {
+        public static VertexArrayObject CreateVao(BlockFace face, float yHeight = 1) {
             switch (face) {
                 case BlockFace.Up:
-                    return CreateVao(_up);
+                    return CreateVao(_up, yHeight, 1);
                 case BlockFace.Down:
-                    return CreateVao(_down);
+                    return CreateVao(_down, yHeight, 1);
                 case BlockFace.East:
-                    return CreateVao(_east);
+                    return CreateVao(_east, yHeight, yHeight);
                 case BlockFace.West:
-                    return CreateVao(_west);
+                    return CreateVao(_west, yHeight, yHeight);
                 case BlockFace.North:
-                    return CreateVao(_north);
+                    return CreateVao(_north, yHeight, yHeight);
                 case BlockFace.South:
-                    return CreateVao(_south);
+                    return CreateVao(_south, yHeight, yHeight);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(face), face, null);
             }
         }
 
-        private static VertexArrayObject CreateVao(IReadOnlyList<Vector3> positions) {
+        private static VertexArrayObject CreateVao(IReadOnlyList<Vector3> positions, float yHeight,
+            float textureYHeight) {
             var vertices = new Vertex[4];
-            vertices[0] = new Vertex(positions[0], positions[4], new Vector2(0, 1));
-            vertices[1] = new Vertex(positions[1], positions[4], new Vector2(0, 0));
-            vertices[2] = new Vertex(positions[2], positions[4], new Vector2(1, 0));
-            vertices[3] = new Vertex(positions[3], positions[4], new Vector2(1, 1));
+            var mul = new Vector3(1, yHeight, 1);
+            vertices[0] = new Vertex(positions[0] * mul, positions[4], new Vector2(0, 1 * textureYHeight));
+            vertices[1] = new Vertex(positions[1] * mul, positions[4], new Vector2(0, 0));
+            vertices[2] = new Vertex(positions[2] * mul, positions[4], new Vector2(1, 0));
+            vertices[3] = new Vertex(positions[3] * mul, positions[4], new Vector2(1, 1 * textureYHeight));
             return new VertexArrayObject(vertices, new[] {0, 1, 3, 1, 2, 3});
         }
     }
