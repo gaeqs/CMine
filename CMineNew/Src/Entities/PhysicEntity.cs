@@ -182,13 +182,14 @@ namespace CMineNew.Entities{
                 ReduceVelocity(data.BlockFace);
                 var yDistance = block.Position.Y + block.BlockHeight - _position.Y;
                 if (data.BlockFace != BlockFace.Up && data.BlockFace != BlockFace.Down && _onGroundInstant &&
-                    block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f) {
-                    _position.Y = block.Position.Y + block.BlockHeight;
+                    block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f
+                    && CanMoveToTopBlock(_position + new Vector3(0, yDistance, 0))) {
+                    _position.Y += yDistance;
+                    _position -= BlockFaceMethods.GetRelative(data.BlockFace).ToFloat() * 0.001f;
                 }
                 else {
                     _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
                 }
-                Console.WriteLine(data.BlockFace);
             }
 
             _onGroundInstant = false;
@@ -201,6 +202,28 @@ namespace CMineNew.Entities{
                 _onGroundInstant = true;
                 _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
             }
+        }
+
+        protected bool CanMoveToTopBlock(Vector3 position) {
+            var mix = (int) Math.Floor(_collisionBox.X + position.X - 1);
+            var miy = (int) Math.Floor(_collisionBox.Y + position.Y - 1);
+            var miz = (int) Math.Floor(_collisionBox.Z + position.Z - 1);
+            var max = (int) Math.Ceiling(_collisionBox.X + position.X + _collisionBox.Width + 1);
+            var may = (int) Math.Ceiling(_collisionBox.Y + position.Y + _collisionBox.Height + 1);
+            var maz = (int) Math.Ceiling(_collisionBox.Z + position.Z + _collisionBox.Depth + 1);
+
+            for (var x = mix; x <= max; x++) {
+                for (var y = miy; y <= may; y++) {
+                    for (var z = miz; z <= maz; z++) {
+                        var block = _world.GetBlock(new Vector3i(x, y, z));
+                        if (block == null || block.Passable) continue;
+                        if (_collisionBox.Collides(block.BlockModel.BlockCollision, position,
+                            block.CollisionBoxPosition, block.CollidableFaces, out _)) return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         protected void ReduceVelocity(BlockFace face) {
