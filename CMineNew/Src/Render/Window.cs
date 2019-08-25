@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Text;
+using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -141,6 +142,7 @@ namespace CMineNew.Render{
 
         protected override void OnClosing(CancelEventArgs e) {
             _room.Close();
+            ShaderManager.CleanUp();
         }
 
         #endregion

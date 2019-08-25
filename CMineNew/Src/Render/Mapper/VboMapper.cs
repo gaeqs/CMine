@@ -186,21 +186,26 @@ namespace CMineNew.Render.Mapper{
         }
 
         private void ResizeBuffer() {
-            _vbo.FinishMapping();
-            var newVbo = new VertexBufferObject();
-            _vbo.Bind(BufferTarget.CopyReadBuffer);
-            newVbo.Bind(BufferTarget.CopyWriteBuffer);
+            lock (this) {
+                var oldBkg = _onBackground;
+                _onBackground = false;
+                _vbo.FinishMapping();
+                var newVbo = new VertexBufferObject();
+                _vbo.Bind(BufferTarget.CopyReadBuffer);
+                newVbo.Bind(BufferTarget.CopyWriteBuffer);
 
-            newVbo.SetData(BufferTarget.CopyWriteBuffer, _maximumAmount * _elementSize * sizeof(float) << 1,
-                BufferUsageHint.StreamDraw);
-            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer,
-                IntPtr.Zero, IntPtr.Zero, _amount * _elementSize * sizeof(float));
+                newVbo.SetData(BufferTarget.CopyWriteBuffer, _maximumAmount * _elementSize * sizeof(float) * 3 / 2,
+                    BufferUsageHint.StreamDraw);
+                GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer,
+                    IntPtr.Zero, IntPtr.Zero, _amount * _elementSize * sizeof(float));
 
-            _onResize?.Invoke(_vao, _vbo, newVbo);
-            _vbo.CleanUp();
-            _vbo = newVbo;
-            _maximumAmount <<= 1;
-            newVbo.StartMapping();
+                _onResize?.Invoke(_vao, _vbo, newVbo);
+                _vbo.CleanUp();
+                _vbo = newVbo;
+                _maximumAmount <<= 1;
+                newVbo.StartMapping();
+                _onBackground = oldBkg;
+            }
         }
     }
 

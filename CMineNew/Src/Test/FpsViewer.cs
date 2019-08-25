@@ -33,8 +33,25 @@ namespace CMineNew.Test{
 
             var fps = Math.Ceiling(CMine.TicksPerSecond / (float) dif).ToString(CultureInfo.InvariantCulture);
 
-            Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] (" +  VertexBufferObject.Buffers + ")" + fps;
+            Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] " +
+                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} " + fps;
             _ticks = 0;
+        }
+
+        private static string BuffersSize() {
+            var memory = VertexBufferObject.BuffersMemory;
+            string st;
+            if (memory > 1000000) {
+                st = Math.Round(memory / 1000000f, 3) + " MB";
+            }
+            else if (memory > 1000) {
+                st = Math.Round(memory / 1000f, 3) + " KB";
+            }
+            else {
+                st = memory + " B";
+            }
+
+            return st;
         }
     }
 }

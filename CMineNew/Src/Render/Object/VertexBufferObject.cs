@@ -5,8 +5,11 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.Render.Object{
     public class VertexBufferObject{
         private static int BuffersCount;
+        private static long BufferMemory;
 
         public static int Buffers => BuffersCount;
+
+        public static long BuffersMemory => BufferMemory;
 
         public static void Unbind(BufferTarget target) {
             GL.BindBuffer(target, 0);
@@ -15,6 +18,7 @@ namespace CMineNew.Render.Object{
         private int _id;
         private unsafe float* _pointer;
         private volatile bool _mapping;
+        private volatile int _size;
         private volatile object _lock = new object();
 
 
@@ -25,8 +29,9 @@ namespace CMineNew.Render.Object{
             }
 
             BuffersCount++;
-            
+
             _mapping = false;
+            _size = 0;
         }
 
         public int Id => _id;
@@ -49,14 +54,23 @@ namespace CMineNew.Render.Object{
         }
 
         public void SetData(BufferTarget target, float[] data, BufferUsageHint usageHint) {
-            GL.BufferData(target, data.Length * sizeof(float), data, usageHint);
+            BufferMemory -= _size;
+            _size = data.Length * sizeof(float);
+            BufferMemory += _size;
+            GL.BufferData(target, _size, data, usageHint);
         }
 
         public void SetData(BufferTarget target, int[] data, BufferUsageHint usageHint) {
-            GL.BufferData(target, data.Length * sizeof(int), data, usageHint);
+            BufferMemory -= _size;
+            _size = data.Length * sizeof(int);
+            BufferMemory += _size;
+            GL.BufferData(target, _size, data, usageHint);
         }
 
         public void SetData(BufferTarget target, int length, BufferUsageHint usageHint) {
+            BufferMemory -= _size;
+            _size = length;
+            BufferMemory += _size;
             GL.BufferData(target, length, IntPtr.Zero, usageHint);
         }
 
@@ -64,6 +78,7 @@ namespace CMineNew.Render.Object{
             FinishMapping();
             GL.DeleteBuffer(_id);
             BuffersCount--;
+            BufferMemory -= _size;
         }
 
         #region mapping

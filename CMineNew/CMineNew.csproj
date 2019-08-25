@@ -102,6 +102,7 @@
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotBricksSlab.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotDirt.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotOakLog.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotStone.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Src\Map\BlockData\Type\BlockBricksSlab.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockDirt.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockOakLog.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockWater.cs" />
@@ -129,6 +131,7 @@
     <Compile Include="Src\Map\Generator\Noise\PerlinOctaveGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\SimplexNoiseGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\SimplexOctaveGenerator.cs" />
+    <Compile Include="Src\Map\Generator\Population\OakTreeGenerator.cs" />
     <Compile Include="Src\Map\Generator\WorldGenerator.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskExpandWater.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskRemoveWater.cs" />
@@ -145,6 +148,7 @@
     <Compile Include="Src\Render\Mapper\VboMapperTask.cs" />
     <Compile Include="Src\Render\Object\LineVertexArrayObject.cs" />
     <Compile Include="Src\Render\Object\Shader.cs" />
+    <Compile Include="Src\Render\Object\ShaderManager.cs" />
     <Compile Include="Src\Render\Object\ShaderProgram.cs" />
     <Compile Include="Src\Render\Object\VertexBufferObject.cs" />
     <Compile Include="Src\Render\Object\Vertex.cs" />
@@ -196,6 +200,8 @@
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />
     <Content Include="Resources\Textures\grass_top.png" />
+    <Content Include="Resources\Textures\oak_log_side.png" />
+    <Content Include="Resources\Textures\oak_log_top.png" />
     <Content Include="Resources\Textures\pointer.png" />
     <Content Include="Resources\Textures\stone.png" />
     <Content Include="Resources\Textures\tall_grass.png" />

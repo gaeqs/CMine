@@ -176,16 +176,21 @@ namespace CMineNew.Entities{
                 ? -1
                 : 1);
 
+            var tryTeleportUp = false;
+            var teleportHeight = 0f;
+            CollisionData teleportCollision = null;
+
             foreach (var block in _collisionBlocks) {
                 if (!_collisionBox.Collides(block.BlockModel.BlockCollision, _position,
                     block.CollisionBoxPosition, block.CollidableFaces, out var data)) continue;
                 ReduceVelocity(data.BlockFace);
                 var yDistance = block.Position.Y + block.BlockHeight - _position.Y;
                 if (data.BlockFace != BlockFace.Up && data.BlockFace != BlockFace.Down && _onGroundInstant &&
-                    block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f
-                    && CanMoveToTopBlock(_position + new Vector3(0, yDistance, 0))) {
-                    _position.Y += yDistance;
-                    _position -= BlockFaceMethods.GetRelative(data.BlockFace).ToFloat() * 0.001f;
+                    block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f) {
+                    tryTeleportUp = true;
+                    if (teleportCollision != null && !(yDistance > teleportHeight)) continue;
+                    teleportHeight = yDistance;
+                    teleportCollision = data;
                 }
                 else {
                     _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
@@ -201,6 +206,17 @@ namespace CMineNew.Entities{
                 ReduceVelocity(data.BlockFace);
                 _onGroundInstant = true;
                 _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
+            }
+
+            if (!tryTeleportUp) return;
+            var to = _position + new Vector3(0, teleportHeight, 0)
+                     - BlockFaceMethods.GetRelative(teleportCollision.BlockFace).ToFloat() * 0.01f;
+            if (CanMoveToTopBlock(to)) {
+                _position.Y += teleportHeight;
+                _position = to;
+            }
+            else {
+                _position += teleportCollision.Distance * BlockFaceMethods.GetRelative(teleportCollision.BlockFace).ToFloat();
             }
         }
 

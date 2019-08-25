@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class CrossBlockRender : BlockRender{
-        private const int MaxBlocks = 4 * 4 * 4 * 16;
+        private const int MaxBlocks = 800;
         private const int InstanceDataLength = 3 + 4 + 4;
         private const int InstanceFloatDataLength = InstanceDataLength * sizeof(float);
 
@@ -79,8 +79,7 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         private void Generate() {
-            _shader = new ShaderProgram(Shaders.block_vertex, Shaders.block_fragment);
-
+            _shader = ShaderManager.GetOrCreateShader("cubic_block", Shaders.block_vertex, Shaders.block_fragment);
             _vao = new VertexArrayObject(Vertices, Indices);
             _vao.Bind();
             _dataBuffer = new VertexBufferObject();

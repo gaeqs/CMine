@@ -103,6 +103,26 @@ namespace CMineNew.Resources.Textures {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] oak_log_side {
+            get {
+                object obj = ResourceManager.GetObject("oak_log_side", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] oak_log_top {
+            get {
+                object obj = ResourceManager.GetObject("oak_log_top", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] pointer {
             get {
                 object obj = ResourceManager.GetObject("pointer", resourceCulture);

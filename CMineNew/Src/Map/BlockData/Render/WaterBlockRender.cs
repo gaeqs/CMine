@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class WaterBlockRender : BlockRender{
-        private const int MaxFaces = 4 * 4 * 4 * 16;
+        private const int MaxFaces = 750;
         private const int InstanceDataLength = 3 + 4 + 4 + 4;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
@@ -99,7 +99,7 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         private void Generate() {
-            _shader = new ShaderProgram(Shaders.water_vertex, Shaders.water_fragment);
+            _shader = ShaderManager.GetOrCreateShader("water_block", Shaders.water_vertex, Shaders.water_fragment);
             foreach (var face in BlockFaceMethods.All) {
                 var vao = BlockFaceVertices.CreateVao(face);
                 vao.Bind();

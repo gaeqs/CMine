@@ -28,14 +28,14 @@ void main() {
     
     float opacity = ambientFull.a;
 
-    vec3 diffuseColor = texture2D(gDiffuse, fragTexCoords).rgb;
-    vec3 specularColor = texture2D(gSpecular, fragTexCoords).rgb;
-    vec3 ambientBrightness = texture2D(gAmbientBrightness, fragTexCoords).rgb;
-    vec3 diffuseBrigtness = texture2D(gDiffuseBrightness, fragTexCoords).rgb;
-    vec3 specularBrightness = texture2D(gSpecularBrightness, fragTexCoords).rgb;
+    //vec3 diffuseColor = texture2D(gDiffuse, fragTexCoords).rgb;
+    //vec3 specularColor = texture2D(gSpecular, fragTexCoords).rgb;
+    //vec3 ambientBrightness = texture2D(gAmbientBrightness, fragTexCoords).rgb;
+    //vec3 diffuseBrigtness = texture2D(gDiffuseBrightness, fragTexCoords).rgb;
+    //vec3 specularBrightness = texture2D(gSpecularBrightness, fragTexCoords).rgb;
 
-    vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * ambientBrightness +
-    diffuseColor * diffuseBrigtness + specularColor * specularBrightness;
+    vec3 result = calculateGlobalAmbient(modelAmbientColor);
+    //+ modelAmbientColor * ambientBrightness +diffuseColor * diffuseBrigtness + specularColor * specularBrightness;
 
     FragColor = vec4(result, 1);
 
