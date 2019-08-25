@@ -44,7 +44,7 @@ namespace CMine.Collision{
 
         public bool Collides(Aabb o, Vector3 thisPosition, Vector3 otherPosition, bool[] faces,
             out CollisionData data) {
-            if (faces != null && !Enumerable.Any(faces, f => f)) {
+            if (faces != null && !faces.Any(f => f)) {
                 data = null;
                 return false;
             }

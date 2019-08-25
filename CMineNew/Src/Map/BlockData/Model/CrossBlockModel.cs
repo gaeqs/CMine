@@ -33,11 +33,11 @@ namespace CMineNew.Map.BlockData.Model{
             return new CrossBlockRender(chunkRegion);
         }
 
-        public override void DrawLines(Camera camera, Vector3i blockPosition) {
+        public override void DrawLines(Camera camera, Block block) {
             _lineVao.Bind();
             BlockLinesShaderProgram.Use();
             BlockLinesShaderProgram.SetUMatrix("viewProjection", camera.ViewProjection);
-            BlockLinesShaderProgram.SetUVector("worldPosition", blockPosition);
+            BlockLinesShaderProgram.SetUVector("worldPosition", block.Position);
             GL.LineWidth(2);
             _lineVao.Draw();
         }

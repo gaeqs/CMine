@@ -6,31 +6,37 @@ namespace CMineNew.Render{
     public class Camera{
         public const float ExtremePitch = (float) Math.PI / 2 - 0.001f;
 
-        private Vector3 _position, _lookAt, _up;
-        private Vector3 _n, _v, _u;
-        private Matrix4 _matrix, _invertedMatrix, _viewProjection;
-        private Frustum _frustum;
-        private bool _requiresRecalculation;
+        protected Vector3 _position, _lookAt, _up;
+        protected Vector2 _rotation;
+        protected Vector3 _n, _v, _u;
+        protected Matrix4 _matrix, _invertedMatrix, _viewProjection;
+        protected Frustum _frustum;
+        protected bool _requiresRecalculation;
 
-        public Camera(Vector3 position, Vector3 lookAt, Vector3 up, float fov) {
+        public Camera(Vector3 position, Vector2 rotation, Vector3 up, float fov) {
             _position = position;
-            _lookAt = lookAt;
+            _rotation = rotation;
             _up = up;
             _frustum = new Frustum(this, 0.03f, 500, fov, CMine.Window.Width / (float) CMine.Window.Height);
-            RecalculateN();
             _frustum.GenerateMatrix();
+            RecalculateLookAt();
         }
 
-        public Vector3 Position {
+        public virtual Vector3 Position {
             get => _position;
-            set => _position = value;
+            set {
+                _position = value;
+                GenerateMatrix();
+            }
         }
 
-        public Vector3 LookAt {
-            get => _lookAt;
+        public virtual Vector3 LookAt => _lookAt;
+
+        public virtual Vector2 Rotation {
+            get => _rotation;
             set {
-                _lookAt = value;
-                RecalculateN();
+                _rotation = new Vector2(Math.Max(-ExtremePitch, Math.Min(ExtremePitch, value.X)), value.Y);
+                RecalculateLookAt();
             }
         }
 
@@ -83,15 +89,6 @@ namespace CMineNew.Render{
             }
         }
 
-        public void SetRotation(Vector2 rotation) {
-            var yawCos = (float) Math.Cos(rotation.Y);
-            var yawSin = (float) Math.Sin(rotation.Y);
-            var pitchCos = (float) Math.Cos(rotation.X);
-            var pitchSin = (float) Math.Sin(rotation.X);
-
-            LookAt = new Vector3(yawCos * pitchCos, pitchSin, yawSin * pitchCos);
-        }
-
         public bool IsVisible(ChunkRegion region) {
             if (_requiresRecalculation) {
                 GenerateMatrix();
@@ -117,7 +114,17 @@ namespace CMineNew.Render{
             }
         }
 
-        private void RecalculateN() {
+        protected void RecalculateLookAt() {
+            var yawCos = (float) Math.Cos(_rotation.Y);
+            var yawSin = (float) Math.Sin(_rotation.Y);
+            var pitchCos = (float) Math.Cos(_rotation.X);
+            var pitchSin = (float) Math.Sin(_rotation.X);
+
+            _lookAt = new Vector3(yawCos * pitchCos, pitchSin, yawSin * pitchCos);
+            RecalculateN();
+        }
+
+        protected void RecalculateN() {
             _n = -_lookAt.Normalized();
             RecalculateV();
         }
@@ -133,7 +140,7 @@ namespace CMineNew.Render{
             _requiresRecalculation = true;
         }
 
-        private void GenerateMatrix() {
+        protected void GenerateMatrix() {
             if (!_requiresRecalculation) return;
             _invertedMatrix = new Matrix4(_u.X, _u.Y, _u.Z, 0,
                 _v.X, _v.Y, _v.Z, 0,

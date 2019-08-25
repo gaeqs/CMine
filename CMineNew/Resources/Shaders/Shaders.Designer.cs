@@ -259,19 +259,19 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gAmbient;
         ///uniform sampler2D gDiffuse;
         ///uniform sampler2D gSpecular;
+        ///uniform sampler2D gPosition;
         ///uniform sampler2D gAmbientBrightness;
         ///uniform sampler2D gDiffuseBrightness;
         ///uniform sampler2D gSpecularBrightness;
         ///
+        ///uniform vec3 cameraPosition;
         ///uniform float ambientStrength;
         ///uniform vec3 ambientColor;
         ///
-        ///vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
-        ///    return ambientStrength * ambientColor * modelAmbientColor;
-        ///}
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+        ///uniform vec4 fogColor;
         ///
-        ///vec3 toLdr (vec3 color) {
-        ///    float exposure = 1 [rest of string was truncated]&quot;;.
+        ///vec3 calcula [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_fragment {
             get {
@@ -296,6 +296,60 @@ namespace CMineNew.Resources.Shaders {
         internal static string post_render_vertex {
             get {
                 return ResourceManager.GetString("post_render_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///in vec3 fragPos, fragNormal;
+        ///in vec2 fragTexCoord;
+        ///in vec4 fragColorFilter;
+        ///
+        ///layout (location = 0) out vec3 gPosition;
+        ///layout (location = 1) out vec4 gNormal;
+        ///layout (location = 2) out vec4 gAmbient;
+        ///layout (location = 3) out vec4 gDiffuse;
+        ///layout (location = 4) out vec4 gSpecular;
+        ///
+        ///uniform sampler2D sampler;
+        ///
+        ///void main() {
+        ///    vec4 texture = texture(sampler, fragTexCoord);
+        ///    if (texture.w &lt; 0.1) discard;
+        ///
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string slab_fragment {
+            get {
+                return ResourceManager.GetString("slab_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///layout (location = 3) in vec3 worldPosition;
+        ///layout (location = 4) in vec4 textureArea;
+        ///layout (location = 5) in vec4 blockColorFilter;
+        ///layout (location = 6) in float upside;
+        ///
+        ///out vec3 fragPos, fragNormal;
+        ///out vec2 fragTexCoord;
+        ///out vec4 fragColorFilter;
+        ///
+        ///uniform mat4 viewProjection;
+        ///
+        ///void main () {
+        ///    float height = upside &gt; 0.5 ? 0.5 : 0;
+        ///    ma [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string slab_vertex {
+            get {
+                return ResourceManager.GetString("slab_vertex", resourceCulture);
             }
         }
         
@@ -353,22 +407,23 @@ namespace CMineNew.Resources.Shaders {
         ///   Looks up a localized string similar to #version 400 core
         ///
         ///in vec3 fragPos, fragNormal;
-        ///in vec2 fragTexCoord;
+        ///in vec2 fragTexCoords;
         ///in vec4 fragColorFilter;
         ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
+        ///out vec4 FragColor;
         ///
+        ///uniform vec3 cameraPosition;
         ///uniform sampler2D sampler;
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+        ///uniform vec4 fogColor;
         ///
         ///void main() {
-        ///    vec4 texture = texture(sampler, fragTexCoord);
-        ///    if (texture.w &lt; 0.1) discard;
+        ///    vec4 texture = texture(sampler, fragTexCoords);
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
+        ///        texture = fragColorFilter * texture.r;
+        ///    }
         ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        ///    FragColor [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_fragment {
             get {
@@ -385,15 +440,16 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 3) in vec3 worldPosition;
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
+        ///layout (location = 6) in vec4 waterLevels;
         ///
         ///out vec3 fragPos, fragNormal;
-        ///out vec2 fragTexCoord;
+        ///out vec2 fragTexCoords;
         ///out vec4 fragColorFilter;
         ///
         ///uniform mat4 viewProjection;
         ///
-        ///void main () {
-        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y [rest of string was truncated]&quot;;.
+        ///float getWaterLevel () {
+        ///    if (position.x &lt; 0.5 &amp;&amp; positio [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_vertex {
             get {

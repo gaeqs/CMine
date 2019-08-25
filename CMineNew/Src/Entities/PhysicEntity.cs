@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using CMine.Collision;
 using CMineNew.Geometry;
 using CMineNew.Map;
+using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Type;
 using OpenTK;
 
@@ -10,6 +12,8 @@ namespace CMineNew.Entities{
         public static readonly float Mass = 10;
         public static readonly Vector3 OnGroundGravity = new Vector3(0, -21f * Mass, 0);
         public static readonly Vector3 WaterGravity = new Vector3(0, -3f * Mass, 0);
+        private static readonly Vector3 BlockCenter = new Vector3(0.5f);
+        private static readonly Vector3 MaxDistance = new Vector3(0.4f);
 
         public const float DampingConstantGround = -200;
 
@@ -24,6 +28,7 @@ namespace CMineNew.Entities{
         protected long _lastJumpTick;
 
         protected BlockWater _waterBlock;
+        private List<Block> _collisionBlocks, _collisionUpBlocks;
 
         public PhysicEntity(World world, Vector3 position, Aabb collisionBox) : base(world, position, collisionBox) {
             _force = Vector3.Zero;
@@ -31,6 +36,8 @@ namespace CMineNew.Entities{
             _lastOnGroundTick = 0;
             _onGroundTicks = 0;
             _lastJumpTick = 0;
+            _collisionBlocks = new List<Block>();
+            _collisionUpBlocks = new List<Block>();
         }
 
         public PhysicEntity(Guid guid, World world, Vector3 position, Aabb collisionBox) : base(guid, world, position,
@@ -39,6 +46,8 @@ namespace CMineNew.Entities{
             _velocity = Vector3.Zero;
             _lastOnGroundTick = 0;
             _lastJumpTick = 0;
+            _collisionBlocks = new List<Block>();
+            _collisionUpBlocks = new List<Block>();
         }
 
         public Vector3 Force {
@@ -89,9 +98,17 @@ namespace CMineNew.Entities{
 
             _force += (OnWater ? WaterGravity : OnGroundGravity) + CalculateDampingForce();
             _velocity += _force * h / Mass;
-            _position += _velocity * h;
             _force = Vector3.Zero;
-            ManageCollision(dif);
+
+            var to = _velocity * h;
+
+            while (Math.Abs(to.X) > 0 || Math.Abs(to.Y) > 0 || Math.Abs(to.Z) > 0) {
+                var movement = Vector3.ComponentMax(Vector3.ComponentMin(to, MaxDistance), -MaxDistance);
+                _position += movement;
+                ManageCollision(dif);
+                to -= movement;
+            }
+
             UpdatePosition(oldPosition);
         }
 
@@ -108,7 +125,11 @@ namespace CMineNew.Entities{
         }
 
         protected void ManageCollision(long dif) {
-            _onGroundInstant = false;
+            GetCollisionBlocks(dif);
+            ManageCollisionBlocks();
+        }
+
+        protected void GetCollisionBlocks(long dif) {
             var mix = (int) Math.Floor(_collisionBox.X + _position.X - 1);
             var miy = (int) Math.Floor(_collisionBox.Y + _position.Y - 1);
             var miz = (int) Math.Floor(_collisionBox.Z + _position.Z - 1);
@@ -116,35 +137,69 @@ namespace CMineNew.Entities{
             var may = (int) Math.Ceiling(_collisionBox.Y + _position.Y + _collisionBox.Height + 1);
             var maz = (int) Math.Ceiling(_collisionBox.Z + _position.Z + _collisionBox.Depth + 1);
 
+            _collisionBlocks.Clear();
+            _collisionUpBlocks.Clear();
+
             for (var x = mix; x <= max; x++) {
                 for (var y = miy; y <= may; y++) {
                     for (var z = miz; z <= maz; z++) {
                         var block = _world.GetBlock(new Vector3i(x, y, z));
                         if (block == null || block.Passable) continue;
                         if (!_collisionBox.Collides(block.BlockModel.BlockCollision, _position,
-                            block.Position.ToFloat(), block.CollidableFaces, out var data)) continue;
+                            block.CollisionBoxPosition, block.CollidableFaces, out var data)) continue;
 
-                        var yDistance = block.Position.Y + block.BlockHeight - _position.Y;
-                        if (data.BlockFace != BlockFace.Up && data.BlockFace != BlockFace.Down && _onGroundInstant &&
-                            block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f) {
-                            _position.Y = block.Position.Y + block.BlockHeight;
+                        if (data.BlockFace == BlockFace.Up) {
+                            _collisionUpBlocks.Add(block);
                         }
-                        else {
-                            _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
-                            ReduceVelocity(data.BlockFace);
 
-                            var now = DateTime.Now.Ticks;
-                            if (data.BlockFace == BlockFace.Up) {
-                                _onGroundInstant = true;
-                                _lastOnGroundTick = now;
-                                _onGroundTicks += dif;
-                            }
-                            else if (now - _lastOnGroundTick > CMine.TicksPerSecond / 3) {
-                                _onGroundTicks = 0;
-                            }
+                        else {
+                            _collisionBlocks.Add(block);
+                        }
+
+                        var now = DateTime.Now.Ticks;
+                        if (data.BlockFace == BlockFace.Up) {
+                            _lastOnGroundTick = now;
+                            _onGroundTicks += dif;
+                            dif = 0;
+                        }
+                        else if (now - _lastOnGroundTick > CMine.TicksPerSecond / 3) {
+                            _onGroundTicks = 0;
                         }
                     }
                 }
+            }
+        }
+
+        protected void ManageCollisionBlocks() {
+            _collisionBlocks.Sort((o1, o2) => (_position - o1.Position.ToFloat() - BlockCenter).LengthSquared <
+                                              (_position - o2.Position.ToFloat() - BlockCenter).LengthSquared
+                ? -1
+                : 1);
+
+            foreach (var block in _collisionBlocks) {
+                if (!_collisionBox.Collides(block.BlockModel.BlockCollision, _position,
+                    block.CollisionBoxPosition, block.CollidableFaces, out var data)) continue;
+                ReduceVelocity(data.BlockFace);
+                var yDistance = block.Position.Y + block.BlockHeight - _position.Y;
+                if (data.BlockFace != BlockFace.Up && data.BlockFace != BlockFace.Down && _onGroundInstant &&
+                    block.CollidableFaces[(int) BlockFace.Up] && yDistance > 0 && yDistance < 0.55f) {
+                    _position.Y = block.Position.Y + block.BlockHeight;
+                }
+                else {
+                    _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
+                }
+                Console.WriteLine(data.BlockFace);
+            }
+
+            _onGroundInstant = false;
+
+            foreach (var block in _collisionUpBlocks) {
+                if (!_collisionBox.Collides(block.BlockModel.BlockCollision, _position,
+                        block.CollisionBoxPosition, block.CollidableFaces, out var data) ||
+                    data.Distance < 0.0000001f) continue;
+                ReduceVelocity(data.BlockFace);
+                _onGroundInstant = true;
+                _position += data.Distance * BlockFaceMethods.GetRelative(data.BlockFace).ToFloat();
             }
         }
 

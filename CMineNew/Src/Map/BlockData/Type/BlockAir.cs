@@ -8,6 +8,8 @@ namespace CMineNew.Map.BlockData.Type{
             : base("default:air", null, chunk, position, Color4.Transparent, true) {
         }
 
+        public override Vector3 CollisionBoxPosition => _position.ToFloat();
+
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
         }
 

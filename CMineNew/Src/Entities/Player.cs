@@ -36,7 +36,7 @@ namespace CMineNew.Entities{
         private bool _eyesOnWater;
 
         public Player(Guid guid, World world, Vector3 position, PlayerController controller)
-            : base(guid, world, position, new Aabb(-0.4f, 0, -0.4f, 0.8f, 1.8f, 0.8f)) {
+            : base(guid, world, position, new Aabb(-0.4f, 0, -0.4f, 0.8f, 1.9f, 0.8f)) {
             _eyesHeight = 1.7f;
             _controller = controller;
             _headRotation = Vector2.Zero;

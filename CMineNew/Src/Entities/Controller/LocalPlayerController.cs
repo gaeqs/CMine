@@ -13,7 +13,6 @@ namespace CMineNew.Entities.Controller{
         private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
-        private float _toPitch, _toYaw;
 
 
         public LocalPlayerController(Player player, Camera camera) : base(player) {
@@ -44,21 +43,6 @@ namespace CMineNew.Entities.Controller{
             if (_space) {
                 _player.ManageJump();
             }
-
-            var rotation = _player.HeadRotation;
-            var dPitch = _toPitch - rotation.X;
-            var dYaw = _toYaw - rotation.Y;
-
-            var rPitchVelocity = RotationVelocity * dif / CMine.TicksPerSecondF;
-            var rYawVelocity = RotationVelocity * dif / CMine.TicksPerSecondF;
-
-            rotation.X = dPitch < 0
-                ? Math.Max(rotation.X - rPitchVelocity, _toPitch)
-                : Math.Min(rotation.X + rPitchVelocity, _toPitch);
-            rotation.Y = dYaw < 0
-                ? Math.Max(rotation.Y - rYawVelocity, _toYaw)
-                : Math.Min(rotation.Y + rYawVelocity, _toYaw);
-            _player.HeadRotation = rotation;
         }
 
         private bool IsBelowBlockPassable() {
@@ -114,7 +98,7 @@ namespace CMineNew.Entities.Controller{
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotBricksSlab();
+                var matInstance = new BlockSnapshotBricksSlab(new Random().NextDouble() > 0.5);
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -150,12 +134,14 @@ namespace CMineNew.Entities.Controller{
                 var deltaX = Mouse.GetCursorState().X - (window.X + window.Width / 2);
                 var deltaY = Mouse.GetCursorState().Y - (window.Y + window.Height / 2);
 
+                var rotation = _player.HeadRotation;
                 if (deltaX == 0 && deltaY == 0) return;
-                _toPitch -= deltaY / 200f;
-                _toYaw += deltaX / 200f;
+                rotation.X -= deltaY / 200f;
+                rotation.Y += deltaX / 200f;
 
-                if (_toPitch > Camera.ExtremePitch) _toPitch = Camera.ExtremePitch;
-                else if (_toPitch < -Camera.ExtremePitch) _toPitch = -Camera.ExtremePitch;
+                if (rotation.X > Camera.ExtremePitch) rotation.X = Camera.ExtremePitch;
+                else if (rotation.X < -Camera.ExtremePitch) rotation.X = -Camera.ExtremePitch;
+                _player.HeadRotation = rotation;
                 Mouse.SetPosition(window.X + window.Width / 2, window.Y + window.Height / 2);
             }
         }

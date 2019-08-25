@@ -32,6 +32,14 @@
         <value>Block/fragment.frag;System.String</value>
     </data>
 
+    <data name="slab_vertex" type="System.Resources.ResXFileRef">
+        <value>Slab/vertex.vert;System.String</value>
+    </data>
+
+    <data name="slab_fragment" type="System.Resources.ResXFileRef">
+        <value>Slab/fragment.frag;System.String</value>
+    </data>
+
     <data name="water_vertex" type="System.Resources.ResXFileRef">
         <value>Water/vertex.vert;System.String</value>
     </data>

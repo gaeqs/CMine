@@ -1,4 +1,3 @@
-using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
@@ -9,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.Map.BlockData.Render{
     public class SlabBlockRender : BlockRender{
         private const int MaxFaces = 4 * 4 * 4;
-        private const int InstanceDataLength = 3 + 4 + 4;
+        private const int InstanceDataLength = 3 + 4 + 4 + 1;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
         private const float SlabHeight = 0.5f;
@@ -45,7 +44,7 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
-                    filter.R, filter.G, filter.B, filter.A
+                    filter.R, filter.G, filter.B, filter.A, slabBlock.Upside ? 1 : 0
                 }, 0));
         }
 
@@ -86,7 +85,7 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         private void Generate() {
-            _shader = new ShaderProgram(Shaders.block_vertex, Shaders.block_fragment);
+            _shader = new ShaderProgram(Shaders.slab_vertex, Shaders.slab_fragment);
             foreach (var face in BlockFaceMethods.All) {
                 var vao = BlockFaceVertices.CreateVao(face, SlabHeight);
                 vao.Bind();
@@ -98,6 +97,7 @@ namespace CMineNew.Map.BlockData.Render{
                 builder.AddPointer(3, true);
                 builder.AddPointer(4, true);
                 builder.AddPointer(4, true);
+                builder.AddPointer(1, true);
                 VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
                 VertexArrayObject.Unbind();
 
@@ -122,6 +122,7 @@ namespace CMineNew.Map.BlockData.Render{
             builder.AddPointer(3, true);
             builder.AddPointer(4, true);
             builder.AddPointer(4, true);
+            builder.AddPointer(1, true);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 

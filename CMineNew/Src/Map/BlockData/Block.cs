@@ -13,10 +13,10 @@ namespace CMineNew.Map.BlockData{
         protected bool _passable;
         protected readonly bool[] _collidableFaces;
         protected Color4 _textureFilter;
-        protected float _blockHeight;
+        protected float _blockHeight, _blockYOffset;
 
         public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
-            Color4 textureFilter, bool passable = false, float blockHeight = 1) {
+            Color4 textureFilter, bool passable = false, float blockHeight = 1, float blockYOffset = 0) {
             _id = id;
             _blockModel = blockModel;
             _chunk = chunk;
@@ -25,6 +25,7 @@ namespace CMineNew.Map.BlockData{
             _collidableFaces = new bool[6];
             _textureFilter = textureFilter;
             _blockHeight = blockHeight;
+            _blockYOffset = blockYOffset;
         }
 
         public string Id => _id;
@@ -45,6 +46,8 @@ namespace CMineNew.Map.BlockData{
 
         public float BlockHeight => _blockHeight;
 
+        public float BlockYOffset => _blockYOffset;
+
         public bool Passable => _passable;
 
         public bool[] CollidableFaces => _collidableFaces;
@@ -54,9 +57,16 @@ namespace CMineNew.Map.BlockData{
             set => _textureFilter = value;
         }
 
+        public abstract Vector3 CollisionBoxPosition { get; }
+
         public void OnPlace0(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             for (var i = 0; i < neighbours.Length; i++) {
-                _collidableFaces[i] = neighbours[i] == null || neighbours[i]._passable;
+                var face = (BlockFace) i;
+                var side = neighbours[i] != null &&
+                           face != BlockFace.Up && face != BlockFace.Down &&
+                           (_blockHeight > neighbours[i]?._blockHeight
+                            || _blockYOffset < neighbours[i]._blockYOffset);
+                _collidableFaces[i] = side || neighbours[i] == null || neighbours[i]._passable;
             }
 
             OnPlace(oldBlock, neighbours, triggerWorldUpdates);
@@ -67,10 +77,10 @@ namespace CMineNew.Map.BlockData{
         public abstract void OnRemove(Block newBlock);
 
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
+            var side = relative != BlockFace.Up && relative != BlockFace.Down &&
+                (_blockHeight > to._blockHeight || _blockYOffset < to._blockYOffset);
 
-            var sideAndHigher = relative != BlockFace.Up && relative != BlockFace.Down && _blockHeight > to._blockHeight;
-            
-            _collidableFaces[(int) relative] = to == null || to._passable || sideAndHigher;
+            _collidableFaces[(int) relative] = to == null || to._passable || side;
             OnNeighbourBlockChange(from, to, relative);
         }
 

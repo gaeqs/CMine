@@ -42,6 +42,8 @@ namespace CMineNew.Map.BlockData.Type{
             _removing = false;
         }
 
+        public override Vector3 CollisionBoxPosition => _position.ToFloat();
+
         public int WaterLevel {
             get => _waterLevel;
             set {

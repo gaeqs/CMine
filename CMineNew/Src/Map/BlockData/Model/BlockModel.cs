@@ -26,6 +26,6 @@ namespace CMineNew.Map.BlockData.Model{
 
         public abstract BlockRender CreateBlockRender(ChunkRegion chunkRegion);
 
-        public abstract void DrawLines(Camera camera, Vector3i blockPosition);
+        public abstract void DrawLines(Camera camera, Block block);
     }
 }

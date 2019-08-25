@@ -9,9 +9,12 @@ namespace CMineNew.Map.BlockData.Sketch{
         private bool[] _visibleFaces;
 
         public CubicBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false)
-            : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position, textureFilter, passable) {
+            : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position, textureFilter,
+                passable) {
             _visibleFaces = new bool[6];
         }
+
+        public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
@@ -60,7 +63,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void RemoveFromRender() {
             if (_chunk.Region.Deleted) return;
-             var render = _chunk.Region.Render;
+            var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
         }
 
