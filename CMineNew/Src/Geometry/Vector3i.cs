@@ -6,6 +6,7 @@ namespace CMineNew.Geometry{
     /// <summary>
     /// Represents a 3D integer vector.
     /// </summary>
+    [Serializable]
     public struct Vector3i{
         
         public static readonly Vector3i Zero = new Vector3i(0);

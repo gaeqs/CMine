@@ -82,6 +82,8 @@ namespace CMineNew.Entities{
         }
 
         public override void Tick(long dif) {
+            if (_world.GetChunk(new Vector3i(_position, true) >> Chunk.WorldPositionShift) == null)
+                return;
             _wasOnWater = _onWater;
             if (_world.GetBlock(new Vector3i(_position, true)) is BlockWater water
                 && water.WaterHeight >= _position.Y - Math.Floor(_position.Y)) {
@@ -216,7 +218,8 @@ namespace CMineNew.Entities{
                 _position = to;
             }
             else {
-                _position += teleportCollision.Distance * BlockFaceMethods.GetRelative(teleportCollision.BlockFace).ToFloat();
+                _position += teleportCollision.Distance *
+                             BlockFaceMethods.GetRelative(teleportCollision.BlockFace).ToFloat();
             }
         }
 

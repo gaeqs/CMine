@@ -19,5 +19,9 @@ namespace CMineNew.Map.BlockData.Snapshot{
             var block = world.GetBlock(position + new Vector3i(0, -1, 0));
             return block is BlockGrass;
         }
+        
+        public override BlockSnapshot Clone() {
+            return this;
+        }
     }
 }

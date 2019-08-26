@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using CMine.DataStructure.List;
 using CMineNew.Entities;
@@ -20,6 +21,8 @@ using OpenTK.Input;
 
 namespace CMineNew.Map{
     public class World : Room{
+        private readonly string _folder;
+
         private readonly PhysicCamera _camera;
         private readonly WorldGBuffer _gBuffer;
 
@@ -39,6 +42,8 @@ namespace CMineNew.Map{
         private readonly object _regionsLock = new object();
 
         public World(string name) : base(name) {
+            _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
+            Directory.CreateDirectory(_folder);
             Background = Color4.Aqua;
 
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
@@ -63,6 +68,8 @@ namespace CMineNew.Map{
 
             _asyncChunkGenerator.GenerateChunkArea = true;
         }
+
+        public string Folder => _folder;
 
         public PhysicCamera Camera => _camera;
 
@@ -129,9 +136,10 @@ namespace CMineNew.Map{
             var chunkPosition = position >> 4;
 
             var region = GetChunkRegion(regionPosition);
-            lock (_regionsLock) {
-                if (region == null) {
-                    region = new ChunkRegion(this, regionPosition);
+            if (region == null) {
+                region = new ChunkRegion(this, regionPosition);
+                region.LoadIfDeleted();
+                lock (_regionsLock) {
                     _chunkRegions[regionPosition] = region;
                 }
             }
@@ -150,19 +158,23 @@ namespace CMineNew.Map{
             var regionPosition = position >> 2;
 
             var region = GetChunkRegion(regionPosition);
-            lock (_regionsLock) {
-                if (region == null) {
-                    region = new ChunkRegion(this, regionPosition);
+            if (region == null) {
+                region = new ChunkRegion(this, regionPosition);
+                region.LoadIfDeleted();
+                lock (_regionsLock) {
                     _chunkRegions[regionPosition] = region;
                 }
             }
 
             var chunk = region.GetChunkFromChunkPosition(position);
-            if (chunk == null) {
-                chunk = new Chunk(region, position);
-                _worldGenerator.GenerateChunkData(chunk);
-                region.SetChunk(chunk, position - (regionPosition << 2));
-            }
+            if (chunk != null) return chunk;
+
+            var chunkPositionInRegion = position - (regionPosition << 2);
+            if (region.TryLoadSavedChunk(chunkPositionInRegion, out chunk))
+                return chunk;
+            chunk = new Chunk(region, position);
+            _worldGenerator.GenerateChunkData(chunk);
+            region.SetChunk(chunk, chunkPositionInRegion);
 
             return chunk;
         }
@@ -275,6 +287,14 @@ namespace CMineNew.Map{
                     }
 
                     Console.WriteLine("Filled in " + (DateTime.Now.Ticks - now) / CMine.TicksPerSecondF + " seconds");
+                    break;
+                case Key.L:
+                    lock (_regionsLock) {
+                        foreach (var region in _chunkRegions.Values) {
+                            region.Save();
+                        }
+                    }
+
                     break;
             }
         }

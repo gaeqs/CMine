@@ -1,3 +1,5 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
@@ -11,7 +13,7 @@ namespace CMineNew.Map.BlockData{
         protected Chunk _chunk;
         protected Vector3i _position;
         protected bool _passable;
-        protected readonly bool[] _collidableFaces;
+        protected bool[] _collidableFaces;
         protected Color4 _textureFilter;
         protected float _blockHeight, _blockYOffset;
 
@@ -78,10 +80,18 @@ namespace CMineNew.Map.BlockData{
 
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
             var side = relative != BlockFace.Up && relative != BlockFace.Down &&
-                (_blockHeight > to._blockHeight || _blockYOffset < to._blockYOffset);
+                       (_blockHeight > to._blockHeight || _blockYOffset < to._blockYOffset);
 
             _collidableFaces[(int) relative] = to == null || to._passable || side;
             OnNeighbourBlockChange(from, to, relative);
+        }
+
+        public virtual void Save(Stream stream, BinaryFormatter formatter) {
+            formatter.Serialize(stream, _collidableFaces);
+        }
+
+        public virtual void Load(Stream stream, BinaryFormatter formatter, uint version) {
+            _collidableFaces = (bool[]) formatter.Deserialize(stream);
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

@@ -18,9 +18,7 @@ namespace CMineNew.Map{
 
         public AsyncChunkGenerator(World world) {
             _world = world;
-            _chunksToGenerate = new EDynamicPriorityQueue<Vector3i>(Comparer<Vector3i>
-                .Create((o1, o2) => (o1 - _playerPosition).Mul(1, 2, 1).LengthSquared() -
-                                    (o2 - _playerPosition).Mul(1, 2, 1).LengthSquared()));
+            _chunksToGenerate = new EDynamicPriorityQueue<Vector3i>(Comparer<Vector3i>.Create(Comparision));
             _thread = null;
             _alive = false;
         }
@@ -124,6 +122,26 @@ namespace CMineNew.Map{
                     }
                 }
             }
+        }
+
+        private int Comparision(Vector3i o1, Vector3i o2) {
+            o1 -= _playerPosition;
+            o2 -= _playerPosition;
+            var o1d = o1.LengthSquared();
+            var o2d = o2.LengthSquared();
+            if (o1d < 9) {
+                if (o2d < 9) {
+                    return o1d - o2d;
+                }
+
+                return -1;
+            }
+
+            if (o2d < 9) {
+                return 1;
+            }
+            
+            return  o1.Mul(1, 2, 1).LengthSquared() -  o2.Mul(1, 2, 1).LengthSquared();
         }
     }
 }

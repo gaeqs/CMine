@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.Task.Type;
@@ -113,6 +115,24 @@ namespace CMineNew.Map.BlockData.Type{
                     chunk.TaskManager.AddTask(new WorldTaskRemoveWater(World, child));
                 }
             }
+        }
+
+        public override void Save(Stream stream, BinaryFormatter formatter) {
+            base.Save(stream, formatter);
+            formatter.Serialize(stream, _waterLevel);
+            formatter.Serialize(stream, _hasWaterOnTop);
+            formatter.Serialize(stream, _parent);
+            formatter.Serialize(stream, _children.ToArray());
+        }
+
+        public override void Load(Stream stream, BinaryFormatter formatter, uint version) {
+            base.Load(stream, formatter, version);
+            _waterLevel = (int) formatter.Deserialize(stream);
+            _hasWaterOnTop = (bool) formatter.Deserialize(stream);
+            _parent = (Vector3i) formatter.Deserialize(stream);
+            var children = (Vector3i[]) formatter.Deserialize(stream);
+            _children.Clear();
+            _children.AddRange(children);
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {

@@ -1,10 +1,9 @@
 using System;
 using System.Drawing;
-using CMineNew.Geometry;
+using System.IO;
 using CMineNew.Map;
+using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
-using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Map.Generator;
 using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Test;
@@ -17,6 +16,10 @@ namespace CMineNew{
         public const int TicksPerSecond = 10000000;
         public const float TicksPerSecondF = 10000000f;
 
+        public static readonly string MainFolder =
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+            Path.DirectorySeparatorChar + " CMine";
+
         //Temporary constant.
         public const int ChunkRadius = 8;
 
@@ -26,11 +29,13 @@ namespace CMineNew{
         public static void Load() {
             Window = new Window(1920, 1080,
                 GameWindowFlags.Fullscreen, false, (window, args) => {
+                    Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();
+                    BlockManager.Load();
                     BlockModelManager.Load();
                     Pointer.Load();
                     var world = new World("test");
-                    
+
                     var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 20));
                     world.StaticTexts.Add(new PositionViewer(ttf));
 

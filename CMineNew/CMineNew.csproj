@@ -81,6 +81,7 @@
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
     <Compile Include="Src\Map\AsyncChunkTrashCan.cs" />
+    <Compile Include="Src\Map\BlockData\BlockManager.cs" />
     <Compile Include="Src\Map\BlockData\Model\BlockModelManager.cs" />
     <Compile Include="Src\Map\BlockData\Model\CrossBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\SlabBlockModel.cs" />

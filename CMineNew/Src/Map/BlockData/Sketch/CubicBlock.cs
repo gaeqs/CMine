@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
@@ -65,6 +67,16 @@ namespace CMineNew.Map.BlockData.Sketch{
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+        }
+
+        public override void Save(Stream stream, BinaryFormatter formatter) {
+            base.Save(stream, formatter);
+            formatter.Serialize(stream, _visibleFaces);
+        }
+
+        public override void Load(Stream stream, BinaryFormatter formatter, uint version) {
+            base.Load(stream, formatter, version);
+            _visibleFaces = (bool[]) formatter.Deserialize(stream);
         }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {

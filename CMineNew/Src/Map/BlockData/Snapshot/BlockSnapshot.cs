@@ -18,5 +18,7 @@ namespace CMineNew.Map.BlockData.Snapshot{
         public abstract Block ToBlock(Chunk chunk, Vector3i position);
 
         public abstract bool CanBePlaced(Vector3i position, World world);
+
+        public abstract BlockSnapshot Clone();
     }
 }

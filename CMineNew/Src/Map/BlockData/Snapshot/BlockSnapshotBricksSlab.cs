@@ -26,5 +26,9 @@ namespace CMineNew.Map.BlockData.Snapshot{
         public override bool CanBePlaced(Vector3i position, World world) {
             return true;
         }
+        
+        public override BlockSnapshot Clone() {
+            return new BlockSnapshotBricksSlab(_upside);
+        }
     }
 }
