@@ -71,16 +71,12 @@ namespace CMineNew.Map{
 
         public void FillWithBlocks(BlockSnapshot[,,] snapshots, bool empty) {
             var pos = _position << WorldPositionShift;
-            for (var x = 0; x < ChunkLength; x++) {
-                for (var y = 0; y < ChunkLength; y++) {
-                    for (var z = 0; z < ChunkLength; z++) {
-                        var snapshot = snapshots[x, y, z];
-                        var blockPos = pos + new Vector3i(x, y, z);
-                        var block = snapshot == null ? new BlockAir(this, blockPos) : snapshot.ToBlock(this, blockPos);
-                        _blocks[x, y, z] = block;
-                    }
-                }
-            }
+            ForEachChunkPosition((x, y, z) => {
+                var snapshot = snapshots[x, y, z];
+                var blockPos = pos + new Vector3i(x, y, z);
+                var block = snapshot == null ? new BlockAir(this, blockPos) : snapshot.ToBlock(this, blockPos);
+                _blocks[x, y, z] = block;
+            });
 
             if (empty) return;
             SendOnPlaceEventToAllBlocks(false);
@@ -88,47 +84,36 @@ namespace CMineNew.Map{
 
         public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates) {
             var blocks = new Block[6];
-            for (var x = 0; x < ChunkLength; x++) {
-                for (var y = 0; y < ChunkLength; y++) {
-                    for (var z = 0; z < ChunkLength; z++) {
-                        var block = _blocks[x, y, z];
-                        if(block == null || block is BlockAir) continue;
-                        GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
-                        block.OnPlace0(null, blocks, triggerWorldUpdates);
-                        if (x == 0) {
-                            blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
-                        }
-                        else if (x == 15) {
-                            blocks[(int) BlockFace.East]?.OnNeighbourBlockChange0(null, block, BlockFace.West);
-                        }
-
-                        if (y == 0) {
-                            blocks[(int) BlockFace.Down]?.OnNeighbourBlockChange0(null, block, BlockFace.Up);
-                        }
-                        else if (y == 15) {
-                            blocks[(int) BlockFace.Up]?.OnNeighbourBlockChange0(null, block, BlockFace.Down);
-                        }
-
-                        if (z == 0) {
-                            blocks[(int) BlockFace.North]?.OnNeighbourBlockChange0(null, block, BlockFace.South);
-                        }
-                        else if (z == 15) {
-                            blocks[(int) BlockFace.South]?.OnNeighbourBlockChange0(null, block, BlockFace.North);
-                        }
-                    }
+            ForEachChunkPosition((x, y, z, block) => {
+                if (block == null || block is BlockAir) return;
+                GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
+                block.OnPlace0(null, blocks, triggerWorldUpdates);
+                if (x == 0) {
+                    blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
                 }
-            }
+                else if (x == 15) {
+                    blocks[(int) BlockFace.East]?.OnNeighbourBlockChange0(null, block, BlockFace.West);
+                }
+
+                if (y == 0) {
+                    blocks[(int) BlockFace.Down]?.OnNeighbourBlockChange0(null, block, BlockFace.Up);
+                }
+                else if (y == 15) {
+                    blocks[(int) BlockFace.Up]?.OnNeighbourBlockChange0(null, block, BlockFace.Down);
+                }
+
+                if (z == 0) {
+                    blocks[(int) BlockFace.North]?.OnNeighbourBlockChange0(null, block, BlockFace.South);
+                }
+                else if (z == 15) {
+                    blocks[(int) BlockFace.South]?.OnNeighbourBlockChange0(null, block, BlockFace.North);
+                }
+            });
         }
 
         public void RemoveAllBlockFacesFromRender() {
             if (Region.Deleted) return;
-            for (var x = 0; x < 16; x++) {
-                for (var y = 0; y < 16; y++) {
-                    for (var z = 0; z < 16; z++) {
-                        _blocks[x, y, z]?.RemoveFromRender();
-                    }
-                }
-            }
+            ForEachChunkPosition((x, y, z, block) => block?.RemoveFromRender());
         }
 
         public Block[] GetNeighbourBlocks(Block[] blocks, Vector3i position, Vector3i chunkPosition) {
@@ -161,11 +146,11 @@ namespace CMineNew.Map{
 
         public void RefreshEdgeBlocks() {
             var blocks = new Block[6];
-            for (var x = 0; x < 16; x++) {
+            for (var x = 0; x < ChunkLength; x++) {
                 var edgeX = x == 0 || x == 15;
-                for (var y = 0; y < 16; y++) {
+                for (var y = 0; y < ChunkLength; y++) {
                     var edgeY = y == 0 || y == 15;
-                    for (var z = 0; z < 16; z++) {
+                    for (var z = 0; z < ChunkLength; z++) {
                         if (edgeX || edgeY || z == 0 || z == 15) {
                             var block = _blocks[x, y, z];
                             if (block == null || block is BlockAir) continue;
@@ -179,38 +164,49 @@ namespace CMineNew.Map{
         }
 
         public void Save(Stream stream, BinaryFormatter formatter) {
-            for (var x = 0; x < 16; x++) {
-                for (var y = 0; y < 16; y++) {
-                    for (var z = 0; z < 16; z++) {
-                        var block = _blocks[x, y, z];
-                        var empty = block == null || block is BlockAir;
-                        stream.WriteByte(empty ? (byte) 0 : (byte) 1);
-                        if (empty) continue;
-                        formatter.Serialize(stream, block.Id);
-                        block.Save(stream, formatter);
+            ForEachChunkPosition((x, y, z, block) => {
+                var empty = block == null || block is BlockAir;
+                stream.WriteByte(empty ? (byte) 0 : (byte) 1);
+                if (empty) return;
+                formatter.Serialize(stream, block.Id);
+                block.Save(stream, formatter);
+            });
+        }
+
+        public void Load(Stream stream, BinaryFormatter formatter, uint version) {
+            var pos = _position << WorldPositionShift;
+            ForEachChunkPosition((x, y, z) => {
+                var blockPos = pos + new Vector3i(x, y, z);
+                if (stream.ReadByte() == 0) {
+                    _blocks[x, y, z] = new BlockAir(this, blockPos);
+                    return;
+                }
+
+                var id = (string) formatter.Deserialize(stream);
+                if (!BlockManager.TryGet(id, out var snapshot))
+                    throw
+                        new System.Exception("Couldn't load chunk " + _position + ". Block Id missing.");
+                var block = snapshot.ToBlock(this, blockPos);
+                _blocks[x, y, z] = block;
+                block.Load(stream, formatter, version);
+            });
+        }
+
+        private static void ForEachChunkPosition(Action<int, int, int> action) {
+            for (var x = 0; x < ChunkLength; x++) {
+                for (var y = 0; y < ChunkLength; y++) {
+                    for (var z = 0; z < ChunkLength; z++) {
+                        action.Invoke(x, y, z);
                     }
                 }
             }
         }
 
-        public void Load(Stream stream, BinaryFormatter formatter, uint version) {
-            var pos = _position << WorldPositionShift;
-            for (var x = 0; x < 16; x++) {
-                for (var y = 0; y < 16; y++) {
-                    for (var z = 0; z < 16; z++) {
-                        var blockPos = pos + new Vector3i(x, y, z);
-                        if (stream.ReadByte() == 0) {
-                            _blocks[x, y, z] = new BlockAir(this, blockPos);
-                            continue;
-                        }
-
-                        var id = (string) formatter.Deserialize(stream);
-                        if (!BlockManager.TryGet(id, out var snapshot))
-                            throw
-                                new System.Exception("Couldn't load chunk " + _position + ". Block Id missing.");
-                        var block = snapshot.ToBlock(this, blockPos);
-                        _blocks[x, y, z] = block;
-                        block.Load(stream, formatter, version);
+        private void ForEachChunkPosition(Action<int, int, int, Block> action) {
+            for (var x = 0; x < ChunkLength; x++) {
+                for (var y = 0; y < ChunkLength; y++) {
+                    for (var z = 0; z < ChunkLength; z++) {
+                        action.Invoke(x, y, z, _blocks[x, y, z]);
                     }
                 }
             }

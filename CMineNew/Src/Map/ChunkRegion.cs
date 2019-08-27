@@ -97,21 +97,17 @@ namespace CMineNew.Map{
             Console.WriteLine("Loading region " + _position + " (Version: " + version + ")");
             Console.WriteLine("Thread: " + Thread.CurrentThread.Name);
             var now = DateTime.Now.Ticks;
-            for (var x = 0; x < RegionChunkLength; x++) {
-                for (var y = 0; y < RegionChunkLength; y++) {
-                    for (var z = 0; z < RegionChunkLength; z++) {
-                        if (stream.ReadByte() == 0) {
-                            _savedChunks[x, y, z] = null;
-                            continue;
-                        }
-
-                        var chunkPos = pos + new Vector3i(x, y, z);
-                        var chunk = new Chunk(this, chunkPos);
-                        _savedChunks[x, y, z] = chunk;
-                        chunk.Load(stream, formatter, version);
-                    }
+            ForEachRegionPosition((x, y, z) => {
+                if (stream.ReadByte() == 0) {
+                    _savedChunks[x, y, z] = null;
+                    return;
                 }
-            }
+
+                var chunkPos = pos + new Vector3i(x, y, z);
+                var chunk = new Chunk(this, chunkPos);
+                _savedChunks[x, y, z] = chunk;
+                chunk.Load(stream, formatter, version);
+            });
 
             stream.Close();
             _deleted = false;
@@ -133,15 +129,11 @@ namespace CMineNew.Map{
 
             var now = DateTime.Now.Ticks;
 
-            for (var x = 0; x < RegionChunkLength; x++) {
-                for (var y = 0; y < RegionChunkLength; y++) {
-                    for (var z = 0; z < RegionChunkLength; z++) {
-                        var chunk = _savedChunks[x, y, z];
-                        stream.WriteByte(chunk == null ? (byte) 0 : (byte) 1);
-                        chunk?.Save(stream, formatter);
-                    }
-                }
-            }
+            ForEachRegionPosition((x, y, z) => {
+                var chunk = _savedChunks[x, y, z];
+                stream.WriteByte(chunk == null ? (byte) 0 : (byte) 1);
+                chunk?.Save(stream, formatter);
+            });
 
             stream.Close();
 
@@ -156,18 +148,22 @@ namespace CMineNew.Map{
                 _render.CleanUp();
             }
 
-            for (var x = 0; x < RegionChunkLength; x++) {
-                for (var y = 0; y < RegionChunkLength; y++) {
-                    for (var z = 0; z < RegionChunkLength; z++) {
-                        _savedChunks[x, y, z] = null;
-                    }
-                }
-            }
+            ForEachRegionPosition((x, y, z) => _savedChunks[x, y, z] = null);
         }
 
         public void Tick(long delay) {
             foreach (var chunk in _chunks) {
                 chunk?.TaskManager.Tick(delay);
+            }
+        }
+
+        public static void ForEachRegionPosition(Action<int, int, int> action) {
+            for (var x = 0; x < RegionChunkLength; x++) {
+                for (var y = 0; y < RegionChunkLength; y++) {
+                    for (var z = 0; z < RegionChunkLength; z++) {
+                        action.Invoke(x, y, z);
+                    }
+                }
             }
         }
     }

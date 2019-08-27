@@ -87,11 +87,9 @@ namespace CMineNew.Map.BlockData{
         }
 
         public virtual void Save(Stream stream, BinaryFormatter formatter) {
-            formatter.Serialize(stream, _collidableFaces);
         }
 
         public virtual void Load(Stream stream, BinaryFormatter formatter, uint version) {
-            _collidableFaces = (bool[]) formatter.Deserialize(stream);
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

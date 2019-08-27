@@ -69,16 +69,6 @@ namespace CMineNew.Map.BlockData.Sketch{
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
         }
 
-        public override void Save(Stream stream, BinaryFormatter formatter) {
-            base.Save(stream, formatter);
-            formatter.Serialize(stream, _visibleFaces);
-        }
-
-        public override void Load(Stream stream, BinaryFormatter formatter, uint version) {
-            base.Load(stream, formatter, version);
-            _visibleFaces = (bool[]) formatter.Deserialize(stream);
-        }
-
         public void ForEachVisibleFace(Action<BlockFace> action) {
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 if (_visibleFaces[i]) {
