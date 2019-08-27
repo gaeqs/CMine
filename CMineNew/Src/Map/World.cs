@@ -165,6 +165,9 @@ namespace CMineNew.Map{
                     _chunkRegions[regionPosition] = region;
                 }
             }
+            else {
+                region.LoadIfDeleted();
+            }
 
             var chunk = region.GetChunkFromChunkPosition(position);
             if (chunk != null) return chunk;
@@ -174,6 +177,7 @@ namespace CMineNew.Map{
                 return chunk;
             chunk = new Chunk(region, position);
             _worldGenerator.GenerateChunkData(chunk);
+            chunk.Natural = true;
             region.SetChunk(chunk, chunkPositionInRegion);
 
             return chunk;

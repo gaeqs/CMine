@@ -107,6 +107,7 @@ namespace CMineNew.Map{
                 var chunk = new Chunk(this, chunkPos);
                 _savedChunks[x, y, z] = chunk;
                 chunk.Load(stream, formatter, version);
+                Console.WriteLine("Loading chunk "+chunk.Position);
             });
 
             stream.Close();
@@ -131,8 +132,10 @@ namespace CMineNew.Map{
 
             ForEachRegionPosition((x, y, z) => {
                 var chunk = _savedChunks[x, y, z];
-                stream.WriteByte(chunk == null ? (byte) 0 : (byte) 1);
-                chunk?.Save(stream, formatter);
+                var save = chunk != null &&  !chunk.Natural;
+                stream.WriteByte(save ? (byte) 1 : (byte) 0);
+                if(!save) return;
+                chunk.Save(stream, formatter);
             });
 
             stream.Close();

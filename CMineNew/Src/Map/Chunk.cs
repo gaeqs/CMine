@@ -19,11 +19,17 @@ namespace CMineNew.Map{
         private readonly Block[,,] _blocks;
         private WorldTaskManager _taskManager;
 
+        private byte[] _saveBuffer;
+        private bool _modified, _natural;
+
         public Chunk(ChunkRegion region, Vector3i position) {
             _region = region;
             _position = position;
             _blocks = new Block[ChunkLength, ChunkLength, ChunkLength];
             _taskManager = new WorldTaskManager();
+            _saveBuffer = null;
+            _modified = true;
+            _natural = false;
         }
 
         public World World => _region.World;
@@ -33,6 +39,16 @@ namespace CMineNew.Map{
         public Vector3i Position {
             get => _position;
             set => _position = value;
+        }
+
+        public bool Modified {
+            get => _modified;
+            set => _modified = value;
+        }
+
+        public bool Natural {
+            get => _natural;
+            set => _natural = value;
         }
 
         public Block[,,] Blocks => _blocks;
@@ -62,6 +78,8 @@ namespace CMineNew.Map{
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
 
+            _modified = true;
+            _natural = false;
             return block;
         }
 
@@ -80,6 +98,7 @@ namespace CMineNew.Map{
 
             if (empty) return;
             SendOnPlaceEventToAllBlocks(false);
+            _modified = true;
         }
 
         public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates) {
@@ -164,13 +183,24 @@ namespace CMineNew.Map{
         }
 
         public void Save(Stream stream, BinaryFormatter formatter) {
+            if (_modified) {
+                GenerateSaveBuffer(formatter);
+                _modified = false;
+            }
+
+            stream.Write(_saveBuffer, 0, _saveBuffer.Length);
+        }
+
+        private void GenerateSaveBuffer(BinaryFormatter formatter) {
+            var buffer = new MemoryStream();
             ForEachChunkPosition((x, y, z, block) => {
                 var empty = block == null || block is BlockAir;
-                stream.WriteByte(empty ? (byte) 0 : (byte) 1);
+                buffer.WriteByte(empty ? (byte) 0 : (byte) 1);
                 if (empty) return;
-                formatter.Serialize(stream, block.Id);
-                block.Save(stream, formatter);
+                formatter.Serialize(buffer, block.Id);
+                block.Save(buffer, formatter);
             });
+            _saveBuffer = buffer.ToArray();
         }
 
         public void Load(Stream stream, BinaryFormatter formatter, uint version) {
@@ -190,6 +220,8 @@ namespace CMineNew.Map{
                 _blocks[x, y, z] = block;
                 block.Load(stream, formatter, version);
             });
+            GenerateSaveBuffer(formatter);
+            _modified = false;
         }
 
         private static void ForEachChunkPosition(Action<int, int, int> action) {
