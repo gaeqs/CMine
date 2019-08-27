@@ -21,8 +21,8 @@ namespace CMineNew.Map.Task.Type{
                 _position - (block.Chunk.Position << 4));
 
             var neighbourDown = neighbours[(int) BlockFace.Down];
-            var cantBeExpanded = neighbourDown is BlockWater || neighbourDown is BlockTallGrass ||
-                                 neighbourDown is BlockAir;
+            var cantBeExpanded = (neighbourDown is BlockWater || neighbourDown is BlockTallGrass ||
+                                 neighbourDown is BlockAir) && water.Parent != water.Position;
 
             foreach (var blockFace in BlockFaceMethods.All) {
                 if (blockFace == BlockFace.Up) continue;

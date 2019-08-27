@@ -1,6 +1,7 @@
 using System;
+using CMine.Map.Generator.Noise;
 
-namespace CMine.Map.Generator.Noise{
+namespace CMineNew.Map.Generator.Noise{
     public class PerlinNoiseGenerator : NoiseGenerator{
         private static readonly int[] P = {
             151, 160, 137, 91, 90, 15, 131, 13, 201,

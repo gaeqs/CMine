@@ -22,7 +22,7 @@ namespace CMineNew.Map.Generator{
             var caveGenerator = new SimplexOctaveGenerator(_seed, 4);
             var tallGrassGenerator = new SimplexOctaveGenerator(_seed, 1);
             var generator = new SimplexOctaveGenerator(_seed, 8);
-            generator.SetScale(0.05);
+            generator.SetScale(0.005);
             tallGrassGenerator.SetScale(1);
             caveGenerator.SetScale(0.1f);
 
@@ -35,7 +35,7 @@ namespace CMineNew.Map.Generator{
                         var noiseY = (int) (generator.Noise(1, 0.5, true,
                                                 x + chunkWorldPosition.X, z + chunkWorldPosition.Z) * 20 + 50);
 
-                        var cave = caveGenerator.Noise(0.5f, 1, true,
+                        var cave = caveGenerator.Noise(1, 1, true,
                                        x + chunkWorldPosition.X, y + chunkWorldPosition.Y,
                                        z + chunkWorldPosition.Z) > 0.3f;
 

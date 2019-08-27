@@ -52,15 +52,16 @@ namespace CMineNew.Map{
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
             _tickRegions = new ELinkedList<ChunkRegion>();
 
-            _entities = new HashSet<Entity>();
-            _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
-            _player.Controller = new LocalPlayerController(_player, _camera);
-            _entities.Add(_player);
-
             _staticTexts = new Collection<StaticText>();
 
             _worldTaskManager = new WorldTaskManager();
             _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
+            
+            _entities = new HashSet<Entity>();
+            _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
+            _player.Controller = new LocalPlayerController(_player, _camera);
+            _entities.Add(_player);
+            
             _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
             _asyncChunkTrashCan.StartThread();
             _asyncChunkGenerator = new AsyncChunkGenerator(this);
@@ -132,6 +133,10 @@ namespace CMineNew.Map{
         }
 
         public Block SetBlock(BlockSnapshot snapshot, Vector3i position) {
+            return SetBlock(snapshot, position, b => true);
+        }
+
+        public Block SetBlock(BlockSnapshot snapshot, Vector3i position, Func<Block, bool> canBeReplaced) {
             var regionPosition = position >> 6;
             var chunkPosition = position >> 4;
 
@@ -151,7 +156,7 @@ namespace CMineNew.Map{
                 //TODO ASYNC CHUNK GENERATOR
             }
 
-            return chunk.SetBlockFromWorldPosition(snapshot, position);
+            return chunk.SetBlockFromWorldPosition(snapshot, position, canBeReplaced);
         }
 
         public Chunk CreateChunk(Vector3i position) {

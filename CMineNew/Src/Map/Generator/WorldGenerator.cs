@@ -17,6 +17,8 @@ namespace CMineNew.Map.Generator{
 
         public Random Random => _random;
 
+        public int Seed => _seed;
+
         public void SetRandomSeed(int seed) {
             _random = new Random(seed);
         }

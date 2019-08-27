@@ -1,4 +1,5 @@
 using System;
+using CMineNew.Map.Generator.Noise;
 
 namespace CMine.Map.Generator.Noise{
     public class SimplexOctaveGenerator : OctaveGenerator{

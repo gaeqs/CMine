@@ -16,6 +16,7 @@ namespace CMineNew.Map.BlockData{
             Register(new BlockSnapshotBricks());
             Register(new BlockSnapshotBricksSlab(false));
             Register(new BlockSnapshotOakLog());
+            Register(new BlockSnapshotOakLeaves());
         }
 
         public static void Register(BlockSnapshot snapshot) {

@@ -103,7 +103,9 @@
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotBricksSlab.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotDirt.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotOakLeaves.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotOakLog.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotSand.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotStone.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
@@ -112,7 +114,9 @@
     <Compile Include="Src\Map\BlockData\Type\BlockBricksSlab.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockDirt.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockOakLeaves.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockOakLog.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockSand.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockWater.cs" />
@@ -125,6 +129,8 @@
     <Compile Include="Src\Map\Chunk.cs" />
     <Compile Include="Src\Map\ChunkRegion.cs" />
     <Compile Include="Src\Map\ChunkRegionRender.cs" />
+    <Compile Include="Src\Map\Generator\Biome\Biome.cs" />
+    <Compile Include="Src\Map\Generator\Biome\BiomeGrid.cs" />
     <Compile Include="Src\Map\Generator\DefaultWorldGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\NoiseGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\OctaveGenerator.cs" />
@@ -201,9 +207,11 @@
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />
     <Content Include="Resources\Textures\grass_top.png" />
+    <Content Include="Resources\Textures\oak_leaves.png" />
     <Content Include="Resources\Textures\oak_log_side.png" />
     <Content Include="Resources\Textures\oak_log_top.png" />
     <Content Include="Resources\Textures\pointer.png" />
+    <Content Include="Resources\Textures\sand.png" />
     <Content Include="Resources\Textures\stone.png" />
     <Content Include="Resources\Textures\tall_grass.png" />
     <Content Include="Resources\Textures\water.png" />

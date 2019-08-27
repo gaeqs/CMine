@@ -1,7 +1,7 @@
-using System;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.Generator.Population;
 using CMineNew.Render;
 using OpenTK;
 using OpenTK.Input;
@@ -14,10 +14,12 @@ namespace CMineNew.Entities.Controller{
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
 
+        private OakTreeGenerator _treeGenerator;
 
         public LocalPlayerController(Player player, Camera camera) : base(player) {
             _player = player;
             _camera = camera;
+            _treeGenerator = new OakTreeGenerator(player.World.WorldGenerator.Seed);
         }
 
         public override void Tick(long dif) {
@@ -98,7 +100,7 @@ namespace CMineNew.Entities.Controller{
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotOakLog();
+                var matInstance = new BlockSnapshotSand();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -113,15 +115,10 @@ namespace CMineNew.Entities.Controller{
                 _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
             }
             else if (args.Button == MouseButton.Middle) {
-                var matInstance = new BlockSnapshotBricks();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
-                if (!matInstance.CanBePlaced(position, _player.World)) return;
-                if (!matInstance.Passable &&
-                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
-                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-                _player.World.SetBlock(matInstance, position);
+                _treeGenerator.TryToGenerate(position, _player.World);
             }
         }
 

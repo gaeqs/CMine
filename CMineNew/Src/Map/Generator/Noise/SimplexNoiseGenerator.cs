@@ -1,9 +1,10 @@
 using System;
+using CMine.Map.Generator.Noise;
 
 /**
  * C# implementation of https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/util/noise/SimplexNoiseGenerator.java.
  */
-namespace CMine.Map.Generator.Noise{
+namespace CMineNew.Map.Generator.Noise{
     public class SimplexNoiseGenerator : PerlinNoiseGenerator{
         protected static readonly double Sqrt3 = Math.Sqrt(3);
         protected static readonly double Sqrt5 = Math.Sqrt(5);

@@ -64,9 +64,16 @@ namespace CMineNew.Map{
         }
 
         public Block SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition) {
+            return SetBlock(snapshot, chunkPosition, f => true);
+        }
+
+        public Block SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition, Func<Block, bool> canBeReplaced) {
+            var old = _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
+            if (!canBeReplaced.Invoke(old)) return null;
+
             var position = (_position << WorldPositionShift) + chunkPosition;
             var block = snapshot.ToBlock(this, position);
-            var old = _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
+
             _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
 
             var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
@@ -85,6 +92,11 @@ namespace CMineNew.Map{
 
         public Block SetBlockFromWorldPosition(BlockSnapshot snapshot, Vector3i worldPosition) {
             return SetBlock(snapshot, worldPosition - (_position << WorldPositionShift));
+        }
+
+        public Block SetBlockFromWorldPosition(BlockSnapshot snapshot, Vector3i worldPosition,
+            Func<Block, bool> canBeReplaced) {
+            return SetBlock(snapshot, worldPosition - (_position << WorldPositionShift), canBeReplaced);
         }
 
         public void FillWithBlocks(BlockSnapshot[,,] snapshots, bool empty) {

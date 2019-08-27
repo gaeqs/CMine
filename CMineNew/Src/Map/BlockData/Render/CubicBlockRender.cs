@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class CubicBlockRender : BlockRender{
-        private const int MaxFaces = 7000;
+        private const int MaxFaces = 8000;
         private const int InstanceDataLength = 3 + 4 + 4;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 

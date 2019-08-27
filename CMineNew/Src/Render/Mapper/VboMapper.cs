@@ -17,7 +17,7 @@ namespace CMineNew.Render.Mapper{
         private int _maximumAmount;
 
         private int _updates;
-        private volatile bool _onBackground;
+        private volatile bool _onBackground, _requiresResize;
 
 
         private readonly EConcurrentLinkedQueue<VboMapperTask<TKey>> _tasks;
@@ -39,6 +39,7 @@ namespace CMineNew.Render.Mapper{
 
             _updates = 0;
             _onBackground = false;
+            _requiresResize = false;
 
             _tasks = new EConcurrentLinkedQueue<VboMapperTask<TKey>>();
             _offsets = new Dictionary<TKey, int>();
@@ -77,12 +78,12 @@ namespace CMineNew.Render.Mapper{
 
         public void AddTask(VboMapperTask<TKey> task) {
             lock (_backgroundLock) {
-                if (_onBackground || _vbo == null || !_vbo.Mapping) {
+                if (_requiresResize || !_onBackground || _vbo == null || !_vbo.Mapping) {
                     _tasks.Push(task);
                     return;
                 }
 
-                ExecuteTask(task);
+                ExecuteTask(task, false);
                 _updates++;
             }
         }
@@ -103,6 +104,12 @@ namespace CMineNew.Render.Mapper{
 
             lock (_backgroundLock) {
                 while (!_tasks.IsEmpty()) {
+                    if (_requiresResize) {
+                        Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
+                        ResizeBuffer();
+                        _requiresResize = false;
+                    }
+
                     unsafe {
                         if (_vbo.Pointer == null) {
                             Console.WriteLine("Warning! Pointer is null!");
@@ -111,7 +118,7 @@ namespace CMineNew.Render.Mapper{
 
                         var current = _tasks.Pop();
                         if (current == null) continue;
-                        ExecuteTask(current);
+                        ExecuteTask(current, true);
                         _updates++;
                     }
                 }
@@ -128,7 +135,7 @@ namespace CMineNew.Render.Mapper{
             }
         }
 
-        private void ExecuteTask(VboMapperTask<TKey> task) {
+        private void ExecuteTask(VboMapperTask<TKey> task, bool fromRender) {
             switch (task.Type) {
                 case VboMapperTaskType.Add:
                     AddToMap(task.Key, task.Data);
@@ -141,9 +148,13 @@ namespace CMineNew.Render.Mapper{
                     break;
             }
 
+            if (_requiresResize) {
+                Console.WriteLine("??? " + fromRender);
+            }
+
             if (_amount < _maximumAmount) return;
-            Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
-            ResizeBuffer();
+            Console.WriteLine("REQUIRES RESIZE: " + _amount);
+            _requiresResize = true;
         }
 
         private void AddToMap(TKey key, float[] data) {
@@ -186,7 +197,7 @@ namespace CMineNew.Render.Mapper{
         }
 
         private void ResizeBuffer() {
-            lock (this) {
+            lock (_backgroundLock) {
                 var oldBkg = _onBackground;
                 _onBackground = false;
                 _vbo.FinishMapping();
@@ -202,7 +213,7 @@ namespace CMineNew.Render.Mapper{
                 _onResize?.Invoke(_vao, _vbo, newVbo);
                 _vbo.CleanUp();
                 _vbo = newVbo;
-                _maximumAmount <<= 1;
+                _maximumAmount = _maximumAmount * 3 / 2;
                 newVbo.StartMapping();
                 _onBackground = oldBkg;
             }

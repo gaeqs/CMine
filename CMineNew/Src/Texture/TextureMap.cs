@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using CMineNew.Geometry;
 using CMineNew.Resources.Textures;
@@ -26,6 +25,8 @@ namespace CMineNew.Texture{
             bitmaps.Add("default:bricks", ToBitmap(Textures.bricks));
             bitmaps.Add("default:oak_log_side", ToBitmap(Textures.oak_log_side));
             bitmaps.Add("default:oak_log_top", ToBitmap(Textures.oak_log_top));
+            bitmaps.Add("default:oak_leaves", ToBitmap(Textures.oak_leaves));
+            bitmaps.Add("default:sand", ToBitmap(Textures.sand));
 
             CreateTextureMap(bitmaps);
         }
@@ -44,7 +45,7 @@ namespace CMineNew.Texture{
             foreach (var bitmap in bitmaps) {
                 graphics.DrawImage(bitmap.Value,
                     new Rectangle(x * 16, y * 16, 16, 16),
-                    new Rectangle(0, 0, 16, 16),GraphicsUnit.Pixel);
+                    new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
                 _areas.Add(bitmap.Key, new Area2d(x / (float) count, y / (float) count,
                     (x + 1) / (float) count, (y + 1) / (float) count));
                 y++;

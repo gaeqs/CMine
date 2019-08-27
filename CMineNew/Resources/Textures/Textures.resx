@@ -58,4 +58,13 @@
     <data name="oak_log_top" type="System.Resources.ResXFileRef">
         <value>oak_log_top.png;System.Byte[]</value>
     </data>
+    
+    <data name="oak_leaves" type="System.Resources.ResXFileRef">
+        <value>oak_leaves.png;System.Byte[]</value>
+    </data>
+
+    <data name="sand" type="System.Resources.ResXFileRef">
+        <value>sand.png;System.Byte[]</value>
+    </data>
+    
 </root>

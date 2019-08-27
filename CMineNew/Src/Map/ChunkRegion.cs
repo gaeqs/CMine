@@ -94,9 +94,6 @@ namespace CMineNew.Map{
             var stream = new DeflateStream(File.Open(file, FileMode.Open, FileAccess.Read), CompressionMode.Decompress);
             var formatter = new BinaryFormatter();
             var version = (uint) formatter.Deserialize(stream);
-            Console.WriteLine("Loading region " + _position + " (Version: " + version + ")");
-            Console.WriteLine("Thread: " + Thread.CurrentThread.Name);
-            var now = DateTime.Now.Ticks;
             ForEachRegionPosition((x, y, z) => {
                 if (stream.ReadByte() == 0) {
                     _savedChunks[x, y, z] = null;
@@ -107,15 +104,10 @@ namespace CMineNew.Map{
                 var chunk = new Chunk(this, chunkPos);
                 _savedChunks[x, y, z] = chunk;
                 chunk.Load(stream, formatter, version);
-                Console.WriteLine("Loading chunk "+chunk.Position);
             });
 
             stream.Close();
             _deleted = false;
-
-
-            var delay = (DateTime.Now.Ticks - now) * 1000 / CMine.TicksPerSecondF;
-            Console.WriteLine("Region loaded in " + delay + " millis.");
         }
 
         public void Save() {
@@ -128,8 +120,6 @@ namespace CMineNew.Map{
             var formatter = new BinaryFormatter();
             formatter.Serialize(stream, version);
 
-            var now = DateTime.Now.Ticks;
-
             ForEachRegionPosition((x, y, z) => {
                 var chunk = _savedChunks[x, y, z];
                 var save = chunk != null &&  !chunk.Natural;
@@ -139,10 +129,6 @@ namespace CMineNew.Map{
             });
 
             stream.Close();
-
-
-            var delay = (DateTime.Now.Ticks - now) * 1000 / CMine.TicksPerSecondF;
-            Console.WriteLine("Region saved in " + delay + " millis.");
         }
 
         public void Delete() {
