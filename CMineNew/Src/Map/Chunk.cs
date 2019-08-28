@@ -236,7 +236,7 @@ namespace CMineNew.Map{
             _modified = false;
         }
 
-        private static void ForEachChunkPosition(Action<int, int, int> action) {
+        public static void ForEachChunkPosition(Action<int, int, int> action) {
             for (var x = 0; x < ChunkLength; x++) {
                 for (var y = 0; y < ChunkLength; y++) {
                     for (var z = 0; z < ChunkLength; z++) {

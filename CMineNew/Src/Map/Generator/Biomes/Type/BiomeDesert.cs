@@ -5,10 +5,13 @@ using CMineNew.Map.BlockData.Snapshot;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeDesert : Biome{
+        
+        private static BlockSnapshot Water = new BlockSnapshotWater(8);
+        
         private readonly OctaveGenerator _heightGenerator;
 
-        public BiomeDesert(int seed)
-            : base(BiomeTemperature.Hot, 62, 70, seed) {
+        public BiomeDesert(World world, int seed)
+            : base(BiomeTemperature.Hot, 62, 70, world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 4);
             _heightGenerator.SetScale(1 / 30f);
         }
@@ -22,7 +25,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight) {
             var y = position.Y;
             if (y > columnHeight) {
-                return BlockSnapshotAir.Instance;
+                return  y > 60 ? BlockSnapshotAir.Instance : Water;
             }
 
             if (y > columnHeight - 4) {

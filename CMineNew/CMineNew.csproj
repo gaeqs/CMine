@@ -146,6 +146,9 @@
     <Compile Include="Src\Map\Generator\Noise\SimplexNoiseGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\SimplexOctaveGenerator.cs" />
     <Compile Include="Src\Map\Generator\Population\OakTreeGenerator.cs" />
+    <Compile Include="Src\Map\Generator\Unloaded\UnloadedChunkGeneration.cs" />
+    <Compile Include="Src\Map\Generator\Unloaded\UnloadedChunkGenerationBlock.cs" />
+    <Compile Include="Src\Map\Generator\Unloaded\UnloadedChunkGenerationManager.cs" />
     <Compile Include="Src\Map\Generator\WorldGenerator.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskExpandWater.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskRemoveWater.cs" />

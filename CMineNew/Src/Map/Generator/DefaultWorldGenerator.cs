@@ -11,7 +11,7 @@ namespace CMineNew.Map.Generator{
 
 
         public DefaultWorldGenerator(World world, int seed) : base(world, seed) {
-            _biomeGrid = new DefaultBiomeGrid(seed);
+            _biomeGrid = new DefaultBiomeGrid(world, seed);
         }
 
         public override bool GenerateChunkData(Chunk chunk) {
@@ -34,6 +34,7 @@ namespace CMineNew.Map.Generator{
                 }
             }
 
+            empty &= _world.UnloadedChunkGenerationManager.PostGenerateChunk(chunk.Position, _buffer);
             chunk.FillWithBlocks(_buffer, empty);
             return empty;
         }

@@ -8,12 +8,14 @@ namespace CMineNew.Map.Generator.Biomes{
         protected readonly int _minHeight;
         protected readonly int _maxHeight;
 
+        protected readonly World _world;
         protected readonly int _seed;
 
-        public Biome(BiomeTemperature temperature, int minHeight, int maxHeight, int seed) {
+        public Biome(BiomeTemperature temperature, int minHeight, int maxHeight, World world, int seed) {
             _temperature = temperature;
             _minHeight = minHeight;
             _maxHeight = maxHeight;
+            _world = world;
             _seed = seed;
         }
 
@@ -23,6 +25,7 @@ namespace CMineNew.Map.Generator.Biomes{
 
         public int MaxHeight => _maxHeight;
 
+        public World World => _world;
         public int Seed => _seed;
 
         public abstract int GetColumnHeight(int x, int z);

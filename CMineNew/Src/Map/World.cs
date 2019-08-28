@@ -10,6 +10,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
+using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
 using CMineNew.RayTrace;
 using CMineNew.Render;
@@ -30,6 +31,7 @@ namespace CMineNew.Map{
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
         private readonly AsyncChunkTrashCan _asyncChunkTrashCan;
         private readonly WorldTaskManager _worldTaskManager;
+        private readonly UnloadedChunkGenerationManager _unloadedChunkGenerationManager;
 
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
         private readonly ELinkedList<ChunkRegion> _tickRegions;
@@ -62,6 +64,7 @@ namespace CMineNew.Map{
             _player.Controller = new LocalPlayerController(_player, _camera);
             _entities.Add(_player);
             
+            _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
             _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
             _asyncChunkTrashCan.StartThread();
             _asyncChunkGenerator = new AsyncChunkGenerator(this);
@@ -99,6 +102,8 @@ namespace CMineNew.Map{
         public Player Player => _player;
 
         public Collection<StaticText> StaticTexts => _staticTexts;
+
+        public UnloadedChunkGenerationManager UnloadedChunkGenerationManager => _unloadedChunkGenerationManager;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
             lock (_regionsLock) {
@@ -178,10 +183,14 @@ namespace CMineNew.Map{
             if (chunk != null) return chunk;
 
             var chunkPositionInRegion = position - (regionPosition << 2);
-            if (region.TryLoadSavedChunk(chunkPositionInRegion, out chunk))
+            if (region.TryLoadSavedChunk(chunkPositionInRegion, out chunk)) {
+                _unloadedChunkGenerationManager.OnChunkLoad(chunk);
                 return chunk;
+            }
+
             chunk = new Chunk(region, position);
             _worldGenerator.GenerateChunkData(chunk);
+            _unloadedChunkGenerationManager.FlushToAllChunks();
             chunk.Natural = true;
             region.SetChunk(chunk, chunkPositionInRegion);
 

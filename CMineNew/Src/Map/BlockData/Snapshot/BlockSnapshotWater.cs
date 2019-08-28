@@ -4,6 +4,7 @@ using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotWater : BlockSnapshot{
+
         private int _waterLevel;
 
         public BlockSnapshotWater(int waterLevel) : base("default:water") {

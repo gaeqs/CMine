@@ -22,14 +22,12 @@ namespace CMineNew.Map.Generator{
         public void SetRandomSeed(int seed) {
             _random = new Random(seed);
         }
-        
+
         /// <summary>
         /// Generates the terrain of the chunk.
         /// </summary>
         /// <param name="chunk"></param>
         /// <returns>true whether the chunk is empty.</returns>
         public abstract bool GenerateChunkData(Chunk chunk);
-
-
     }
 }

@@ -9,8 +9,8 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
         private readonly OctaveGenerator _heightGenerator;
 
-        public BiomeOcean(int seed)
-            : base(BiomeTemperature.Normal, 30, 55, seed) {
+        public BiomeOcean(World world,int seed)
+            : base(BiomeTemperature.Normal, 30, 55, world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 4);
             _heightGenerator.SetScale(1 / 100f);
         }

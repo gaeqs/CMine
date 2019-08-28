@@ -2,15 +2,22 @@ using System;
 using CMine.Map.Generator.Noise;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.Generator.Population;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeForest : Biome{
-        private readonly OctaveGenerator _heightGenerator;
+        private static BlockSnapshot Water = new BlockSnapshotWater(8);
 
-        public BiomeForest(int seed)
-            : base(BiomeTemperature.Normal, 62, 70, seed) {
+        private readonly OctaveGenerator _heightGenerator;
+        private readonly OakTreeGenerator _treeGenerator;
+        private Random _random;
+
+        public BiomeForest(World world, int seed)
+            : base(BiomeTemperature.Normal, 62, 70, world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 6);
             _heightGenerator.SetScale(1 / 20f);
+            _treeGenerator = new OakTreeGenerator(seed);
+            _random = new Random();
         }
 
         public override int GetColumnHeight(int x, int z) {
@@ -22,11 +29,19 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight) {
             var y = position.Y;
             if (y > columnHeight) {
-                return BlockSnapshotAir.Instance;
+                return y > 60 ? BlockSnapshotAir.Instance : Water;
             }
 
             if (y == columnHeight) {
-                return BlockSnapshotGrass.Instance;
+                if (y > 60) {
+                    if (_random.NextDouble() > 0.95) {
+                        _treeGenerator.TryToGenerate(position + new Vector3i(0, 1, 0), _world);
+                    }
+
+                    return BlockSnapshotGrass.Instance;
+                }
+
+                return BlockSnapshotDirt.Instance;
             }
 
             if (y > columnHeight - 4) {

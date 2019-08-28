@@ -44,7 +44,7 @@ void main() {
     float lengthSquared = dot(distance, distance);
     
     if(waterShader > 0.5) {
-        float length = 1 - lengthSquared / 100;
+        float length = 1 - lengthSquared / 1000;
         FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
     }
     else if (lengthSquared > viewDistanceSquared) {
