@@ -7,16 +7,17 @@ namespace CMineNew.Map.BlockData{
         private static Dictionary<string, BlockSnapshot> Blocks = new Dictionary<string, BlockSnapshot>();
 
         public static void Load() {
-            Register(new BlockSnapshotAir());
-            Register(new BlockSnapshotStone());
-            Register(new BlockSnapshotDirt());
-            Register(new BlockSnapshotGrass());
+            Register(BlockSnapshotAir.Instance);
+            Register(BlockSnapshotStone.Instance);
+            Register(BlockSnapshotDirt.Instance);
+            Register(BlockSnapshotGrass.Instance);
             Register(new BlockSnapshotTallGrass());
             Register(new BlockSnapshotWater(BlockWater.MaxWaterLevel));
             Register(new BlockSnapshotBricks());
             Register(new BlockSnapshotBricksSlab(false));
             Register(new BlockSnapshotOakLog());
             Register(new BlockSnapshotOakLeaves());
+            Register(BlockSnapshotSand.Instance);
         }
 
         public static void Register(BlockSnapshot snapshot) {

@@ -4,6 +4,8 @@ using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotDirt : BlockSnapshot{
+        
+        public static readonly BlockSnapshotDirt Instance = new BlockSnapshotDirt();
         public BlockSnapshotDirt() : base("default:dirt") {
         }
 

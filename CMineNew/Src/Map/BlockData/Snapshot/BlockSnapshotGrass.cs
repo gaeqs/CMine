@@ -4,6 +4,8 @@ using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotGrass : BlockSnapshot{
+        public static readonly BlockSnapshotGrass Instance = new BlockSnapshotGrass();
+
         public BlockSnapshotGrass() : base("default:grass") {
         }
 
@@ -13,11 +15,11 @@ namespace CMineNew.Map.BlockData.Snapshot{
         public override Block ToBlock(Chunk chunk, Vector3i position) {
             return new BlockGrass(chunk, position);
         }
-        
+
         public override bool CanBePlaced(Vector3i position, World world) {
             return true;
         }
-        
+
         public override BlockSnapshot Clone() {
             return this;
         }

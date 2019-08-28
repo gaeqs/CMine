@@ -129,8 +129,15 @@
     <Compile Include="Src\Map\Chunk.cs" />
     <Compile Include="Src\Map\ChunkRegion.cs" />
     <Compile Include="Src\Map\ChunkRegionRender.cs" />
-    <Compile Include="Src\Map\Generator\Biome\Biome.cs" />
-    <Compile Include="Src\Map\Generator\Biome\BiomeGrid.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Biome.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\BiomeCollection.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\BiomeGrid.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\DefaultBiomeGrid.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Type\BiomeDesert.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Type\BiomeForest.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Type\BiomeMountains.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Type\BiomeOcean.cs" />
+    <Compile Include="Src\Map\Generator\Biomes\Type\BiomePlains.cs" />
     <Compile Include="Src\Map\Generator\DefaultWorldGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\NoiseGenerator.cs" />
     <Compile Include="Src\Map\Generator\Noise\OctaveGenerator.cs" />

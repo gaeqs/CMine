@@ -1,71 +1,60 @@
-using CMine.Map.Generator.Noise;
+using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Map.BlockData.Type;
+using CMineNew.Map.Generator.Biomes;
 
 namespace CMineNew.Map.Generator{
     public class DefaultWorldGenerator : WorldGenerator{
-        private static readonly BlockSnapshot Air = new BlockSnapshotAir();
-        private static readonly BlockSnapshot Grass = new BlockSnapshotGrass();
-        private static readonly BlockSnapshot TallGrass = new BlockSnapshotTallGrass();
-        private static readonly BlockSnapshot Dirt = new BlockSnapshotDirt();
-        private static readonly BlockSnapshot Stone = new BlockSnapshotStone();
-        private static readonly BlockSnapshot Water = new BlockSnapshotWater(BlockWater.MaxWaterLevel);
-
-        private static readonly BlockSnapshot[,,] Buffer =
+        private readonly BlockSnapshot[,,] _buffer =
             new BlockSnapshot[Chunk.ChunkLength, Chunk.ChunkLength, Chunk.ChunkLength];
+
+        private BiomeGrid _biomeGrid;
 
 
         public DefaultWorldGenerator(World world, int seed) : base(world, seed) {
+            _biomeGrid = new DefaultBiomeGrid(seed);
         }
 
         public override bool GenerateChunkData(Chunk chunk) {
-            var caveGenerator = new SimplexOctaveGenerator(_seed, 4);
-            var tallGrassGenerator = new SimplexOctaveGenerator(_seed, 1);
-            var generator = new SimplexOctaveGenerator(_seed, 8);
-            generator.SetScale(0.005);
-            tallGrassGenerator.SetScale(1);
-            caveGenerator.SetScale(0.1f);
-
             var empty = true;
             var chunkWorldPosition = chunk.Position << 4;
             for (var x = 0; x < 16; x++) {
                 for (var z = 0; z < 16; z++) {
+                    var wX = x + chunkWorldPosition.X;
+                    var wZ = z + chunkWorldPosition.Z;
+                    var biome = _biomeGrid.GetBiome(wX, wZ);
+                    var height = InterpolateHeight(wX, wZ, biome);
                     for (var y = 0; y < 16; y++) {
-                        var wy = y + chunkWorldPosition.Y;
-                        var noiseY = (int) (generator.Noise(1, 0.5, true,
-                                                x + chunkWorldPosition.X, z + chunkWorldPosition.Z) * 20 + 50);
-
-                        var cave = caveGenerator.Noise(1, 1, true,
-                                       x + chunkWorldPosition.X, y + chunkWorldPosition.Y,
-                                       z + chunkWorldPosition.Z) > 0.3f;
-
-                        var grass = !cave && tallGrassGenerator.Noise(0.2f, 1, true,
-                                        x + chunkWorldPosition.X, z + chunkWorldPosition.Z) > 0.3f;
-
-                        if (wy > noiseY + 1) {
-                            Buffer[x, y, z] = wy > 45 ? Air : Water;
-                        }
-                        else if (wy == noiseY + 1) {
-                            Buffer[x, y, z] = wy > 45 ? grass ? TallGrass : Air : Water;
-                        }
-                        else if (wy == noiseY) {
+                        var position = new Vector3i(x, y, z) + chunkWorldPosition;
+                        var snapshot = biome.GetBlockSnapshot(position, height);
+                        _buffer[x, y, z] = snapshot;
+                        if (!(snapshot is BlockSnapshotAir)) {
                             empty = false;
-                            Buffer[x, y, z] = wy > 44 ? cave && wy > 46 ? Air : Grass : Dirt;
-                        }
-                        else if (noiseY - wy < 4) {
-                            empty = false;
-                            Buffer[x, y, z] = cave && wy > 46 ? Air : Dirt;
-                        }
-                        else {
-                            empty = false;
-                            Buffer[x, y, z] = cave ? Air : Stone;
                         }
                     }
                 }
             }
 
-            chunk.FillWithBlocks(Buffer, empty);
+            chunk.FillWithBlocks(_buffer, empty);
             return empty;
+        }
+
+        private int InterpolateHeight(int worldX, int worldZ, Biome mainBiome) {
+            var height = mainBiome.GetColumnHeight(worldX, worldZ);
+            var total = height;
+            for (var x = -2; x < 3; x++) {
+                for (var z = -2; z < 3; z++) {
+                    if (x == 0 && z == 0) continue;
+                    var biome = _biomeGrid.GetBiome(worldX + x, worldZ + z);
+                    if (biome == mainBiome) {
+                        total += height;
+                    }
+                    else {
+                        total += biome.GetColumnHeight(worldX, worldZ);
+                    }
+                }
+            }
+
+            return total / 25;
         }
     }
 }
