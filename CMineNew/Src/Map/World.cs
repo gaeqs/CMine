@@ -34,6 +34,7 @@ namespace CMineNew.Map{
         private readonly UnloadedChunkGenerationManager _unloadedChunkGenerationManager;
 
         private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
+        private readonly Dictionary<Vector2i, World2dRegion> _regions2d;
         private readonly ELinkedList<ChunkRegion> _tickRegions;
 
         private readonly HashSet<Entity> _entities;
@@ -46,24 +47,25 @@ namespace CMineNew.Map{
         public World(string name) : base(name) {
             _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
             Directory.CreateDirectory(_folder);
-            Background = Color4.Aqua;
+            Background = Color4.Magenta;
 
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
             _gBuffer = new WorldGBuffer(CMine.Window);
 
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
+            _regions2d = new Dictionary<Vector2i, World2dRegion>();
             _tickRegions = new ELinkedList<ChunkRegion>();
 
             _staticTexts = new Collection<StaticText>();
 
             _worldTaskManager = new WorldTaskManager();
             _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
-            
+
             _entities = new HashSet<Entity>();
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
             _player.Controller = new LocalPlayerController(_player, _camera);
             _entities.Add(_player);
-            
+
             _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
             _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
             _asyncChunkTrashCan.StartThread();
@@ -92,6 +94,8 @@ namespace CMineNew.Map{
                 }
             }
         }
+
+        public Dictionary<Vector2i, World2dRegion> Regions2d => _regions2d;
 
         public object RegionsLock => _regionsLock;
 
@@ -197,6 +201,20 @@ namespace CMineNew.Map{
             return chunk;
         }
 
+        public World2dRegion GetOrCreate2dRegion(Vector2i regionPosition) {
+            if (_regions2d.TryGetValue(regionPosition, out var value)) {
+                return value;
+            }
+
+            var region = new World2dRegion(this, regionPosition);
+            region.CalculateBiomes();
+            region.CalculateHeights();
+            region.CalculateInterpolatedHeightsAndColors();
+            Console.WriteLine("ADDING "+regionPosition);
+            _regions2d.Add(regionPosition, region);
+            return region;
+        }
+
         public override void Tick(long delay) {
             _worldTaskManager.Tick(delay);
 
@@ -253,7 +271,7 @@ namespace CMineNew.Map{
             DrawSelectedBlock();
 
             //Draws GBuffer squad.
-            _gBuffer.Draw(_camera.Position, Vector3.One, 1f, _player.EyesOnWater);
+            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 1f, _player.EyesOnWater);
 
             //Transfers depth buffer to main FBO.
             _gBuffer.TransferDepthBufferToMainFbo();

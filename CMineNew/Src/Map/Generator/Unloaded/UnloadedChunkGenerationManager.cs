@@ -27,10 +27,10 @@ namespace CMineNew.Map.Generator.Unloaded{
             _generations.Add(chunkPosition, generation);
         }
 
-        public bool PostGenerateChunk(Vector3i chunkPosition, BlockSnapshot[,,] snapshots) {
-            if (!_generations.TryGetValue(chunkPosition, out var generation)) return true;
-            _generations.Remove(chunkPosition);
-            return generation.OnChunkLoad(snapshots);
+        public bool PostGenerateChunk(Chunk chunk, BlockSnapshot[,,] snapshots, World2dRegion region2d) {
+            if (!_generations.TryGetValue(chunk.Position, out var generation)) return true;
+            _generations.Remove(chunk.Position);
+            return generation.OnChunkLoad(snapshots, chunk, region2d);
         }
 
         public void OnChunkLoad(Chunk chunk) {

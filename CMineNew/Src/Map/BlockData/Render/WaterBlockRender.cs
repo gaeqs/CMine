@@ -70,7 +70,9 @@ namespace CMineNew.Map.BlockData.Render{
             const int max = (CMine.ChunkRadius - 1) << 4;
             _shader.SetUFloat("viewDistanceSquared", min * min);
             _shader.SetUFloat("viewDistanceOffsetSquared", max * max);
-            _shader.SetUVector("fogColor", new Vector4(0, 1, 1, 1));
+
+            var background = _chunkRegion.World.Background;
+            _shader.SetUVector("fogColor", new Vector4(background.R, background.G, background.B, 1));
             
             _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
             

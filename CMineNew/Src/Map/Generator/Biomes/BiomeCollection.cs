@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace CMineNew.Map.Generator.Biomes{
@@ -17,7 +18,7 @@ namespace CMineNew.Map.Generator.Biomes{
             _totalPercentage += percentage;
         }
 
-        public Biomes.Biome GetBiome(float value) {
+        public Biome GetBiome(float value) {
             value *= _totalPercentage;
             for (var i = 0; i < _percentage.Count; i++) {
                 var percentage = _percentage[i];

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
     public class BlockManager{
@@ -10,13 +11,13 @@ namespace CMineNew.Map.BlockData{
             Register(BlockSnapshotAir.Instance);
             Register(BlockSnapshotStone.Instance);
             Register(BlockSnapshotDirt.Instance);
-            Register(BlockSnapshotGrass.Instance);
-            Register(new BlockSnapshotTallGrass());
+            Register(new BlockSnapshotGrass(Color4.Green));
+            Register(new BlockSnapshotTallGrass(Color4.Green));
             Register(new BlockSnapshotWater(BlockWater.MaxWaterLevel));
             Register(new BlockSnapshotBricks());
             Register(new BlockSnapshotBricksSlab(false));
             Register(new BlockSnapshotOakLog());
-            Register(new BlockSnapshotOakLeaves());
+            Register(new BlockSnapshotOakLeaves(Color4.Green));
             Register(BlockSnapshotSand.Instance);
         }
 

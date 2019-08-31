@@ -1,13 +1,13 @@
 using System;
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
+using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Population{
     public class OakTreeGenerator{
         private static readonly BlockSnapshot Log = new BlockSnapshotOakLog();
-        private static readonly BlockSnapshot Leaves = new BlockSnapshotOakLeaves();
+        private static readonly BlockSnapshot Leaves = new BlockSnapshotOakLeaves(Color4.Green);
 
         private int _seed;
 
@@ -43,11 +43,11 @@ namespace CMineNew.Map.Generator.Population{
                     if (x == 0 && z == 0) continue;
                     if ((x == -2 || x == 2) && (z == -2 || z == 2)) {
                         if (random.NextDouble() > 0.5) {
-                            manager.AddBlock(position + new Vector3i(x, height - 2, z), Leaves, false);
+                            manager.AddBlock(position + new Vector3i(x, height - 2, z), Leaves.Clone(), false);
                         }
                     }
                     else {
-                        manager.AddBlock(position + new Vector3i(x, height - 2, z), Leaves, false);
+                        manager.AddBlock(position + new Vector3i(x, height - 2, z), Leaves.Clone(), false);
                     }
                 }
             }
@@ -57,11 +57,11 @@ namespace CMineNew.Map.Generator.Population{
                     if (x == 0 && z == 0) continue;
                     if ((x == -1 || x == 1) && (z == -1 || z == 1)) {
                         if (random.NextDouble() > 0.5) {
-                            manager.AddBlock(position + new Vector3i(x, height - 1, z), Leaves, false);
+                            manager.AddBlock(position + new Vector3i(x, height - 1, z), Leaves.Clone(), false);
                         }
                     }
                     else {
-                        manager.AddBlock(position + new Vector3i(x, height - 1, z), Leaves, false);
+                        manager.AddBlock(position + new Vector3i(x, height - 1, z), Leaves.Clone(), false);
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace CMineNew.Map.Generator.Population{
             for (var x = -1; x < 2; x++) {
                 for (var z = -1; z < 2; z++) {
                     if (!((x == -1 || x == 1) && (z == -1 || z == 1))) {
-                        manager.AddBlock(position + new Vector3i(x, height, z), Leaves, false);
+                        manager.AddBlock(position + new Vector3i(x, height, z), Leaves.Clone(), false);
                     }
                 }
             }

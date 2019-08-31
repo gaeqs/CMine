@@ -1,5 +1,7 @@
+using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.BlockData.Snapshot.Interface;
 using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.Generator.Unloaded{
@@ -24,24 +26,29 @@ namespace CMineNew.Map.Generator.Unloaded{
         }
 
         public void AddToLoadedChunk(Chunk chunk) {
+            var chunkPos = chunk.Position << Chunk.WorldPositionShift;
+            var regionPos = new Vector2i(chunk.Position.X, chunk.Position.Z) >> World2dRegion.ChunkPositionShift;
+            var region = chunk.World.Regions2d[regionPos];
             Chunk.ForEachChunkPosition((x, y, z) => {
                 var pos = new Vector3i(x, y, z);
                 var data = _data[x, y, z];
                 if (data == null) return;
                 if (data.OverrideBlocks) {
-                    chunk.SetBlock(data.Snapshot, pos);
+                    chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunk.World, chunkPos + pos, region), pos);
                     return;
                 }
 
                 var block = chunk.GetBlock(pos);
                 if (block != null && !(block is BlockAir) && !(block is BlockTallGrass)) return;
-                chunk.SetBlock(data.Snapshot, pos);
+                chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunk.World, chunkPos + pos, region), pos);
             });
         }
 
-        public bool OnChunkLoad(BlockSnapshot[,,] snapshots) {
+        public bool OnChunkLoad(BlockSnapshot[,,] snapshots, Chunk chunk, World2dRegion region2d) {
             var empty = true;
+            var chunkPos = chunk.Position << Chunk.WorldPositionShift;
             Chunk.ForEachChunkPosition((x, y, z) => {
+                var blockPos = chunkPos + new Vector3i(x, y, z);
                 var data = _data[x, y, z];
                 if (data == null) return;
                 if (data.OverrideBlocks) {
@@ -49,7 +56,7 @@ namespace CMineNew.Map.Generator.Unloaded{
                         empty = false;
                     }
 
-                    snapshots[x, y, z] = data.Snapshot;
+                    snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, chunk.World, blockPos, region2d);
                     return;
                 }
 
@@ -60,9 +67,18 @@ namespace CMineNew.Map.Generator.Unloaded{
                     empty = false;
                 }
 
-                snapshots[x, y, z] = data.Snapshot;
+                snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, chunk.World, blockPos, region2d);
             });
             return empty;
+        }
+
+        private BlockSnapshot UpdateSnapshot(BlockSnapshot snapshot, World world, Vector3i position, World2dRegion region) {
+            if (!(snapshot is IGrass grass)) return snapshot;
+            var pos2d = new Vector2i(position.X, position.Z);
+            var relative = pos2d - (region.Position << World2dRegion.WorldPositionShift);
+            grass.GrassColor = region.InterpolatedGrassColors[relative.X, relative.Y];
+
+            return snapshot;
         }
     }
 }

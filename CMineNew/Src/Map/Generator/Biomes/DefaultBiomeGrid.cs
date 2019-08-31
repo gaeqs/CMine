@@ -11,9 +11,9 @@ namespace CMineNew.Map.Generator.Biomes{
             collections[(int) BiomeTemperature.Hot] = new BiomeCollection();
             collections[(int) BiomeTemperature.Hot].AddBiome(new BiomeDesert(world, seed), 30);
             collections[(int) BiomeTemperature.Normal] = new BiomeCollection();
-            collections[(int) BiomeTemperature.Normal].AddBiome(new BiomePlains(world, seed), 30);
             collections[(int) BiomeTemperature.Normal].AddBiome(new BiomeForest(world, seed), 30);
-            collections[(int) BiomeTemperature.Normal].AddBiome(new BiomeOcean(world, seed), 60);
+            collections[(int) BiomeTemperature.Normal].AddBiome(new BiomePlains(world, seed), 30);
+            collections[(int) BiomeTemperature.Normal].AddBiome(new BiomeOcean(world, seed), 30);
             collections[(int) BiomeTemperature.Cold] = new BiomeCollection();
             collections[(int) BiomeTemperature.Cold].AddBiome(new BiomeMountains(world, seed), 30);
             return collections;

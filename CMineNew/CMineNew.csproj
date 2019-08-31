@@ -77,6 +77,7 @@
     <Compile Include="Src\Geometry\Area2d.cs" />
     <Compile Include="Src\Geometry\Plane.cs" />
     <Compile Include="Src\Geometry\Sphere.cs" />
+    <Compile Include="Src\Geometry\Vector2i.cs" />
     <Compile Include="Src\Geometry\Vector3i.cs" />
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotStone.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTallGrass.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\Interface\IGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockBricks.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockBricksSlab.cs" />
@@ -156,6 +158,7 @@
     <Compile Include="Src\Map\Task\WorldTaskManager.cs" />
     <Compile Include="Src\Map\Task\WorldTaskRegionDelete.cs" />
     <Compile Include="Src\Map\World.cs" />
+    <Compile Include="Src\Map\World2dRegion.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
     <Compile Include="Src\RayTrace\Pointer.cs" />

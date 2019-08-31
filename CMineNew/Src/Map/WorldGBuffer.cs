@@ -67,7 +67,8 @@ namespace CMineNew.Map{
             DrawQuad();
         }
 
-        public void Draw(Vector3 cameraPosition, Vector3 ambientColor, float ambientStrength, bool waterShader) {
+        public void Draw(Vector3 cameraPosition, Vector3 ambientColor, Color4 backgroundColor,
+            float ambientStrength, bool waterShader) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -82,7 +83,8 @@ namespace CMineNew.Map{
             _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
             _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
             _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
-            _postRenderShader.SetUVector("fogColor", new Vector4(0, 1, 1, 1));
+            _postRenderShader.SetUVector("fogColor", 
+                new Vector4(backgroundColor.R, backgroundColor.G, backgroundColor.B, 1));
 
 
             GL.ActiveTexture(TextureUnit.Texture0);

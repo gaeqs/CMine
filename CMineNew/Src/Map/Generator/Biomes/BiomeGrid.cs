@@ -30,8 +30,12 @@ namespace CMineNew.Map.Generator.Biomes{
 
         public BiomeCollection[] Biomes => _biomes;
 
-        public Biomes.Biome GetBiome(Vector3i position) {
+        public Biome GetBiome(Vector3i position) {
             return GetBiome(position.X, position.Z);
+        }
+
+        public Biome GetBiome(Vector2i position) {
+            return GetBiome(position.X, position.Y);
         }
 
         public virtual Biome GetBiome(int x, int z) {
@@ -46,7 +50,7 @@ namespace CMineNew.Map.Generator.Biomes{
             }
 
             var biomes = _biomes[(int) temperature];
-            var bNoise = (float) _biomeGenerator.Noise(1, 1, true, x, z);
+            var bNoise = (float) _biomeGenerator.Noise(1, 500, true, x, z);
             return biomes.GetBiome(bNoise / 2 + 0.5f);
         }
     }
