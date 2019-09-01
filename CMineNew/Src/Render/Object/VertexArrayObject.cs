@@ -59,6 +59,7 @@ namespace CMineNew.Render.Object{
 
             GL.VertexAttribPointer(index, size, VertexAttribPointerType.Float, false, stride, offset);
             GL.VertexAttribDivisor(index, elementAttribute ? 1 : 0);
+            GL.EnableVertexAttribArray(index);
             _attributes.Add(index);
         }
 
@@ -79,23 +80,17 @@ namespace CMineNew.Render.Object{
         }
 
         public void Draw() {
-            EnableAttributes();
             GL.DrawElements(PrimitiveType.Triangles, _indicesAmount,
                 DrawElementsType.UnsignedInt, IntPtr.Zero);
-            DisableAttributes();
         }
 
         public void DrawnInstanced(int amount) {
-            EnableAttributes();
             GL.DrawElementsInstanced(PrimitiveType.Triangles, _indicesAmount,
                 DrawElementsType.UnsignedInt, IntPtr.Zero, amount);
-            DisableAttributes();
         }
 
         public void DrawArrays(int first, int count) {
-            EnableAttributes();
             GL.DrawArrays(PrimitiveType.Triangles, first, count);
-            DisableAttributes();
         }
 
         #region private methods
@@ -121,18 +116,18 @@ namespace CMineNew.Render.Object{
             vbo.SetData(BufferTarget.ElementArrayBuffer, indices, BufferUsageHint.StaticDraw);
         }
 
-        private void EnableAttributes() {
-            foreach (var i in _attributes) {
-             
-                GL.EnableVertexAttribArray(i);
-            }
-        }
+        //private void EnableAttributes() {
+        //    foreach (var i in _attributes) {
+        //     
+        //        GL.EnableVertexAttribArray(i);
+        //    }
+        //}
 
-        private void DisableAttributes() {
-            foreach (var i in _attributes) {
-                GL.DisableVertexAttribArray(i);
-            }
-        }
+        //private void DisableAttributes() {
+        //    foreach (var i in _attributes) {
+        //        GL.DisableVertexAttribArray(i);
+        //    }
+        //}
 
         private static float[] ToFloatArray(Vertex[] vertices) {
             var array = new float[vertices.Length * Vertex.Size];

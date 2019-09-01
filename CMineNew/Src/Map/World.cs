@@ -278,16 +278,18 @@ namespace CMineNew.Map{
 
             DrawSelectedBlock();
             
-            _gBuffer.DrawLights(_lightManager, _camera.Position);
-
-            //Draws GBuffer squad.
-            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 0.2f, _player.EyesOnWater);
-
             //Transfers depth buffer to main FBO.
             _gBuffer.TransferDepthBufferToMainFbo();
+            
+            _gBuffer.DrawLights(_lightManager, _camera.Position);
+
+            //Draws GBuffer quad.
+            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 0.2f, _player.EyesOnWater);
+            
 
             //Draws objects in main FBO.
             GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(true);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.BlendEquation(BlendEquationMode.FuncAdd);

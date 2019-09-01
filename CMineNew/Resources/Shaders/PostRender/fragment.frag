@@ -37,8 +37,7 @@ void main() {
     vec3 specularBrightness = texture2D(gSpecularBrightness, fragTexCoords).rgb;
 
     //0.4 is temporal.
-    vec3 result = calculateGlobalAmbient(modelAmbientColor)
-    + modelAmbientColor * ambientBrightness + diffuseColor * diffuseBrigtness + specularColor * specularBrightness * 0.4;
+    vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * ambientBrightness + diffuseColor * diffuseBrigtness + specularColor * specularBrightness * 0.4;
 
     FragColor = vec4(result, 1);
 

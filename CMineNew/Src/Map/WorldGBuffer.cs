@@ -30,7 +30,7 @@ namespace CMineNew.Map{
         private readonly ShaderProgram _postRenderShader, _backgroundShader;
         private readonly ShaderProgram _directionalShader, _pointShader, _flashShader;
 
-        private int _quadVao;
+        private VertexArrayObject _quadVao;
         private int _width, _height;
 
         private int _positionTexture, _normalTexture, _ambientTexture, _diffuseTexture, _specularTexture;
@@ -71,18 +71,20 @@ namespace CMineNew.Map{
         }
 
         public void DrawBackground(Color4 color) {
-            VertexArrayObject.Bind(_quadVao);
+            _quadVao.Bind();
             _backgroundShader.Use();
             _backgroundShader.SetUVector("background", new Vector4(color.R, color.G, color.B, color.A));
             DrawQuad();
         }
 
         public void DrawLights(LightManager manager, Vector3 cameraPosition) {
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _id);
             GL.Disable(EnableCap.DepthTest);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            VertexArrayObject.Bind(_quadVao);
+            _quadVao.Bind();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
             GL.ActiveTexture(TextureUnit.Texture1);
@@ -115,8 +117,9 @@ namespace CMineNew.Map{
             float ambientStrength, bool waterShader) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
+            GL.DepthMask(false);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            VertexArrayObject.Bind(_quadVao);
+            _quadVao.Bind();
             _postRenderShader.Use();
             _postRenderShader.SetUVector("cameraPosition", cameraPosition);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
@@ -152,19 +155,16 @@ namespace CMineNew.Map{
         #region constructor methods
 
         private void GenerateSimpleVao() {
-            GL.GenVertexArrays(1, out _quadVao);
-            GL.GenBuffers(1, out int quadVbo);
-            VertexArrayObject.Bind(_quadVao);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, quadVbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * QuadVertices.Length,
-                QuadVertices, BufferUsageHint.StaticDraw);
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false,
-                sizeof(float) * 4, 0);
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false,
-                sizeof(float) * 4, sizeof(float) * 2);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            _quadVao = new VertexArrayObject();
+            _quadVao.Bind();
+            var vbo = new VertexBufferObject();
+            _quadVao.LinkBuffer(vbo);
+            vbo.Bind(BufferTarget.ArrayBuffer);
+            vbo.SetData(BufferTarget.ArrayBuffer, QuadVertices, BufferUsageHint.StaticDraw);
+            var builder = new AttributePointerBuilder(_quadVao, 4, 0);
+            builder.AddPointer(2, false);
+            builder.AddPointer(2, false);
+            VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
             VertexArrayObject.Unbind();
         }
 
@@ -190,9 +190,9 @@ namespace CMineNew.Map{
             ConfigureTexture(_width, _height, _ambientTexture, PixelInternalFormat.Rgba16f, PixelFormat.Rgba);
             ConfigureTexture(_width, _height, _diffuseTexture, PixelInternalFormat.Rgb8, PixelFormat.Rgb);
             ConfigureTexture(_width, _height, _specularTexture, PixelInternalFormat.Rgb8, PixelFormat.Rgb);
-            ConfigureTexture(_width, _height, _ambientBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
-            ConfigureTexture(_width, _height, _diffuseBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
-            ConfigureTexture(_width, _height, _specularBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _ambientBrightness, PixelInternalFormat.Rgb32f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _diffuseBrightness, PixelInternalFormat.Rgb32f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _specularBrightness, PixelInternalFormat.Rgb32f, PixelFormat.Rgb);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _depthBuffer);
@@ -245,7 +245,7 @@ namespace CMineNew.Map{
         #endregion
 
         private void DrawQuad() {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            _quadVao.DrawArrays(0, 6);
         }
     }
 }
