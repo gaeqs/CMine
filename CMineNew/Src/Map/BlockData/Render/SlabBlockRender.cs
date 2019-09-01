@@ -1,3 +1,4 @@
+using System.Linq;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
@@ -58,8 +59,8 @@ namespace CMineNew.Map.BlockData.Render{
             _shader.Use();
             _shader.SetUMatrix("viewProjection", _chunkRegion.World.Camera.ViewProjection);
             foreach (var face in BlockFaceMethods.All) {
-                var vao = _vaos[(int) face];
                 var mapper = _mappers[(int) face];
+                var vao = _vaos[(int) face];
                 vao.Bind();
                 mapper.OnBackground = false;
                 mapper.FlushQueue();

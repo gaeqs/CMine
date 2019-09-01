@@ -79,6 +79,11 @@
     <Compile Include="Src\Geometry\Sphere.cs" />
     <Compile Include="Src\Geometry\Vector2i.cs" />
     <Compile Include="Src\Geometry\Vector3i.cs" />
+    <Compile Include="Src\Light\CameraFlashLight.cs" />
+    <Compile Include="Src\Light\DirectionalLight.cs" />
+    <Compile Include="Src\Light\FlashLight.cs" />
+    <Compile Include="Src\Light\PointLight.cs" />
+    <Compile Include="Src\Light\LightManager.cs" />
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
     <Compile Include="Src\Map\AsyncChunkTrashCan.cs" />
@@ -206,6 +211,9 @@
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />
     <Content Include="Resources\Shaders\Block\vertex.vert" />
+    <Content Include="Resources\Shaders\Light\directional_light_fragment.frag" />
+    <Content Include="Resources\Shaders\Light\flash_light_fragment.frag" />
+    <Content Include="Resources\Shaders\Light\point_light_fragment.frag" />
     <Content Include="Resources\Shaders\Pointer\fragment.frag" />
     <Content Include="Resources\Shaders\Pointer\vertex.vert" />
     <Content Include="Resources\Shaders\PostRender\fragment.frag" />

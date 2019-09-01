@@ -25,25 +25,27 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
 void main() {
     vec4 ambientFull = texture2D(gAmbient, fragTexCoords);
     vec3 modelAmbientColor = ambientFull.rgb;
-    
+
     float opacity = ambientFull.a;
 
-    //vec3 diffuseColor = texture2D(gDiffuse, fragTexCoords).rgb;
-    //vec3 specularColor = texture2D(gSpecular, fragTexCoords).rgb;
-    //vec3 ambientBrightness = texture2D(gAmbientBrightness, fragTexCoords).rgb;
-    //vec3 diffuseBrigtness = texture2D(gDiffuseBrightness, fragTexCoords).rgb;
-    //vec3 specularBrightness = texture2D(gSpecularBrightness, fragTexCoords).rgb;
+    vec3 position = texture2D(gPosition, fragTexCoords).rgb;
 
-    vec3 result = calculateGlobalAmbient(modelAmbientColor);
-    //+ modelAmbientColor * ambientBrightness +diffuseColor * diffuseBrigtness + specularColor * specularBrightness;
+    vec3 diffuseColor = texture2D(gDiffuse, fragTexCoords).rgb;
+    vec3 specularColor = texture2D(gSpecular, fragTexCoords).rgb;
+    vec3 ambientBrightness = texture2D(gAmbientBrightness, fragTexCoords).rgb;
+    vec3 diffuseBrigtness = texture2D(gDiffuseBrightness, fragTexCoords).rgb;
+    vec3 specularBrightness = texture2D(gSpecularBrightness, fragTexCoords).rgb;
+
+    //0.4 is temporal.
+    vec3 result = calculateGlobalAmbient(modelAmbientColor)
+    + modelAmbientColor * ambientBrightness + diffuseColor * diffuseBrigtness + specularColor * specularBrightness * 0.4;
 
     FragColor = vec4(result, 1);
 
-    vec3 position = texture2D(gPosition, fragTexCoords).rgb;
     vec3 distance = position - cameraPosition;
     float lengthSquared = dot(distance, distance);
-    
-    if(waterShader > 0.5) {
+
+    if (waterShader > 0.5) {
         float length = 1 - lengthSquared / 1000;
         FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
     }

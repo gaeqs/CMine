@@ -2,17 +2,22 @@ using System;
 using CMine.Map.Generator.Noise;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.Generator.Population;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeMountains : Biome{
 
         private readonly OctaveGenerator _heightGenerator;
+        private readonly OakTreeGenerator _treeGenerator;
+        private readonly Random _random;
 
         public BiomeMountains(World world, int seed)
             : base(BiomeTemperature.Normal, 70, 90, new Color4(27, 162, 113, 255), world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 1);
             _heightGenerator.SetScale(1 / 50f);
+            _treeGenerator = new OakTreeGenerator(seed);
+            _random = new Random();
         }
 
         public override int GetColumnHeight(int x, int z) {
@@ -29,6 +34,14 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
             if (y == columnHeight) {
                 if (y > 60) {
+                    if (_random.NextDouble() > 0.9995) {
+                        _treeGenerator.TryToGenerate(position + new Vector3i(0, 1, 0), _world);
+                    }
+
+                    else if (_random.NextDouble() > 0.96) {
+                        _world.UnloadedChunkGenerationManager.AddBlock(position + new Vector3i(0, 1, 0),
+                            new BlockSnapshotTallGrass(grassColor), false);
+                    }
                     return new BlockSnapshotGrass(grassColor);
                 }
 

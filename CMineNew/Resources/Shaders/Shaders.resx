@@ -64,6 +64,18 @@
         <value>PostRender/fragment.frag;System.String</value>
     </data>
 
+    <data name="directional_light_fragment" type="System.Resources.ResXFileRef">
+        <value>Light/directional_light_fragment.frag;System.String</value>
+    </data>
+
+    <data name="flash_light_fragment" type="System.Resources.ResXFileRef">
+        <value>Light/flash_light_fragment.frag;System.String</value>
+    </data>
+
+    <data name="point_light_fragment" type="System.Resources.ResXFileRef">
+        <value>Light/point_light_fragment.frag;System.String</value>
+    </data>
+
     <data name="background_vertex" type="System.Resources.ResXFileRef">
         <value>Background/vertex.vert;System.String</value>
     </data>

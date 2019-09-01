@@ -1,4 +1,5 @@
 using System;
+using CMineNew.Light;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
@@ -10,7 +11,8 @@ namespace CMineNew.Map{
         private static readonly DrawBuffersEnum[] DrawBuffersEnums = {
             DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1,
             DrawBuffersEnum.ColorAttachment2, DrawBuffersEnum.ColorAttachment3,
-            DrawBuffersEnum.ColorAttachment4
+            DrawBuffersEnum.ColorAttachment4, DrawBuffersEnum.ColorAttachment5,
+            DrawBuffersEnum.ColorAttachment6, DrawBuffersEnum.ColorAttachment7
         };
 
         private static readonly float[] QuadVertices = {
@@ -26,17 +28,25 @@ namespace CMineNew.Map{
 
         private int _id;
         private readonly ShaderProgram _postRenderShader, _backgroundShader;
+        private readonly ShaderProgram _directionalShader, _pointShader, _flashShader;
 
         private int _quadVao;
         private int _width, _height;
 
         private int _positionTexture, _normalTexture, _ambientTexture, _diffuseTexture, _specularTexture;
+        private int _ambientBrightness, _diffuseBrightness, _specularBrightness;
         private int _depthBuffer;
 
         public WorldGBuffer(INativeWindow window) {
             _postRenderShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_fragment);
             _postRenderShader.SetupForPostRender();
             _backgroundShader = new ShaderProgram(Shaders.background_vertex, Shaders.background_fragment);
+            _directionalShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.directional_light_fragment);
+            _pointShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.point_light_fragment);
+            _flashShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.flash_light_fragment);
+            _directionalShader.SetupForLight();
+            _pointShader.SetupForLight();
+            _flashShader.SetupForLight();
             _width = window.Width;
             _height = window.Height;
             GenerateSimpleVao();
@@ -67,6 +77,40 @@ namespace CMineNew.Map{
             DrawQuad();
         }
 
+        public void DrawLights(LightManager manager, Vector3 cameraPosition) {
+            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
+            GL.BlendEquation(BlendEquationMode.FuncAdd);
+            VertexArrayObject.Bind(_quadVao);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
+            
+            _directionalShader.Use();
+            _directionalShader.SetUVector("cameraPosition", cameraPosition);
+            manager.DirectionalLights.ForEach(light => {
+                light.ToShader(_directionalShader);
+                DrawQuad();
+            });
+            
+            
+            _pointShader.Use();
+            _pointShader.SetUVector("cameraPosition", cameraPosition);
+            manager.PointLights.ForEach(light => {
+                light.ToShader(_pointShader);
+                DrawQuad();
+            });
+            
+            _flashShader.Use();
+            _flashShader.SetUVector("cameraPosition", cameraPosition);
+            manager.FlashLights.ForEach(light => {
+                light.ToShader(_flashShader);
+                DrawQuad();
+            });
+        }
+
         public void Draw(Vector3 cameraPosition, Vector3 ambientColor, Color4 backgroundColor,
             float ambientStrength, bool waterShader) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -83,7 +127,7 @@ namespace CMineNew.Map{
             _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
             _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
             _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
-            _postRenderShader.SetUVector("fogColor", 
+            _postRenderShader.SetUVector("fogColor",
                 new Vector4(backgroundColor.R, backgroundColor.G, backgroundColor.B, 1));
 
 
@@ -96,7 +140,11 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture3);
             GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
             GL.ActiveTexture(TextureUnit.Texture4);
-            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
+            GL.BindTexture(TextureTarget.Texture2D, _ambientBrightness);
+            GL.ActiveTexture(TextureUnit.Texture5);
+            GL.BindTexture(TextureTarget.Texture2D, _diffuseBrightness);
+            GL.ActiveTexture(TextureUnit.Texture6);
+            GL.BindTexture(TextureTarget.Texture2D, _specularBrightness);
             DrawQuad();
         }
 
@@ -121,13 +169,16 @@ namespace CMineNew.Map{
         }
 
         private void GenerateTextures() {
-            var images = new int[5];
+            var images = new int[8];
             GL.GenTextures(images.Length, images);
             _positionTexture = images[0];
             _normalTexture = images[1];
             _ambientTexture = images[2];
             _diffuseTexture = images[3];
             _specularTexture = images[4];
+            _ambientBrightness = images[5];
+            _diffuseBrightness = images[6];
+            _specularBrightness = images[7];
 
             GL.GenRenderbuffers(1, out _depthBuffer);
             Resize();
@@ -139,6 +190,9 @@ namespace CMineNew.Map{
             ConfigureTexture(_width, _height, _ambientTexture, PixelInternalFormat.Rgba16f, PixelFormat.Rgba);
             ConfigureTexture(_width, _height, _diffuseTexture, PixelInternalFormat.Rgb8, PixelFormat.Rgb);
             ConfigureTexture(_width, _height, _specularTexture, PixelInternalFormat.Rgb8, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _ambientBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _diffuseBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _specularBrightness, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _depthBuffer);
@@ -160,6 +214,12 @@ namespace CMineNew.Map{
                 TextureTarget.Texture2D, _diffuseTexture, 0);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment4,
                 TextureTarget.Texture2D, _specularTexture, 0);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment5,
+                TextureTarget.Texture2D, _ambientBrightness, 0);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment6,
+                TextureTarget.Texture2D, _diffuseBrightness, 0);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment7,
+                TextureTarget.Texture2D, _specularBrightness, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment,
                 RenderbufferTarget.Renderbuffer, _depthBuffer);
             GL.DrawBuffers(DrawBuffersEnums.Length, DrawBuffersEnums);

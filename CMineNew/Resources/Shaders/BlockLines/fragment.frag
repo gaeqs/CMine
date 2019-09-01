@@ -13,5 +13,6 @@ void main() {
     gDiffuse = vec4(0, 0, 0, 1);
     gSpecular = vec4(0, 0, 0, 1);
     gPosition = fragPos;
-    gNormal = vec4(0, 1, 0, 0);
+    //32 = Specular Weight
+    gNormal = vec4(0, 1, 0, 8);
 }

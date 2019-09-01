@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
@@ -65,7 +65,7 @@ namespace CMineNew.Map.BlockData.Render{
             _shader.Use();
             _shader.SetUMatrix("viewProjection", camera.ViewProjection);
             _shader.SetUVector("cameraPosition", camera.Position);
-            
+
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
             _shader.SetUFloat("viewDistanceSquared", min * min);
@@ -73,12 +73,12 @@ namespace CMineNew.Map.BlockData.Render{
 
             var background = _chunkRegion.World.Background;
             _shader.SetUVector("fogColor", new Vector4(background.R, background.G, background.B, 1));
-            
+
             _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
-            
+
             foreach (var face in BlockFaceMethods.All) {
-                var vao = _vaos[(int) face];
                 var mapper = _mappers[(int) face];
+                var vao = _vaos[(int) face];
                 vao.Bind();
                 mapper.OnBackground = false;
                 mapper.FlushQueue();

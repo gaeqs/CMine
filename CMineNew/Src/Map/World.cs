@@ -7,6 +7,7 @@ using CMine.DataStructure.List;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
+using CMineNew.Light;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
@@ -26,6 +27,8 @@ namespace CMineNew.Map{
 
         private readonly PhysicCamera _camera;
         private readonly WorldGBuffer _gBuffer;
+
+        private readonly LightManager _lightManager;
 
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
@@ -47,10 +50,12 @@ namespace CMineNew.Map{
         public World(string name) : base(name) {
             _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
             Directory.CreateDirectory(_folder);
-            Background = Color4.Magenta;
+            Background = Color4.Aqua;
 
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
             _gBuffer = new WorldGBuffer(CMine.Window);
+
+            _lightManager = new LightManager();
 
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
             _regions2d = new Dictionary<Vector2i, World2dRegion>();
@@ -73,6 +78,10 @@ namespace CMineNew.Map{
             _asyncChunkGenerator.StartThread();
 
             _asyncChunkGenerator.GenerateChunkArea = true;
+
+            var vec = new Vector3(0.5f, 0.5f, 0.5f);
+            _lightManager.DirectionalLights.Add(new DirectionalLight(new Vector3(-1, -1, 0), 
+                vec, vec, vec));
         }
 
         public string Folder => _folder;
@@ -210,7 +219,6 @@ namespace CMineNew.Map{
             region.CalculateBiomes();
             region.CalculateHeights();
             region.CalculateInterpolatedHeightsAndColors();
-            Console.WriteLine("ADDING "+regionPosition);
             _regions2d.Add(regionPosition, region);
             return region;
         }
@@ -269,9 +277,11 @@ namespace CMineNew.Map{
             }
 
             DrawSelectedBlock();
+            
+            _gBuffer.DrawLights(_lightManager, _camera.Position);
 
             //Draws GBuffer squad.
-            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 1f, _player.EyesOnWater);
+            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 0.2f, _player.EyesOnWater);
 
             //Transfers depth buffer to main FBO.
             _gBuffer.TransferDepthBufferToMainFbo();
@@ -314,15 +324,9 @@ namespace CMineNew.Map{
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:
-                    var snapshot = new BlockSnapshotStone();
-                    var now = DateTime.Now.Ticks;
-                    for (var x = -100; x < 100; x++) {
-                        for (var z = -100; z < 100; z++) {
-                            SetBlock(snapshot, new Vector3i(_player.Position) + new Vector3i(x, -2, z));
-                        }
-                    }
-
-                    Console.WriteLine("Filled in " + (DateTime.Now.Ticks - now) / CMine.TicksPerSecondF + " seconds");
+                    _lightManager.PointLights.Add(new PointLight(_player.Position + new Vector3(0, _player.EyesHeight, 0),
+                        new Vector3(1, 1, 1), new Vector3(1, 1, 1),
+                        new Vector3(1, 1, 1), 1, 0.5f, 0.3f));
                     break;
                 case Key.L:
                     lock (_regionsLock) {
@@ -330,7 +334,6 @@ namespace CMineNew.Map{
                             region.Save();
                         }
                     }
-
                     break;
             }
         }

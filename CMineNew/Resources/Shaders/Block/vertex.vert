@@ -25,7 +25,5 @@ void main () {
     vec2 size = max - min;
     
     fragTexCoord = min + texturePosition * size;
-    
-    //fragTexCoord = vec2(texturePosition.x > 0 ? textureArea.x : textureArea.z, texturePosition.y > 0 ? textureArea.w : textureArea.y);
     fragColorFilter = blockColorFilter;
 }

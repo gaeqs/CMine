@@ -137,7 +137,15 @@ namespace CMineNew.Render.Object{
             SetUInt("gDiffuse", 1);
             SetUInt("gSpecular", 2);
             SetUInt("gPosition", 3);
-            SetUInt("gNormal", 4);
+            SetUInt("gAmbientBrightness", 4);
+            SetUInt("gDiffuseBrightness", 5);
+            SetUInt("gSpecularBrightness", 6);
+        }
+
+        public void SetupForLight() {
+            Use();
+            SetUInt("gPosition", 0);
+            SetUInt("gNormal", 1);
         }
     }
 }

@@ -206,6 +206,102 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
+        ///struct DirectionalLight {
+        ///    vec3 direction;
+        ///    vec3 ambientColor;
+        ///    vec3 diffuseColor;
+        ///    vec3 specularColor;
+        ///};
+        ///
+        ///in vec2 fragTexCoords;
+        ///
+        ///layout (location = 5) out vec3 gAmbientBrightness;
+        ///layout (location = 6) out vec3 gDiffuseBrightness;
+        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///
+        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gNormal;
+        ///
+        ///uniform vec3 cameraPosition;
+        ///uniform DirectionalLight light;
+        ///
+        ///void main() {
+        ///    vec3 position = texture(gPosition,  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string directional_light_fragment {
+            get {
+                return ResourceManager.GetString("directional_light_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///struct FlashLight {
+        ///    vec3 position;
+        ///    vec3 direction;
+        ///    vec3 ambientColor;
+        ///    vec3 diffuseColor;
+        ///    vec3 specularColor;
+        ///
+        ///    float constantAttenuation;
+        ///    float linearAttenuation;
+        ///    float quadraticAttenuation;
+        ///
+        ///    float cutOff;
+        ///    float outerCutOff;
+        ///};
+        ///
+        ///
+        ///in vec2 fragTexCoords;
+        ///
+        ///layout (location = 5) out vec3 gAmbientBrightness;
+        ///layout (location = 6) out vec3 gDiffuseBrightness;
+        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///
+        ///uniform sampler2D gPo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string flash_light_fragment {
+            get {
+                return ResourceManager.GetString("flash_light_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///struct PointLight {
+        ///    vec3 position;
+        ///    vec3 ambientColor;
+        ///    vec3 diffuseColor;
+        ///    vec3 specularColor;
+        ///
+        ///    float constantAttenuation;
+        ///    float linearAttenuation;
+        ///    float quadraticAttenuation;
+        ///};
+        ///
+        ///
+        ///in vec2 fragTexCoords;
+        ///
+        ///layout (location = 5) out vec3 gAmbientBrightness;
+        ///layout (location = 6) out vec3 gDiffuseBrightness;
+        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///
+        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gNormal;
+        ///
+        ///uniform vec3 cameraPosition [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string point_light_fragment {
+            get {
+                return ResourceManager.GetString("point_light_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
         ///in vec3 fragPos;
         ///in vec2 fragTexCoord;
         ///

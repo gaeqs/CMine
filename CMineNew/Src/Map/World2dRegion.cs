@@ -77,10 +77,11 @@ namespace CMineNew.Map{
 
         private void Interpolate(World2dRegion[,] regions, Vector2i position, Vector2i local, out int height,
             out Color4 grassColor) {
+            const int radius = 5;
             height = 0;
             var gColor = Vector3.Zero;
-            for (var x = -2; x < 3; x++) {
-                for (var z = -2; z < 3; z++) {
+            for (var x = -radius; x <= radius; x++) {
+                for (var z = -radius; z <= radius; z++) {
                     var rx = 1;
                     var rz = 1;
                     var relative = position + new Vector2i(x, z);
@@ -119,8 +120,8 @@ namespace CMineNew.Map{
                 }
             }
 
-            height /= 25;
-            gColor /= 25;
+            height /= radius * radius * 4;
+            gColor /= radius * radius * 4;
             grassColor = new Color4(gColor.X, gColor.Y, gColor.Z, 1);
         }
 

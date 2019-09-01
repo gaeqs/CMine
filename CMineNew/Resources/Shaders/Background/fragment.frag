@@ -13,5 +13,5 @@ void main() {
     gDiffuse = vec4(0);
     gSpecular = vec4(0);
     gPosition = vec3(0);
-    gNormal = vec4(0);
+    gNormal = vec4(0); // normal = Zero represents that the pixel is from the background.
 }

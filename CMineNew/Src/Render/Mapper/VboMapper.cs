@@ -60,6 +60,7 @@ namespace CMineNew.Render.Mapper{
 
         public int Amount => _amount;
 
+
         public int Updates => _updates;
 
         public bool OnBackground {
