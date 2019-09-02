@@ -155,7 +155,7 @@ namespace CMineNew.Entities{
         }
 
         public override void Tick(long dif) {
-            //If the entity is in a position where the chunk is not loaded, dont do anything.
+            //If the entity is in a position where the chunk is not loaded, don't do anything.
             if (_world.GetChunk(new Vector3i(_position, true) >> Chunk.WorldPositionShift) == null)
                 return;
 
