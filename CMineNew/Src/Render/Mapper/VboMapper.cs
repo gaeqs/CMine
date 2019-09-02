@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CMine.DataStructure.Queue;
+using CMineNew.DataStructure.Queue;
 using CMineNew.Render.Object;
 using OpenTK.Graphics.OpenGL;
 

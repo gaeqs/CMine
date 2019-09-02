@@ -4,7 +4,7 @@ using System.IO;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace GraphicEngine.Loader{
+namespace CMineNew.Loader{
     public static class ImageLoader{
 
         public static int Load(byte[] bytes, bool nearest = true, bool repeat = true, bool flipY = true) {

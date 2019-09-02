@@ -153,6 +153,66 @@ namespace CMineNew.Resources.Textures {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] sky_box_back {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_back", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sky_box_bottom {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_bottom", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sky_box_front {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_front", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sky_box_left {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_left", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sky_box_right {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_right", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sky_box_top {
+            get {
+                object obj = ResourceManager.GetObject("sky_box_top", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] stone {
             get {
                 object obj = ResourceManager.GetObject("stone", resourceCulture);

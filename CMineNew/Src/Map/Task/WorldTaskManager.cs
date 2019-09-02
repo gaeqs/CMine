@@ -1,5 +1,5 @@
 using System;
-using CMine.DataStructure.List;
+using CMineNew.DataStructure.List;
 
 namespace CMineNew.Map.Task{
     public class WorldTaskManager{

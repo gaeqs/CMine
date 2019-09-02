@@ -1,4 +1,4 @@
-namespace CMine.DataStructure.Queue{
+namespace CMineNew.DataStructure.Queue{
     public class EConcurrentLinkedQueue<T>{
         private volatile Node<T> _first, _last;
         private volatile object _firstLock = new object(), _lastLock = new object();

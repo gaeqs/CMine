@@ -1,19 +1,38 @@
 using System;
-using CMine.Collision;
+using CMineNew.Collision;
 using CMineNew.Map;
 using OpenTK;
 
 namespace CMineNew.Entities{
+    
+    /// <summary>
+    /// Represents a movable object in the world.
+    /// Entities always have a GUID, a world position and a collision box.
+    /// </summary>
     public class Entity{
         protected readonly World _world;
         protected readonly Guid _guid;
         protected Vector3 _position;
-        protected Aabb _collisionBox;
-
+        protected readonly Aabb _collisionBox;
+        
+        /// <summary>
+        /// Creates an entity using a world, a position and a collision box.
+        /// The GUID is generated using the method Guid.NewGuid().
+        /// </summary>
+        /// <param name="world">The world.</param>
+        /// <param name="position">The position.</param>
+        /// <param name="collisionBox">The collision box.</param>
         public Entity(World world, Vector3 position, Aabb collisionBox)
             : this(Guid.NewGuid(), world, position, collisionBox) {
         }
-
+        
+        /// <summary>
+        /// Creates an entity using a GUID, a world, a position and a collision box.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="position">The position.</param>
+        /// <param name="collisionBox">The collision box.</param>
         public Entity(Guid guid, World world, Vector3 position, Aabb collisionBox) {
             _world = world;
             _guid = guid;
@@ -21,10 +40,20 @@ namespace CMineNew.Entities{
             _collisionBox = collisionBox;
         }
 
+        /// <summary>
+        /// The entity's world.
+        /// </summary>
         public World World => _world;
 
+        /// <summary>
+        /// The entity's GUID.
+        /// </summary>
         public Guid Guid => _guid;
 
+        /// <summary>
+        /// The entity's position.
+        /// When set the method UpdatePosition(Vector3i) is called.
+        /// </summary>
         public Vector3 Position {
             get => _position;
             set {
@@ -34,11 +63,24 @@ namespace CMineNew.Entities{
             }
         }
 
+        /// <summary>
+        /// The entity's collision box.
+        /// </summary>
         public Aabb CollisionBox => _collisionBox;
 
+        /// <summary>
+        /// A virtual method that is called when the position of the entity is called.
+        /// This method is meant to be overriden by special entities such as players.
+        /// </summary>
+        /// <param name="old"></param>
         public virtual void UpdatePosition(Vector3 old) {
         }
 
+        /// <summary>
+        /// A virtual method that is called every game loop.
+        /// This method is meant to be overriden by other entities.
+        /// </summary>
+        /// <param name="dif"></param>
         public virtual void Tick(long dif) {
         }
 

@@ -5,9 +5,12 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using CMineNew.Geometry;
+using CMineNew.Util;
 
 namespace CMineNew.Map{
     public class ChunkRegion{
+        public const string RegionsFolder = "regions";
+
         public const int RegionChunkLength = 4;
         public const int RegionChunkSize = RegionChunkLength * RegionChunkLength;
         public const int RegionChunkVolume = RegionChunkLength * RegionChunkLength * RegionChunkLength;
@@ -85,8 +88,9 @@ namespace CMineNew.Map{
 
         public void LoadIfDeleted() {
             if (!_deleted) return;
-            var file = _world.Folder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + "-" +
-                       _position.Z + ".reg";
+            var regionsFolder = _world.Folder + Path.DirectorySeparatorChar + RegionsFolder;
+            FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
+            var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + "-" + _position.Z + ".reg";
             if (!File.Exists(file)) return;
 
             var pos = _position << ChunkPositionShift;
@@ -112,8 +116,9 @@ namespace CMineNew.Map{
 
         public void Save() {
             const uint version = 0;
-            var file = _world.Folder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + "-" +
-                       _position.Z + ".reg";
+            var regionsFolder = _world.Folder + Path.DirectorySeparatorChar + RegionsFolder;
+            FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
+            var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + "-" + _position.Z + ".reg";
 
             var stream = new DeflateStream(File.Open(file, FileMode.OpenOrCreate, FileAccess.Write),
                 CompressionMode.Compress);
@@ -122,9 +127,9 @@ namespace CMineNew.Map{
 
             ForEachRegionPosition((x, y, z) => {
                 var chunk = _savedChunks[x, y, z];
-                var save = chunk != null &&  !chunk.Natural;
+                var save = chunk != null && !chunk.Natural;
                 stream.WriteByte(save ? (byte) 1 : (byte) 0);
-                if(!save) return;
+                if (!save) return;
                 chunk.Save(stream, formatter);
             });
 

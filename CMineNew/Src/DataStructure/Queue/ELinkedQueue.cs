@@ -1,6 +1,6 @@
-using CMine.DataStructure.List;
+using CMineNew.DataStructure.List;
 
-namespace CMine.DataStructure.Queue{
+namespace CMineNew.DataStructure.Queue{
     public class ELinkedQueue<TE> : ELinkedList<TE>, IEQueue<TE>{
         public void Push(TE elem) {
             Add(elem);

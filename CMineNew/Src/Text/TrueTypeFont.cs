@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using CMineNew.Geometry;
-using GraphicEngine.Loader;
+using CMineNew.Loader;
 
 namespace CMineNew.Text{
     public class TrueTypeFont{

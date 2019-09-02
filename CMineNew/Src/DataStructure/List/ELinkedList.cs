@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CMine.DataStructure.List{
+namespace CMineNew.DataStructure.List{
     public class ELinkedList<TE> : IEList<TE>{
         protected Node<TE> _first, _last;
         protected int _size;

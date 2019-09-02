@@ -137,9 +137,11 @@ namespace CMineNew.Render.Object{
             SetUInt("gDiffuse", 1);
             SetUInt("gSpecular", 2);
             SetUInt("gPosition", 3);
-            SetUInt("gAmbientBrightness", 4);
-            SetUInt("gDiffuseBrightness", 5);
-            SetUInt("gSpecularBrightness", 6);
+            SetUInt("gNormal", 4);
+            SetUInt("gAmbientBrightness", 5);
+            SetUInt("gDiffuseBrightness", 6);
+            SetUInt("gSpecularBrightness", 7);
+            SetUInt("skyBox", 8);
         }
 
         public void SetupForLight() {

@@ -165,6 +165,7 @@
     <Compile Include="Src\Map\World.cs" />
     <Compile Include="Src\Map\World2dRegion.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
+    <Compile Include="Src\Map\WorldRenderData.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
     <Compile Include="Src\RayTrace\Pointer.cs" />
     <Compile Include="Src\Render\Camera.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Src\Render\Object\VertexArrayObject.cs" />
     <Compile Include="Src\Render\PhysicCamera.cs" />
     <Compile Include="Src\Render\Room.cs" />
+    <Compile Include="Src\Render\SkyBox.cs" />
     <Compile Include="Src\Render\Window.cs" />
     <Compile Include="Src\Test\FpsViewer.cs" />
     <Compile Include="Src\Test\PositionViewer.cs" />
@@ -187,6 +189,7 @@
     <Compile Include="Src\Text\StaticText.cs" />
     <Compile Include="Src\Text\StaticTextRenderer.cs" />
     <Compile Include="Src\Text\TrueTypeFont.cs" />
+    <Compile Include="Src\Util\FolderUtils.cs" />
     <Compile Include="Src\Util\ForceUtils.cs" />
     <Compile Include="Src\Util\ModelLinesUtil.cs" />
   </ItemGroup>
@@ -218,6 +221,8 @@
     <Content Include="Resources\Shaders\Pointer\vertex.vert" />
     <Content Include="Resources\Shaders\PostRender\fragment.frag" />
     <Content Include="Resources\Shaders\PostRender\vertex.vert" />
+    <Content Include="Resources\Shaders\SkyBox\fragment.frag" />
+    <Content Include="Resources\Shaders\SkyBox\vertex.vert" />
     <Content Include="Resources\Shaders\Slab\fragment.frag" />
     <Content Include="Resources\Shaders\Slab\vertex.vert" />
     <Content Include="Resources\Shaders\StaticText\fragment.frag" />
@@ -233,6 +238,12 @@
     <Content Include="Resources\Textures\oak_log_top.png" />
     <Content Include="Resources\Textures\pointer.png" />
     <Content Include="Resources\Textures\sand.png" />
+    <Content Include="Resources\Textures\SkyBox\back.png" />
+    <Content Include="Resources\Textures\SkyBox\bottom.png" />
+    <Content Include="Resources\Textures\SkyBox\front.png" />
+    <Content Include="Resources\Textures\SkyBox\left.png" />
+    <Content Include="Resources\Textures\SkyBox\right.png" />
+    <Content Include="Resources\Textures\SkyBox\top.png" />
     <Content Include="Resources\Textures\stone.png" />
     <Content Include="Resources\Textures\tall_grass.png" />
     <Content Include="Resources\Textures\water.png" />

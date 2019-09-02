@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
-using CMine.DataStructure.List;
+using CMineNew.DataStructure.List;
 
-namespace CMine.DataStructure.Queue{
+namespace CMineNew.DataStructure.Queue{
     public class EDynamicPriorityQueue<T> : ELinkedList<T>, IEQueue<T>{
         private Comparer<T> _comparer;
 
@@ -18,7 +17,7 @@ namespace CMine.DataStructure.Queue{
 
         public T Pop() {
             var current = GetBestNode(out var previous);
-            if(current == null) throw new Exception("Queue is empty.");
+            if(current == null) throw new System.Exception("Queue is empty.");
             if (previous == null)
                 return RemoveFirst();
             
@@ -39,13 +38,12 @@ namespace CMine.DataStructure.Queue{
         }
 
         private Node<T> GetBestNode(out Node<T> bestPrevious) {
-            Node<T> previous = null;
             var current = _first;
             bestPrevious = null;
             var best = _first;
 
             while (current._next != null) {
-                previous = current;
+                var previous = current;
                 current = current._next;
                 if (_comparer.Compare(best._value, current._value) < 0) continue;
                 best = current;

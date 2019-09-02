@@ -1,5 +1,6 @@
 using System;
 using CMineNew.Light;
+using CMineNew.Render;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
@@ -113,8 +114,7 @@ namespace CMineNew.Map{
             });
         }
 
-        public void Draw(Vector3 cameraPosition, Vector3 ambientColor, Color4 backgroundColor,
-            float ambientStrength, bool waterShader) {
+        public void Draw(Vector3 cameraPosition, Vector3 ambientColor, float ambientStrength, bool waterShader, SkyBox skyBox) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
             GL.DepthMask(false);
@@ -130,8 +130,6 @@ namespace CMineNew.Map{
             _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
             _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
             _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
-            _postRenderShader.SetUVector("fogColor",
-                new Vector4(backgroundColor.R, backgroundColor.G, backgroundColor.B, 1));
 
 
             GL.ActiveTexture(TextureUnit.Texture0);
@@ -143,11 +141,15 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture3);
             GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
             GL.ActiveTexture(TextureUnit.Texture4);
-            GL.BindTexture(TextureTarget.Texture2D, _ambientBrightness);
+            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
             GL.ActiveTexture(TextureUnit.Texture5);
-            GL.BindTexture(TextureTarget.Texture2D, _diffuseBrightness);
+            GL.BindTexture(TextureTarget.Texture2D, _ambientBrightness);
             GL.ActiveTexture(TextureUnit.Texture6);
+            GL.BindTexture(TextureTarget.Texture2D, _diffuseBrightness);
+            GL.ActiveTexture(TextureUnit.Texture7);
             GL.BindTexture(TextureTarget.Texture2D, _specularBrightness);
+            GL.ActiveTexture(TextureUnit.Texture8);
+            GL.BindTexture(TextureTarget.TextureCubeMap, skyBox.Id);
             DrawQuad();
         }
 

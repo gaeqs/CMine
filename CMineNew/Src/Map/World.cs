@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using CMine.DataStructure.List;
+using CMineNew.DataStructure.List;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
@@ -15,6 +15,7 @@ using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
 using CMineNew.RayTrace;
 using CMineNew.Render;
+using CMineNew.Resources.Textures;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
@@ -25,10 +26,7 @@ namespace CMineNew.Map{
     public class World : Room{
         private readonly string _folder;
 
-        private readonly PhysicCamera _camera;
-        private readonly WorldGBuffer _gBuffer;
-
-        private readonly LightManager _lightManager;
+        private readonly WorldRenderData _renderData;
 
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
@@ -52,10 +50,7 @@ namespace CMineNew.Map{
             Directory.CreateDirectory(_folder);
             Background = Color4.Aqua;
 
-            _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
-            _gBuffer = new WorldGBuffer(CMine.Window);
-
-            _lightManager = new LightManager();
+            _renderData = new WorldRenderData();
 
             _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
             _regions2d = new Dictionary<Vector2i, World2dRegion>();
@@ -68,7 +63,7 @@ namespace CMineNew.Map{
 
             _entities = new HashSet<Entity>();
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
-            _player.Controller = new LocalPlayerController(_player, _camera);
+            _player.Controller = new LocalPlayerController(_player, _renderData.Camera);
             _entities.Add(_player);
 
             _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
@@ -78,15 +73,13 @@ namespace CMineNew.Map{
             _asyncChunkGenerator.StartThread();
 
             _asyncChunkGenerator.GenerateChunkArea = true;
-
-            var vec = new Vector3(0.5f, 0.5f, 0.5f);
-            _lightManager.DirectionalLights.Add(new DirectionalLight(new Vector3(-1, -1, 0), 
-                vec, vec, vec));
         }
 
         public string Folder => _folder;
 
-        public PhysicCamera Camera => _camera;
+        public PhysicCamera Camera => _renderData.Camera;
+
+        public WorldRenderData RenderData => _renderData;
 
         public WorldGenerator WorldGenerator => _worldGenerator;
 
@@ -107,8 +100,6 @@ namespace CMineNew.Map{
         public Dictionary<Vector2i, World2dRegion> Regions2d => _regions2d;
 
         public object RegionsLock => _regionsLock;
-
-        public WorldGBuffer GBuffer => _gBuffer;
 
         public HashSet<Entity> Entities => _entities;
 
@@ -168,13 +159,9 @@ namespace CMineNew.Map{
             }
 
             var chunk = region.GetChunkFromChunkPosition(chunkPosition);
-            if (chunk == null) {
-                chunk = new Chunk(region, chunkPosition);
-                region.SetChunk(chunk, chunkPosition - (regionPosition << 2));
-                //TODO ASYNC CHUNK GENERATOR
-            }
-
-            return chunk.SetBlockFromWorldPosition(snapshot, position, canBeReplaced);
+            if (chunk != null) return chunk.SetBlockFromWorldPosition(snapshot, position, canBeReplaced);
+            _unloadedChunkGenerationManager.AddBlock(position, snapshot, true);
+            return null;
         }
 
         public Chunk CreateChunk(Vector3i position) {
@@ -245,20 +232,17 @@ namespace CMineNew.Map{
                 staticText.Tick(delay, this);
             }
 
-            _camera.ToPosition = _player.Position + new Vector3(0, _player.EyesHeight, 0);
-            _camera.ToRotation = _player.HeadRotation;
-            _camera.Tick(delay);
+            _renderData.CameraTick(_player, delay);
         }
 
         public override void Draw() {
             //Bind GBuffer and draw background.
-            _gBuffer.Bind();
+            _renderData.BindGBuffer();
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.DepthMask(true);
-            GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);
-            _gBuffer.DrawBackground(_background);
+            GL.Disable(EnableCap.DepthTest);
 
             //Starts GBuffer drawing.
 
@@ -267,7 +251,7 @@ namespace CMineNew.Map{
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
             lock (_regionsLock) {
                 foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
-                    if (_camera.IsVisible(region)) {
+                    if (_renderData.Camera.IsVisible(region)) {
                         region.Render.Draw();
                     }
                     else {
@@ -277,15 +261,19 @@ namespace CMineNew.Map{
             }
 
             DrawSelectedBlock();
-            
+
+            //Draws background
+            GL.DepthFunc(DepthFunction.Lequal);
+            _renderData.DrawSkyBox();
+            GL.DepthFunc(DepthFunction.Less);
+
             //Transfers depth buffer to main FBO.
-            _gBuffer.TransferDepthBufferToMainFbo();
-            
-            _gBuffer.DrawLights(_lightManager, _camera.Position);
+            _renderData.TransferDepthBufferToMainFbo();
+
+            _renderData.DrawLights();
 
             //Draws GBuffer quad.
-            _gBuffer.Draw(_camera.Position, Vector3.One, _background, 0.2f, _player.EyesOnWater);
-            
+            _renderData.DrawGBuffer(_player.EyesOnWater);
 
             //Draws objects in main FBO.
             GL.Enable(EnableCap.DepthTest);
@@ -309,12 +297,12 @@ namespace CMineNew.Map{
                 staticText.Draw();
             }
 
-            Pointer.Draw(_camera);
+            _renderData.DrawPointer();
         }
 
         private void DrawSelectedBlock() {
             var tracer = _player.BlockRayTracer;
-            tracer.Result?.BlockModel.DrawLines(_camera, tracer.Result);
+            _renderData.DrawSelectedBlock(tracer.Result);
         }
 
         public override void KeyPush(KeyboardKeyEventArgs args) {
@@ -326,7 +314,8 @@ namespace CMineNew.Map{
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:
-                    _lightManager.PointLights.Add(new PointLight(_player.Position + new Vector3(0, _player.EyesHeight, 0),
+                    _renderData.LightManager.PointLights.Add(new PointLight(
+                        _player.Position + new Vector3(0, _player.EyesHeight, 0),
                         new Vector3(1, 1, 1), new Vector3(1, 1, 1),
                         new Vector3(1, 1, 1), 1, 0.5f, 0.3f));
                     break;
@@ -336,6 +325,7 @@ namespace CMineNew.Map{
                             region.Save();
                         }
                     }
+
                     break;
             }
         }

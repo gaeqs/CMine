@@ -7,23 +7,31 @@ using OpenTK;
 using OpenTK.Input;
 
 namespace CMineNew.Entities.Controller{
+    
+    /// <summary>
+    /// Represents a PlayerControlled that translates mouse and keyboard inputs intro player's actions.
+    /// </summary>
     public class LocalPlayerController : PlayerController{
-        private const float RotationVelocity = 180;
 
         private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
 
-        private OakTreeGenerator _treeGenerator;
-
+        /// <summary>
+        /// Creates the controller.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        /// <param name="camera">The world's camera.</param>
         public LocalPlayerController(Player player, Camera camera) : base(player) {
             _player = player;
             _camera = camera;
-            _treeGenerator = new OakTreeGenerator(player.World.WorldGenerator.Seed);
         }
 
         public override void Tick(long dif) {
-            HandleMouseMove();
+            //Handle mouse movement.
+            HandleMouseMovement();
+            
+            //Calculates the movement's direction.
             var direction = Vector3.Zero;
             if (_w && !_s) {
                 var add = _camera.LookAt * new Vector3(1, 0, 1);
@@ -40,16 +48,13 @@ namespace CMineNew.Entities.Controller{
             if (_d && !_a) direction -= _camera.U;
             if (_a && !_d) direction += _camera.U;
 
+            //Moves the player.
             _player.Move(direction, _control);
 
+            //If space is pressed, try to jump.
             if (_space) {
                 _player.ManageJump();
             }
-        }
-
-        private bool IsBelowBlockPassable() {
-            var block = _player.World.GetBlock(new Vector3i(_player.Position, true) + new Vector3i(0, -1, 0));
-            return block.Passable;
         }
 
         public override void HandleKeyPush(KeyboardKeyEventArgs eventArgs) {
@@ -99,6 +104,7 @@ namespace CMineNew.Entities.Controller{
         }
 
         public override void HandleMousePush(MouseButtonEventArgs args) {
+            //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
                 var matInstance = new BlockSnapshotSand();
                 if (_player.BlockRayTracer.Result == null) return;
@@ -115,17 +121,16 @@ namespace CMineNew.Entities.Controller{
                 _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
             }
             else if (args.Button == MouseButton.Middle) {
-                if (_player.BlockRayTracer.Result == null) return;
-                var result = _player.BlockRayTracer.Result;
-                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
-                _treeGenerator.TryToGenerate(position, _player.World);
             }
         }
 
         public override void HandleMouseRelease(MouseButtonEventArgs args) {
         }
 
-        public void HandleMouseMove() {
+        /// <summary>
+        /// Handles the mouse movement.
+        /// </summary>
+        public void HandleMouseMovement() {
             GameWindow window = CMine.Window;
             if (window.Focused) {
                 var deltaX = Mouse.GetCursorState().X - (window.X + window.Width / 2);
@@ -139,6 +144,8 @@ namespace CMineNew.Entities.Controller{
                 if (rotation.X > Camera.ExtremePitch) rotation.X = Camera.ExtremePitch;
                 else if (rotation.X < -Camera.ExtremePitch) rotation.X = -Camera.ExtremePitch;
                 _player.HeadRotation = rotation;
+                
+                //Moves the cursor to the center of the window.
                 Mouse.SetPosition(window.X + window.Width / 2, window.Y + window.Height / 2);
             }
         }

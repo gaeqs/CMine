@@ -71,10 +71,10 @@ namespace CMineNew.Map.BlockData.Render{
             _shader.SetUFloat("viewDistanceSquared", min * min);
             _shader.SetUFloat("viewDistanceOffsetSquared", max * max);
 
-            var background = _chunkRegion.World.Background;
-            _shader.SetUVector("fogColor", new Vector4(background.R, background.G, background.B, 1));
-
             _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
+            
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
 
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
@@ -102,6 +102,8 @@ namespace CMineNew.Map.BlockData.Render{
 
         private void Generate() {
             _shader = ShaderManager.GetOrCreateShader("water_block", Shaders.water_vertex, Shaders.water_fragment);
+            _shader.Use();
+            _shader.SetUInt("skyBox", 1);
             foreach (var face in BlockFaceMethods.All) {
                 var vao = BlockFaceVertices.CreateVao(face);
                 vao.Bind();

@@ -1,9 +1,9 @@
 using System;
+using CMineNew.Loader;
 using CMineNew.Render;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using CMineNew.Resources.Textures;
-using GraphicEngine.Loader;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.RayTrace{

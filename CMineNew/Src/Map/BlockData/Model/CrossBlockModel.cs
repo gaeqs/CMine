@@ -1,5 +1,5 @@
 using System;
-using CMine.Collision;
+using CMineNew.Collision;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Render;
 using CMineNew.Render;

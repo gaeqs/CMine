@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using CMineNew.Geometry;
+using CMineNew.Loader;
 using CMineNew.Resources.Textures;
-using GraphicEngine.Loader;
 
 namespace CMineNew.Texture{
     public class TextureMap{

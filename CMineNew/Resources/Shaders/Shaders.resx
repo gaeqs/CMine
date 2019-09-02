@@ -99,4 +99,12 @@
     <data name="pointer_fragment" type="System.Resources.ResXFileRef">
         <value>Pointer/fragment.frag;System.String</value>
     </data>
+
+    <data name="sky_box_vertex" type="System.Resources.ResXFileRef">
+        <value>SkyBox/vertex.vert;System.String</value>
+    </data>
+
+    <data name="sky_box_fragment" type="System.Resources.ResXFileRef">
+        <value>SkyBox/fragment.frag;System.String</value>
+    </data>
 </root>

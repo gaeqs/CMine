@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
-using CMine.DataStructure.Queue;
+using CMineNew.DataStructure.Queue;
 using CMineNew.Geometry;
 
 namespace CMineNew.Map{

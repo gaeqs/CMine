@@ -18,7 +18,7 @@ namespace CMineNew{
 
         public static readonly string MainFolder =
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-            Path.DirectorySeparatorChar + " CMine";
+            Path.DirectorySeparatorChar + "CMine";
 
         //Temporary constant.
         public const int ChunkRadius = 8;

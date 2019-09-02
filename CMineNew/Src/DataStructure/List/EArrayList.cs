@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CMine.DataStructure.List{
+namespace CMineNew.DataStructure.List{
     public class EArrayList<TE> : IEList<TE>{
         private const int DefaultSize = 10;
 
