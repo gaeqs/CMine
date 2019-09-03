@@ -38,15 +38,16 @@ void main() {
         float specularWeight = normalFull.a;
         vec3 direction = normalize(cameraPosition -  position);
 
-        vec3 lightDirection = normalize(light.position - position);
+        vec3 lightPosition = light.position - position;
+        float lightDistance = length(lightPosition);
+        vec3 lightDirection = lightPosition / lightDistance;
 
         float diffuseStrength = max(dot(normal, lightDirection), 0.0);
 
         vec3 reflectDirection = reflect(-lightDirection, normal);
         float specularStrenth = pow(max(dot(direction, reflectDirection), 0.0), specularWeight);
-
-        float distance    = length(light.position - position);
-        float attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * distance + light.quadraticAttenuation * (distance * distance));
+        
+        float attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * lightDistance + light.quadraticAttenuation * (lightDistance * lightDistance));
 
         gAmbientBrightness = light.ambientColor * attenuation;
         gDiffuseBrightness = light.diffuseColor  * diffuseStrength * attenuation;
