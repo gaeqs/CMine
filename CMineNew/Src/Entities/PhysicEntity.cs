@@ -208,13 +208,13 @@ namespace CMineNew.Entities{
         /// <summary>
         /// Manages the movement of the entity and collisions.
         /// </summary>
-        /// <param name="h">The delay between the last tick and the current one in seconds.</param>
-        /// <param name="delay">The delay between the last tick and the current one in ticks.</param>
+        /// <param name="h">The delay between the last game loop and the current one in seconds.</param>
+        /// <param name="delay">The delay between the last game loop and the current one in ticks.</param>
         protected void ManageMovement(float h, long delay) {
             var to = _velocity * h;
 
-            //Applied the position several times if any of its parameters in their absolute form is bigger than MaxDistance.
-            //This avoids the effect named "tunneling" in blocks.
+            //Applies the position several times if any of its parameters in their absolute form is bigger than MaxDistance.
+            //This avoids the effect named "tunneling" in blocks collisions.
             //(This can be optimized)
             while (Math.Abs(to.X) > 0 || Math.Abs(to.Y) > 0 || Math.Abs(to.Z) > 0) {
                 var movement = Vector3.ComponentMax(Vector3.ComponentMin(to, MaxDistance), -MaxDistance);
@@ -227,7 +227,7 @@ namespace CMineNew.Entities{
         /// <summary>
         /// Gets the blocks that can collide with the entity and manages collisions.
         /// </summary>
-        /// <param name="dif">The delay between the last tick and the current one in ticks.</param>
+        /// <param name="dif">The delay between the last game loop and the current one in ticks.</param>
         protected void ManageCollision(long dif) {
             GetCollisionBlocks(dif);
             ManageBlockCollision();
@@ -236,7 +236,7 @@ namespace CMineNew.Entities{
         /// <summary>
         /// Gets the blocks that can collide the entity.
         /// </summary>
-        /// <param name="dif">The delay between the last tick and the current one in ticks.</param>
+        /// <param name="dif">The delay between the last game loop and the current one in ticks.</param>
         protected void GetCollisionBlocks(long dif) {
             //Min a max positions of blocks that can collide with the entity.
             var mix = (int) Math.Floor(_collisionBox.X + _position.X - 1);
