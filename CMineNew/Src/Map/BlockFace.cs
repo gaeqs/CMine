@@ -59,42 +59,42 @@ namespace CMineNew.Map{
     }
 
     public static class BlockFaceVertices{
-        private static Vector3[] _north = new[] {
+        private static Vector3[] _north = {
             new Vector3(0, 0, 0),
             new Vector3(0, 1, 0),
             new Vector3(1, 1, 0),
             new Vector3(1, 0, 0), new Vector3(0, 0, -1)
         };
 
-        private static Vector3[] _south = new[] {
+        private static Vector3[] _south = {
             new Vector3(0, 0, 1),
             new Vector3(0, 1, 1),
             new Vector3(1, 1, 1),
             new Vector3(1, 0, 1), new Vector3(0, 0, 1)
         };
 
-        private static Vector3[] _west = new[] {
+        private static Vector3[] _west = {
             new Vector3(0, 0, 0),
             new Vector3(0, 1, 0),
             new Vector3(0, 1, 1),
             new Vector3(0, 0, 1), new Vector3(1, 0, 0)
         };
 
-        private static Vector3[] _east = new[] {
+        private static Vector3[] _east = {
             new Vector3(1, 0, 0),
             new Vector3(1, 1, 0),
             new Vector3(1, 1, 1),
             new Vector3(1, 0, 1), new Vector3(-1, 0, 0)
         };
 
-        private static Vector3[] _up = new[] {
+        private static Vector3[] _up = {
             new Vector3(0, 1, 0),
             new Vector3(0, 1, 1),
             new Vector3(1, 1, 1),
             new Vector3(1, 1, 0), new Vector3(0, 1, 0)
         };
 
-        private static Vector3[] _down = new[] {
+        private static Vector3[] _down = {
             new Vector3(0, 0, 0),
             new Vector3(0, 0, 1),
             new Vector3(1, 0, 1),
