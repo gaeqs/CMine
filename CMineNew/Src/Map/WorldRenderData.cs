@@ -56,7 +56,8 @@ namespace CMineNew.Map{
         }
         
         public void DrawLights() {
-            _gBuffer.DrawLights(_lightManager, _camera.Position);
+            _lightManager.Draw(_camera, _gBuffer);
+            //_gBuffer.DrawLights(_lightManager, _camera.Position);
         }
 
         public void DrawGBuffer(bool waterShader) {

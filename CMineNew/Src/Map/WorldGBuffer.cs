@@ -80,18 +80,22 @@ namespace CMineNew.Map{
             DrawQuad();
         }
 
+        public void BindPositionAndNormalTextures() {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
+        }
+
         public void DrawLights(LightManager manager, Vector3 cameraPosition) {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _id);
+            Bind();
             GL.Disable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             _quadVao.Bind();
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, _positionTexture);
-            GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
+            BindPositionAndNormalTextures();
             
             _directionalShader.Use();
             _directionalShader.SetUVector("cameraPosition", cameraPosition);

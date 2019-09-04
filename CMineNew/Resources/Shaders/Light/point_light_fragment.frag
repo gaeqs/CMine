@@ -1,18 +1,8 @@
 #version 400 core
 
-struct PointLight {
-    vec3 position;
-    vec3 ambientColor;
-    vec3 diffuseColor;
-    vec3 specularColor;
-
-    float constantAttenuation;
-    float linearAttenuation;
-    float quadraticAttenuation;
-};
-
-
 in vec2 fragTexCoords;
+in vec3 fragLightPosition, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
+in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
 
 layout (location = 5) out vec3 gAmbientBrightness;
 layout (location = 6) out vec3 gDiffuseBrightness;
@@ -22,7 +12,6 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 
 uniform vec3 cameraPosition;
-uniform PointLight light;
 
 void main() {
     vec4 normalFull = texture(gNormal, fragTexCoords);
@@ -38,7 +27,7 @@ void main() {
         float specularWeight = normalFull.a;
         vec3 direction = normalize(cameraPosition -  position);
 
-        vec3 lightPosition = light.position - position;
+        vec3 lightPosition = fragLightPosition - position;
         float lightDistance = length(lightPosition);
         vec3 lightDirection = lightPosition / lightDistance;
 
@@ -47,10 +36,10 @@ void main() {
         vec3 reflectDirection = reflect(-lightDirection, normal);
         float specularStrenth = pow(max(dot(direction, reflectDirection), 0.0), specularWeight);
         
-        float attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * lightDistance + light.quadraticAttenuation * (lightDistance * lightDistance));
+        float attenuation = 1.0 / (fragConstantAttenuation + fragLinearAttenuation * lightDistance + fragQuadraticAttenuation * (lightDistance * lightDistance));
 
-        gAmbientBrightness = light.ambientColor * attenuation;
-        gDiffuseBrightness = light.diffuseColor  * diffuseStrength * attenuation;
-        gSpecularBrightness = light.specularColor * specularStrenth * attenuation;
+        gAmbientBrightness = fragAmbientColor * attenuation;
+        gDiffuseBrightness = fragDiffuseColor  * diffuseStrength * attenuation;
+        gSpecularBrightness = fragSpecularColor * specularStrenth * attenuation;
     }
 }

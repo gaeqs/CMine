@@ -13,9 +13,7 @@ using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
-using CMineNew.RayTrace;
 using CMineNew.Render;
-using CMineNew.Resources.Textures;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
@@ -314,7 +312,7 @@ namespace CMineNew.Map{
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:
-                    _renderData.LightManager.PointLights.Add(new PointLight(
+                    _renderData.LightManager.AddPointLight(new PointLight(
                         _player.Position + new Vector3(0, _player.EyesHeight, 0),
                         new Vector3(1, 1, 1), new Vector3(1, 1, 1),
                         new Vector3(1, 1, 1), 1, 0.5f, 0.3f));

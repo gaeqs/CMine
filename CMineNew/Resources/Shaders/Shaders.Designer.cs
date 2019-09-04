@@ -207,14 +207,8 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///struct DirectionalLight {
-        ///    vec3 direction;
-        ///    vec3 ambientColor;
-        ///    vec3 diffuseColor;
-        ///    vec3 specularColor;
-        ///};
-        ///
         ///in vec2 fragTexCoords;
+        ///in vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
         ///
         ///layout (location = 5) out vec3 gAmbientBrightness;
         ///layout (location = 6) out vec3 gDiffuseBrightness;
@@ -224,10 +218,12 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gNormal;
         ///
         ///uniform vec3 cameraPosition;
-        ///uniform DirectionalLight light;
         ///
         ///void main() {
-        ///    vec4 normalFull = texture(gNormal,  [rest of string was truncated]&quot;;.
+        ///    vec4 normalFull = texture(gNormal, fragTexCoords);
+        ///    vec3 normal = normalFull.rgb;
+        ///    
+        ///    if(normal.x == [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string directional_light_fragment {
             get {
@@ -238,29 +234,45 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///struct FlashLight {
-        ///    vec3 position;
-        ///    vec3 direction;
-        ///    vec3 ambientColor;
-        ///    vec3 diffuseColor;
-        ///    vec3 specularColor;
+        ///layout (location = 0) in vec2 position;
+        ///layout (location = 1) in vec2 texturePosition;
+        ///layout (location = 2) in vec3 lightDirection;
+        ///layout (location = 3) in vec3 ambientColor;
+        ///layout (location = 4) in vec3 diffuseColor;
+        ///layout (location = 5) in vec3 specularColor;
         ///
-        ///    float constantAttenuation;
-        ///    float linearAttenuation;
-        ///    float quadraticAttenuation;
+        ///out vec2 fragTexCoords;
+        ///out vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
         ///
-        ///    float cutOff;
-        ///    float outerCutOff;
-        ///};
+        ///void main () {
+        ///    gl_Position = vec4(position.xy, 0, 1);
+        ///    fragTexCoords = texturePosition;
+        ///
+        ///    f [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string directional_light_vertex {
+            get {
+                return ResourceManager.GetString("directional_light_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
         ///
         ///
         ///in vec2 fragTexCoords;
+        ///in vec3 fragLightPosition, fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
+        ///in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
+        ///in float fragCutOff, fragOuterCutOff;
         ///
         ///layout (location = 5) out vec3 gAmbientBrightness;
         ///layout (location = 6) out vec3 gDiffuseBrightness;
         ///layout (location = 7) out vec3 gSpecularBrightness;
         ///
-        ///uniform sampler2D gPo [rest of string was truncated]&quot;;.
+        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gNormal;
+        ///
+        ///uniform vec3 camer [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string flash_light_fragment {
             get {
@@ -271,19 +283,30 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///struct PointLight {
-        ///    vec3 position;
-        ///    vec3 ambientColor;
-        ///    vec3 diffuseColor;
-        ///    vec3 specularColor;
-        ///
-        ///    float constantAttenuation;
-        ///    float linearAttenuation;
-        ///    float quadraticAttenuation;
-        ///};
-        ///
+        ///layout (location = 0) in vec2 position;
+        ///layout (location = 1) in vec2 texturePosition;
+        ///layout (location = 2) in vec3 lightPosition;
+        ///layout (location = 3) in vec3 lightDirection;
+        ///layout (location = 4) in vec3 ambientColor;
+        ///layout (location = 5) in vec3 diffuseColor;
+        ///layout (location = 6) in vec3 specularColor;
+        ///layout (location = 7) in float constantAttenuation;
+        ///layout (location = 8) in float linearAttenuation;
+        ///layout (location = 9) in float quadraticAttenuation;
+        ///layout (locatio [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string flash_light_vertex {
+            get {
+                return ResourceManager.GetString("flash_light_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
         ///
         ///in vec2 fragTexCoords;
+        ///in vec3 fragLightPosition, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
+        ///in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
         ///
         ///layout (location = 5) out vec3 gAmbientBrightness;
         ///layout (location = 6) out vec3 gDiffuseBrightness;
@@ -292,11 +315,36 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gPosition;
         ///uniform sampler2D gNormal;
         ///
-        ///uniform vec3 cameraPosition [rest of string was truncated]&quot;;.
+        ///uniform vec3 cameraPosition;
+        ///
+        ///void main() {
+        ///    vec4 normalFull = texture(gN [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string point_light_fragment {
             get {
                 return ResourceManager.GetString("point_light_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec2 position;
+        ///layout (location = 1) in vec2 texturePosition;
+        ///layout (location = 2) in vec3 lightPosition;
+        ///layout (location = 3) in vec3 ambientColor;
+        ///layout (location = 4) in vec3 diffuseColor;
+        ///layout (location = 5) in vec3 specularColor;
+        ///layout (location = 6) in float constantAttenuation;
+        ///layout (location = 7) in float linearAttenuation;
+        ///layout (location = 8) in float quadraticAttenuation;
+        ///
+        ///out vec2 fragTexCoords;
+        ///out vec3 fragLightPosition, fragAmb [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string point_light_vertex {
+            get {
+                return ResourceManager.GetString("point_light_vertex", resourceCulture);
             }
         }
         
@@ -357,18 +405,17 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gDiffuse;
         ///uniform sampler2D gSpecular;
         ///uniform sampler2D gPosition;
+        ///uniform sampler2D gNormal;
         ///uniform sampler2D gAmbientBrightness;
         ///uniform sampler2D gDiffuseBrightness;
         ///uniform sampler2D gSpecularBrightness;
+        ///uniform samplerCube skyBox;
         ///
         ///uniform vec3 cameraPosition;
         ///uniform float ambientStrength;
         ///uniform vec3 ambientColor;
         ///
-        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
-        ///uniform vec4 fogColor;
-        ///
-        ///vec3 calcula [rest of string was truncated]&quot;;.
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSqua [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_fragment {
             get {
@@ -399,9 +446,7 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///in vec3 fragPos, fragNormal;
-        ///in vec2 fragTexCoord;
-        ///in vec4 fragColorFilter;
+        ///in vec3 fragTexCoord;
         ///
         ///layout (location = 0) out vec3 gPosition;
         ///layout (location = 1) out vec4 gNormal;
@@ -409,13 +454,14 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 3) out vec4 gDiffuse;
         ///layout (location = 4) out vec4 gSpecular;
         ///
-        ///uniform sampler2D sampler;
+        ///uniform samplerCube skyBox;
         ///
         ///void main() {
-        ///    vec4 texture = texture(sampler, fragTexCoord);
-        ///    if (texture.w &lt; 0.1) discard;
-        ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        ///    gAmbient = texture(skyBox, fragTexCoord);
+        ///    gDiffuse = vec4(0);
+        ///    gSpecular = vec4(0);
+        ///    gPosition = vec3(0);
+        ///    gNormal = vec4(0); // normal = Zero represents that the pixel is from the backg [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sky_box_fragment {
             get {
@@ -427,20 +473,17 @@ namespace CMineNew.Resources.Shaders {
         ///   Looks up a localized string similar to #version 400 core
         ///
         ///layout (location = 0) in vec3 position;
-        ///layout (location = 1) in vec3 normal;
-        ///layout (location = 2) in vec2 texturePosition;
-        ///layout (location = 3) in vec3 worldPosition;
-        ///layout (location = 4) in vec4 textureArea;
-        ///layout (location = 5) in vec4 blockColorFilter;
         ///
-        ///out vec3 fragPos, fragNormal;
-        ///out vec2 fragTexCoord;
-        ///out vec4 fragColorFilter;
+        ///out vec3 fragTexCoord;
         ///
         ///uniform mat4 viewProjection;
         ///
         ///void main () {
-        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y [rest of string was truncated]&quot;;.
+        ///    gl_Position = viewProjection * vec4(position, 1);
+        ///    gl_Position = gl_Position.xyww;
+        ///    fragTexCoord = position;
+        ///}
+        ///.
         /// </summary>
         internal static string sky_box_vertex {
             get {
@@ -564,15 +607,16 @@ namespace CMineNew.Resources.Shaders {
         ///uniform vec3 cameraPosition;
         ///uniform sampler2D sampler;
         ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
-        ///uniform vec4 fogColor;
+        ///
+        ///uniform samplerCube skyBox;
         ///
         ///void main() {
-        ///    vec4 texture = texture(sampler, fragTexCoords);
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
-        ///        texture = fragColorFilter * texture.r;
+        ///    vec4 ambient = texture(sampler, fragTexCoords);
+        ///    if (ambient.r == ambient.g &amp;&amp; ambient.r == ambient.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
+        ///        ambient = fragColorFilter * ambient.r;
         ///    }
         ///
-        ///    FragColor [rest of string was truncated]&quot;;.
+        ///    Fr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_fragment {
             get {

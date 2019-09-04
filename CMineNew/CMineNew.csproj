@@ -216,7 +216,10 @@
     <Content Include="Resources\Shaders\Block\vertex.vert" />
     <Content Include="Resources\Shaders\Light\directional_light_fragment.frag" />
     <Content Include="Resources\Shaders\Light\flash_light_fragment.frag" />
+    <Content Include="Resources\Shaders\Light\flash_light_vertex.vert" />
     <Content Include="Resources\Shaders\Light\point_light_fragment.frag" />
+    <Content Include="Resources\Shaders\Light\directional_light_vertex.vert" />
+    <Content Include="Resources\Shaders\Light\point_light_vertex.vert" />
     <Content Include="Resources\Shaders\Pointer\fragment.frag" />
     <Content Include="Resources\Shaders\Pointer\vertex.vert" />
     <Content Include="Resources\Shaders\PostRender\fragment.frag" />

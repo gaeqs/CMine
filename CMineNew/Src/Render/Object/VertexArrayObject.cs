@@ -92,6 +92,10 @@ namespace CMineNew.Render.Object{
         public void DrawArrays(int first, int count) {
             GL.DrawArrays(PrimitiveType.Triangles, first, count);
         }
+        
+        public void DrawnArraysInstanced(int first, int count, int amount) {
+            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, count, amount);
+        }
 
         #region private methods
 

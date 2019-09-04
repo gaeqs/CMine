@@ -23,7 +23,7 @@ namespace CMineNew.Render{
             _unitsPerPixel = new Vector2(2f / width, 2f / height);
             VSync = vSync ? VSyncMode.On : VSyncMode.Off;
 
-            //X += 1920;
+            X += 1920;
 
             _room = null;
         }

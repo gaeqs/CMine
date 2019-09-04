@@ -1,22 +1,10 @@
 #version 400 core
 
-struct FlashLight {
-    vec3 position;
-    vec3 direction;
-    vec3 ambientColor;
-    vec3 diffuseColor;
-    vec3 specularColor;
-
-    float constantAttenuation;
-    float linearAttenuation;
-    float quadraticAttenuation;
-
-    float cutOff;
-    float outerCutOff;
-};
-
 
 in vec2 fragTexCoords;
+in vec3 fragLightPosition, fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
+in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
+in float fragCutOff, fragOuterCutOff;
 
 layout (location = 5) out vec3 gAmbientBrightness;
 layout (location = 6) out vec3 gDiffuseBrightness;
@@ -26,7 +14,6 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 
 uniform vec3 cameraPosition;
-uniform FlashLight light;
 
 
 void main() {
@@ -44,24 +31,24 @@ void main() {
         float specularWeight = normalFull.a;
         vec3 direction = normalize(cameraPosition -  position);
 
-        vec3 lightDirection = normalize(light.position - position);
+        vec3 lightDirection = normalize(fragLightPosition - position);
 
         float diff = max(dot(normal, lightDirection), 0.0);
 
         vec3 reflectDir = reflect(-lightDirection, normal);
         float spec = pow(max(dot(direction, reflectDir), 0.0), specularWeight);
 
-        float distance    = length(light.position - position);
-        float attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * distance + light.quadraticAttenuation * (distance * distance));
+        float distance    = length(fragLightPosition - position);
+        float attenuation = 1.0 / (fragConstantAttenuation + fragLinearAttenuation * distance + fragQuadraticAttenuation * (distance * distance));
 
-        float theta = dot(lightDirection, normalize(-light.direction));
-        float epsilon = (light.cutOff - light.outerCutOff);
-        float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+        float theta = dot(lightDirection, normalize(-fragLightDirection));
+        float epsilon = (fragCutOff - fragOuterCutOff);
+        float intensity = clamp((theta - fragOuterCutOff) / epsilon, 0.0, 1.0);
 
         float intensityAttenuation = intensity * attenuation;
 
-        gAmbientBrightness = light.ambientColor * intensityAttenuation;
-        gDiffuseBrightness = light.diffuseColor  * diff * intensityAttenuation;
-        gSpecularBrightness = light.specularColor * spec * intensityAttenuation;
+        gAmbientBrightness = fragAmbientColor * intensityAttenuation;
+        gDiffuseBrightness = fragDiffuseColor  * diff * intensityAttenuation;
+        gSpecularBrightness = fragSpecularColor * spec * intensityAttenuation;
     }
 }
