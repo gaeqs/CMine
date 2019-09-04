@@ -68,5 +68,13 @@ namespace CMineNew.Light{
             shader.SetUVector("light.diffuseColor", _diffuseColor);
             shader.SetUVector("light.specularColor", _specularColor);
         }
+
+        public virtual float[] ToData() {
+            return new[] {_direction.X, _direction.Y, _direction.Z, 
+                _ambientColor.X, _ambientColor.Y, _ambientColor.Z,
+                _diffuseColor.X, _diffuseColor.Y, _diffuseColor.Z,
+                _specularColor.X, _specularColor.Y, _specularColor.Z
+            };
+        }
     }
 }

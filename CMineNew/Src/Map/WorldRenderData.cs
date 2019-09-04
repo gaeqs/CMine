@@ -23,7 +23,7 @@ namespace CMineNew.Map{
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
 
             var vec = new Vector3(0.5f, 0.5f, 0.5f);
-            _lightManager.DirectionalLights.Add(new DirectionalLight(new Vector3(-1, -1, 0),
+            _lightManager.AddDirectionalLight(new DirectionalLight(new Vector3(-1, -1, 0),
                 vec, vec, vec));
         }
 

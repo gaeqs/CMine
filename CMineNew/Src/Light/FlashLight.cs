@@ -173,6 +173,17 @@ namespace CMineNew.Light{
             shader.SetUFloat("light.cutOff", _cutOffCos);
             shader.SetUFloat("light.outerCutOff", _outerCutOffCos);
         }
+        
+        public virtual float[] ToData() {
+            return new[] {_position.X, _position.Y, _position.Z, 
+                _direction.X, _direction.Y, _direction.Z,
+                _ambientColor.X, _ambientColor.Y, _ambientColor.Z,
+                _diffuseColor.X, _diffuseColor.Y, _diffuseColor.Z,
+                _specularColor.X, _specularColor.Y, _specularColor.Z,
+                _constantAttenuation, _linearAttenuation, _quadraticAttenuation,
+                _cutOff, _outerCutOff
+            };
+        }
 
         /// <summary>
         /// Calculates the radius of the light.

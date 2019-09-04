@@ -50,10 +50,12 @@ namespace CMineNew.Map{
             _flashShader.SetupForLight();
             _width = window.Width;
             _height = window.Height;
-            GenerateSimpleVao();
+            _quadVao = GenerateQuadVao();
             GenerateTextures();
             GenerateFrameBuffer();
         }
+
+        public VertexArrayObject QuadVao => _quadVao;
 
         public void Bind() {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _id);
@@ -156,18 +158,19 @@ namespace CMineNew.Map{
 
         #region constructor methods
 
-        private void GenerateSimpleVao() {
-            _quadVao = new VertexArrayObject();
-            _quadVao.Bind();
+        public static VertexArrayObject GenerateQuadVao() {
+            var vao = new VertexArrayObject();
+            vao.Bind();
             var vbo = new VertexBufferObject();
-            _quadVao.LinkBuffer(vbo);
+            vao.LinkBuffer(vbo);
             vbo.Bind(BufferTarget.ArrayBuffer);
             vbo.SetData(BufferTarget.ArrayBuffer, QuadVertices, BufferUsageHint.StaticDraw);
-            var builder = new AttributePointerBuilder(_quadVao, 4, 0);
+            var builder = new AttributePointerBuilder(vao, 4, 0);
             builder.AddPointer(2, false);
             builder.AddPointer(2, false);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
             VertexArrayObject.Unbind();
+            return vao;
         }
 
         private void GenerateTextures() {
