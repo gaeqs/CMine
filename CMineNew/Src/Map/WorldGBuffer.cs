@@ -87,39 +87,6 @@ namespace CMineNew.Map{
             GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
         }
 
-        public void DrawLights(LightManager manager, Vector3 cameraPosition) {
-            Bind();
-            GL.Disable(EnableCap.DepthTest);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
-            GL.BlendEquation(BlendEquationMode.FuncAdd);
-            _quadVao.Bind();
-            BindPositionAndNormalTextures();
-            
-            _directionalShader.Use();
-            _directionalShader.SetUVector("cameraPosition", cameraPosition);
-            manager.DirectionalLights.ForEach(light => {
-                light.ToShader(_directionalShader);
-                DrawQuad();
-            });
-            
-            
-            _pointShader.Use();
-            _pointShader.SetUVector("cameraPosition", cameraPosition);
-            manager.PointLights.ForEach(light => {
-                light.ToShader(_pointShader);
-                DrawQuad();
-            });
-            
-            _flashShader.Use();
-            _flashShader.SetUVector("cameraPosition", cameraPosition);
-            manager.FlashLights.ForEach(light => {
-                light.ToShader(_flashShader);
-                DrawQuad();
-            });
-        }
-
         public void Draw(Vector3 cameraPosition, Vector3 ambientColor, float ambientStrength, bool waterShader, SkyBox skyBox) {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);

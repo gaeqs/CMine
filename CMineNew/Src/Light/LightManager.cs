@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using CMineNew.Map;
 using CMineNew.Render;
@@ -12,11 +11,11 @@ namespace CMineNew.Light{
     /// Represents a manager that stores all lights in a world.
     /// </summary>
     public class LightManager{
-        private readonly VertexArrayObject _directionalVao, _pointVao, _flashVao;
+        private VertexArrayObject _directionalVao, _pointVao, _flashVao;
         private readonly ShaderProgram _directionalShader, _pointShader, _flashShader;
-        private readonly VboMapper<DirectionalLight> _directionalMapper;
-        private readonly VboMapper<PointLight> _pointMapper;
-        private readonly VboMapper<FlashLight> _flashMapper;
+        private VboMapper<DirectionalLight> _directionalMapper;
+        private VboMapper<PointLight> _pointMapper;
+        private VboMapper<FlashLight> _flashMapper;
 
         private readonly List<DirectionalLight> _directionalLights;
         private readonly List<PointLight> _pointLights;
@@ -30,9 +29,7 @@ namespace CMineNew.Light{
             _pointLights = new List<PointLight>();
             _flashLights = new List<FlashLight>();
 
-            _directionalVao = WorldGBuffer.GenerateQuadVao();
-            _pointVao = WorldGBuffer.GenerateQuadVao();
-            _flashVao = WorldGBuffer.GenerateQuadVao();
+
             _directionalShader =
                 new ShaderProgram(Shaders.directional_light_vertex, Shaders.directional_light_fragment);
             _pointShader = new ShaderProgram(Shaders.point_light_vertex, Shaders.point_light_fragment);
@@ -42,71 +39,61 @@ namespace CMineNew.Light{
             _pointShader.SetupForLight();
             _flashShader.SetupForLight();
 
-            var directionVbo = new VertexBufferObject();
-            var pointVbo = new VertexBufferObject();
-            var flashVbo = new VertexBufferObject();
-            _directionalVao.LinkBuffer(directionVbo);
-            _pointVao.LinkBuffer(pointVbo);
-            _flashVao.LinkBuffer(flashVbo);
-            _directionalMapper = new VboMapper<DirectionalLight>(directionVbo, _directionalVao, 12,
-                1000, (o, buffer, newBuffer) => { });
-            _pointMapper = new VboMapper<PointLight>(pointVbo, _pointVao, 15,
-                1000, (o, buffer, newBuffer) => { });
-            _flashMapper = new VboMapper<FlashLight>(flashVbo, _flashVao, 20, 1000,
-                (o, buffer, newBuffer) => { });
-
-            _directionalVao.Bind();
-            directionVbo.Bind(BufferTarget.ArrayBuffer);
-            directionVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 12 * sizeof(float), BufferUsageHint.StreamDraw);
-            var builder = new AttributePointerBuilder(_directionalVao, 12, 2);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-
-            _pointVao.Bind();
-            pointVbo.Bind(BufferTarget.ArrayBuffer);
-            pointVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 15 * sizeof(float), BufferUsageHint.StreamDraw);
-            builder = new AttributePointerBuilder(_pointVao, 15, 2);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-
-            _flashVao.Bind();
-            flashVbo.Bind(BufferTarget.ArrayBuffer);
-            flashVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 20 * sizeof(float), BufferUsageHint.StreamDraw);
-            builder = new AttributePointerBuilder(_flashVao, 20, 2);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
+            ConfigureDirectionalLights();
+            ConfigurePointLights();
+            ConfigureFlashLights();
 
             VertexArrayObject.Unbind();
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 
+
+        /// <summary>
+        /// Adds a directional light.
+        /// </summary>
+        /// <param name="light">The light.</param>
         public void AddDirectionalLight(DirectionalLight light) {
             _directionalLights.Add(light);
             _directionalMapper.AddTask(new VboMapperTask<DirectionalLight>(VboMapperTaskType.Add,
                 light, light.ToData(), 0));
         }
 
+        /// <summary>
+        /// Removes a directional light.
+        /// </summary>
+        /// <param name="light">The light.</param>
+        public void RemoveDirectionalLight(DirectionalLight light) {
+            if (_directionalLights.Remove(light)) {
+                _directionalMapper.AddTask(new VboMapperTask<DirectionalLight>(VboMapperTaskType.Remove,
+                    light, null, 0));
+            }
+        }
+
+        /// <summary>
+        /// Adds a point light.
+        /// </summary>
+        /// <param name="light">The light.</param>
         public void AddPointLight(PointLight light) {
             _pointLights.Add(light);
             _pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Add,
                 light, light.ToData(), 0));
         }
 
+        /// <summary>
+        /// Removes a point light.
+        /// </summary>
+        /// <param name="light">The light.</param>
+        public void RemovePointLight(PointLight light) {
+            if (_pointLights.Remove(light)) {
+                _pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Remove,
+                    light, null, 0));
+            }
+        }
+
+        /// <summary>
+        /// Adds a flash light.
+        /// </summary>
+        /// <param name="light">The light.</param>
         public void AddFlashLight(FlashLight light) {
             _flashLights.Add(light);
             _flashMapper.AddTask(new VboMapperTask<FlashLight>(VboMapperTaskType.Add,
@@ -114,20 +101,39 @@ namespace CMineNew.Light{
         }
 
         /// <summary>
-        /// The mutable list where directional lights are stored.
+        /// Removes a flash light.
+        /// </summary>
+        /// <param name="light">The light.</param>
+        public void RemoveFlashLight(FlashLight light) {
+            if (_flashLights.Remove(light)) {
+                _flashMapper.AddTask(new VboMapperTask<FlashLight>(VboMapperTaskType.Remove,
+                    light, null, 0));
+            }
+        }
+
+        /// <summary>
+        /// The list where directional lights are stored.
+        /// To edit this list, use the methods AddDirectionalLight() and RemoveDirectionalLight();
         /// </summary>
         public List<DirectionalLight> DirectionalLights => _directionalLights;
 
         /// <summary>
-        /// The mutable list where point lights are stored.
+        /// The list where point lights are stored.
+        /// To edit this list, use the methods AddPointLight() and RemovePointLight();
         /// </summary>
         public List<PointLight> PointLights => _pointLights;
 
         /// <summary>
-        /// The mutable list where flash lights are stored.
+        /// The list where flash lights are stored.
+        /// To edit this list, use the methods AddFlashLight() and RemoveFlashLight();
         /// </summary>
         public List<FlashLight> FlashLights => _flashLights;
 
+        /// <summary>
+        /// Draws all lights into the WorldGBuffer.
+        /// </summary>
+        /// <param name="camera">The camera of the world.</param>
+        /// <param name="gBuffer">The GBuffer.</param>
         public void Draw(Camera camera, WorldGBuffer gBuffer) {
             gBuffer.Bind();
             GL.Disable(EnableCap.DepthTest);
@@ -154,6 +160,72 @@ namespace CMineNew.Light{
             _flashShader.SetUVector("cameraPosition", camera.Position);
             _flashMapper.FlushQueue();
             _flashVao.DrawnArraysInstanced(0, 6, _flashMapper.Amount);
+        }
+
+        /// <summary>
+        /// Configures all OpenGL objects necessary to render directional lights.
+        /// </summary>
+        private void ConfigureDirectionalLights() {
+            _directionalVao = WorldGBuffer.GenerateQuadVao();
+            var directionVbo = new VertexBufferObject();
+            _directionalVao.LinkBuffer(directionVbo);
+            _directionalMapper = new VboMapper<DirectionalLight>(directionVbo, _directionalVao, 12,
+                1000, (o, buffer, newBuffer) => { });
+            _directionalVao.Bind();
+            directionVbo.Bind(BufferTarget.ArrayBuffer);
+            directionVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 12 * sizeof(float), BufferUsageHint.StreamDraw);
+            var builder = new AttributePointerBuilder(_directionalVao, 12, 2);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+        }
+
+        /// <summary>
+        /// Configures all OpenGL objects necessary to render point lights.
+        /// </summary>
+        private void ConfigurePointLights() {
+            _pointVao = WorldGBuffer.GenerateQuadVao();
+            var pointVbo = new VertexBufferObject();
+            _pointVao.LinkBuffer(pointVbo);
+            _pointMapper = new VboMapper<PointLight>(pointVbo, _pointVao, 15,
+                1000, (o, buffer, newBuffer) => { });
+            _pointVao.Bind();
+            pointVbo.Bind(BufferTarget.ArrayBuffer);
+            pointVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 15 * sizeof(float), BufferUsageHint.StreamDraw);
+            var builder = new AttributePointerBuilder(_pointVao, 15, 2);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
+        }
+
+        /// <summary>
+        /// Configures all OpenGL objects necessary to render flash lights.
+        /// </summary>
+        private void ConfigureFlashLights() {
+            _flashVao = WorldGBuffer.GenerateQuadVao();
+            var flashVbo = new VertexBufferObject();
+            _flashVao.LinkBuffer(flashVbo);
+            _flashMapper = new VboMapper<FlashLight>(flashVbo, _flashVao, 20, 1000,
+                (o, buffer, newBuffer) => { });
+            _flashVao.Bind();
+            flashVbo.Bind(BufferTarget.ArrayBuffer);
+            flashVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 20 * sizeof(float), BufferUsageHint.StreamDraw);
+            var builder = new AttributePointerBuilder(_flashVao, 20, 2);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(3, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
+            builder.AddPointer(1, true);
         }
     }
 }
