@@ -106,7 +106,7 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMousePush(MouseButtonEventArgs args) {
             //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotSand();
+                var matInstance = new BlockSnapshotBricks();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -121,6 +121,15 @@ namespace CMineNew.Entities.Controller{
                 _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
             }
             else if (args.Button == MouseButton.Middle) {
+                var matInstance = new BlockSnapshotBricksSlab(false);
+                if (_player.BlockRayTracer.Result == null) return;
+                var result = _player.BlockRayTracer.Result;
+                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                if (!matInstance.CanBePlaced(position, _player.World)) return;
+                if (!matInstance.Passable &&
+                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
+                _player.World.SetBlock(matInstance, position);
             }
         }
 

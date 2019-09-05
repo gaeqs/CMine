@@ -21,8 +21,8 @@ void main() {
     }
 
     gAmbient = vec4(texture.rgb, 1);
-    gDiffuse = vec4(0, 0, 0, 1);
-    gSpecular = vec4(0, 0, 0, 1);
+    gDiffuse = vec4(texture.rgb, 1);
+    gSpecular = vec4(texture.rgb, 1);
     gPosition = fragPos;
 
     //W = Specular Weight
