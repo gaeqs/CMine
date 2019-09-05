@@ -26,7 +26,7 @@ namespace CMineNew.Map.Generator{
                     var wZ = z + blockRegionPosition.Y;
 
                     var biome = region2d.Biomes[wX, wZ];
-                    var height = region2d.InterpolatedHeihts[wX, wZ];
+                    var height = region2d.InterpolatedHeights[wX, wZ];
                     var grassColor = region2d.InterpolatedGrassColors[wX, wZ];
 
                     for (var y = 0; y < 16; y++) {

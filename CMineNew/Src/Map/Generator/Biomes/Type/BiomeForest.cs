@@ -12,7 +12,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         private Random _random;
 
         public BiomeForest(World world, int seed)
-            : base(BiomeTemperature.Normal, 62, 70, Color4.Green, world, seed) {
+            : base("default:forest", BiomeTemperature.Normal, 62, 70, Color4.Green, world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 6);
             _heightGenerator.SetScale(1 / 20f);
             _treeGenerator = new OakTreeGenerator(seed);

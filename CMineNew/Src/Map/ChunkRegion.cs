@@ -98,6 +98,7 @@ namespace CMineNew.Map{
             var stream = new DeflateStream(File.Open(file, FileMode.Open, FileAccess.Read), CompressionMode.Decompress);
             var formatter = new BinaryFormatter();
             var version = (uint) formatter.Deserialize(stream);
+            var region2d = _world.GetOrCreate2dRegion(new Vector2i(_position.X, _position.Z));
             ForEachRegionPosition((x, y, z) => {
                 if (stream.ReadByte() == 0) {
                     _savedChunks[x, y, z] = null;
@@ -107,7 +108,7 @@ namespace CMineNew.Map{
                 var chunkPos = pos + new Vector3i(x, y, z);
                 var chunk = new Chunk(this, chunkPos);
                 _savedChunks[x, y, z] = chunk;
-                chunk.Load(stream, formatter, version);
+                chunk.Load(stream, formatter, version, region2d);
             });
 
             stream.Close();

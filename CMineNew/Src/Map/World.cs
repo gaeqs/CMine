@@ -201,9 +201,14 @@ namespace CMineNew.Map{
             }
 
             var region = new World2dRegion(this, regionPosition);
-            region.CalculateBiomes();
-            region.CalculateHeights();
-            region.CalculateInterpolatedHeightsAndColors();
+            if (!region.Load()) {
+                region.CalculateBiomes();
+                region.CalculateHeights();
+                region.CalculateInterpolatedHeightsAndColors();
+            }
+            else {
+                Console.WriteLine("REGION "+regionPosition+" LOADED.");
+            }
             _regions2d.Add(regionPosition, region);
             return region;
         }
@@ -320,6 +325,10 @@ namespace CMineNew.Map{
                 case Key.L:
                     lock (_regionsLock) {
                         foreach (var region in _chunkRegions.Values) {
+                            region.Save();
+                        }
+
+                        foreach (var region in _regions2d.Values) {
                             region.Save();
                         }
                     }

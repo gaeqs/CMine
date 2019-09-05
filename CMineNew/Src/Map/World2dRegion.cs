@@ -1,11 +1,16 @@
 using System;
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.Generator.Biomes;
+using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map{
     public class World2dRegion{
+        public const string World2dRegionFolder = "2dRegions";
         public const int RegionChunkLength = 4;
         public const int RegionChunkSize = RegionChunkLength * RegionChunkLength;
         public const int RegionLength = 64;
@@ -17,7 +22,7 @@ namespace CMineNew.Map{
         private readonly Vector2i _position;
 
         private readonly Biome[,] _biomes;
-        private readonly int[,] _heights, _interpolatedHeihts;
+        private readonly int[,] _heights, _interpolatedHeights;
         private readonly Color4[,] _interpolatedGrassColors;
 
         public World2dRegion(World world, Vector2i position) {
@@ -25,7 +30,7 @@ namespace CMineNew.Map{
             _position = position;
             _biomes = new Biome[RegionLength, RegionLength];
             _heights = new int[RegionLength, RegionLength];
-            _interpolatedHeihts = new int[RegionLength, RegionLength];
+            _interpolatedHeights = new int[RegionLength, RegionLength];
             _interpolatedGrassColors = new Color4[RegionLength, RegionLength];
         }
 
@@ -37,7 +42,7 @@ namespace CMineNew.Map{
 
         public int[,] Heights => _heights;
 
-        public int[,] InterpolatedHeihts => _interpolatedHeihts;
+        public int[,] InterpolatedHeights => _interpolatedHeights;
 
         public Color4[,] InterpolatedGrassColors => _interpolatedGrassColors;
 
@@ -69,10 +74,67 @@ namespace CMineNew.Map{
                     var local = new Vector2i(x, z);
                     var position = worldPosition + local;
                     Interpolate(regions, position, local, out var height, out var grassColor);
-                    _interpolatedHeihts[x, z] = height;
+                    _interpolatedHeights[x, z] = height;
                     _interpolatedGrassColors[x, z] = grassColor;
                 }
             }
+        }
+
+        public void Save() {
+            const uint version = 0;
+            var regionsFolder = _world.Folder + Path.DirectorySeparatorChar + World2dRegionFolder;
+            FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
+            var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + ".reg";
+
+            var stream = new DeflateStream(File.Open(file, FileMode.OpenOrCreate, FileAccess.Write),
+                CompressionMode.Compress);
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(stream, version);
+
+            for (var x = 0; x < RegionLength; x++) {
+                for (var z = 0; z < RegionLength; z++) {
+                    var biome = _biomes[x, z];
+                    var height = _heights[x, z];
+                    var interpolatedHeight = _interpolatedHeights[x, z];
+                    var interpolatedColor = _interpolatedGrassColors[x, z];
+                    formatter.Serialize(stream, biome.Id);
+                    formatter.Serialize(stream, height);
+                    formatter.Serialize(stream, interpolatedHeight);
+                    formatter.Serialize(stream, interpolatedColor.R);
+                    formatter.Serialize(stream, interpolatedColor.G);
+                    formatter.Serialize(stream, interpolatedColor.B);
+                    formatter.Serialize(stream, interpolatedColor.A);
+                }
+            }
+            stream.Close();
+        }
+
+        public bool Load() {
+            var regionsFolder = _world.Folder + Path.DirectorySeparatorChar + World2dRegionFolder;
+            FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
+            var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + ".reg";
+            if (!File.Exists(file)) return false;
+
+            var stream = new DeflateStream(File.Open(file, FileMode.Open, FileAccess.Read), CompressionMode.Decompress);
+            var formatter = new BinaryFormatter();
+            var version = (uint) formatter.Deserialize(stream);
+
+            var grid = _world.WorldGenerator.BiomeGrid;
+            for (var x = 0; x < RegionLength; x++) {
+                for (var z = 0; z < RegionLength; z++) {
+                    _biomes[x, z] = grid.GetBiomeOrDefault((string) formatter.Deserialize(stream));
+                    _heights[x, z] = (int) formatter.Deserialize(stream);
+                    _interpolatedHeights[x, z] = (int) formatter.Deserialize(stream);
+                    _interpolatedGrassColors[x, z] = new Color4(
+                        (float) formatter.Deserialize(stream),
+                        (float) formatter.Deserialize(stream),
+                        (float) formatter.Deserialize(stream),
+                        (float) formatter.Deserialize(stream));
+                }
+            }
+            stream.Close();
+            
+            return true;
         }
 
         private void Interpolate(World2dRegion[,] regions, Vector2i position, Vector2i local, out int height,

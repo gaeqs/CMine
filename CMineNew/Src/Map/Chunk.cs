@@ -215,7 +215,7 @@ namespace CMineNew.Map{
             _saveBuffer = buffer.ToArray();
         }
 
-        public void Load(Stream stream, BinaryFormatter formatter, uint version) {
+        public void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
             var pos = _position << WorldPositionShift;
             ForEachChunkPosition((x, y, z) => {
                 var blockPos = pos + new Vector3i(x, y, z);
@@ -230,7 +230,7 @@ namespace CMineNew.Map{
                         new System.Exception("Couldn't load chunk " + _position + ". Block Id missing.");
                 var block = snapshot.ToBlock(this, blockPos);
                 _blocks[x, y, z] = block;
-                block.Load(stream, formatter, version);
+                block.Load(stream, formatter, version, region2d);
             });
             GenerateSaveBuffer(formatter);
             _modified = false;

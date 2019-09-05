@@ -13,7 +13,8 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         private readonly Random _random;
 
         public BiomePlains(World world, int seed)
-            : base(BiomeTemperature.Normal, 62, 66, new Color4(53, 233, 83, 255), world, seed) {
+            : base("default:plains", BiomeTemperature.Normal, 62, 66,
+                new Color4(53, 233, 83, 255), world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 4);
             _heightGenerator.SetScale(1 / 100f);
 

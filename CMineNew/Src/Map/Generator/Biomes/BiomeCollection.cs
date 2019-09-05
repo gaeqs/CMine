@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 namespace CMineNew.Map.Generator.Biomes{
     public class BiomeCollection{
-        private readonly List<Biomes.Biome> _biomes;
+        private readonly List<Biome> _biomes;
         private readonly List<int> _percentage;
         private int _totalPercentage;
 
+        public List<Biome> Biomes => _biomes;
+
+        public List<int> Percentage => _percentage;
+        
         public BiomeCollection() {
             _biomes = new List<Biomes.Biome>();
             _percentage = new List<int>();

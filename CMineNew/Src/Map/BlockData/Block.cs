@@ -89,7 +89,7 @@ namespace CMineNew.Map.BlockData{
         public virtual void Save(Stream stream, BinaryFormatter formatter) {
         }
 
-        public virtual void Load(Stream stream, BinaryFormatter formatter, uint version) {
+        public virtual void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

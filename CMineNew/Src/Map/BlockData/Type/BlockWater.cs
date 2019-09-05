@@ -125,8 +125,8 @@ namespace CMineNew.Map.BlockData.Type{
             formatter.Serialize(stream, _children.ToArray());
         }
 
-        public override void Load(Stream stream, BinaryFormatter formatter, uint version) {
-            base.Load(stream, formatter, version);
+        public override void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
+            base.Load(stream, formatter, version, region2d);
             _waterLevel = (int) formatter.Deserialize(stream);
             _hasWaterOnTop = (bool) formatter.Deserialize(stream);
             _parent = (Vector3i) formatter.Deserialize(stream);

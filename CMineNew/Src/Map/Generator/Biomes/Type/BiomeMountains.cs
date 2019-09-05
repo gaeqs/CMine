@@ -7,13 +7,13 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeMountains : Biome{
-
         private readonly OctaveGenerator _heightGenerator;
         private readonly OakTreeGenerator _treeGenerator;
         private readonly Random _random;
 
         public BiomeMountains(World world, int seed)
-            : base(BiomeTemperature.Normal, 70, 90, new Color4(27, 162, 113, 255), world, seed) {
+            : base("default:mountains", BiomeTemperature.Normal, 70, 90,
+                new Color4(27, 162, 113, 255), world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 1);
             _heightGenerator.SetScale(1 / 50f);
             _treeGenerator = new OakTreeGenerator(seed);
@@ -29,7 +29,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Color4 grassColor) {
             var y = position.Y;
             if (y > columnHeight) {
-                return y > 60 ? BlockSnapshotAir.Instance : (BlockSnapshot) new BlockSnapshotWater(8); 
+                return y > 60 ? BlockSnapshotAir.Instance : (BlockSnapshot) new BlockSnapshotWater(8);
             }
 
             if (y == columnHeight) {
@@ -42,6 +42,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
                         _world.UnloadedChunkGenerationManager.AddBlock(position + new Vector3i(0, 1, 0),
                             new BlockSnapshotTallGrass(grassColor), false);
                     }
+
                     return new BlockSnapshotGrass(grassColor);
                 }
 

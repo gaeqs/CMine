@@ -89,8 +89,8 @@ namespace CMineNew.Map.BlockData.Sketch{
             formatter.Serialize(stream, _upside);
         }
 
-        public override void Load(Stream stream, BinaryFormatter formatter, uint version) {
-            base.Load(stream, formatter, version);
+        public override void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
+            base.Load(stream, formatter, version, region2d);
             _visibleFaces = (bool[]) formatter.Deserialize(stream);
             _upside = (bool) formatter.Deserialize(stream);
         }

@@ -4,6 +4,7 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes{
     public abstract class Biome{
+        protected readonly string _id;
         protected readonly BiomeTemperature _temperature;
 
         protected readonly int _minHeight;
@@ -14,8 +15,9 @@ namespace CMineNew.Map.Generator.Biomes{
         protected readonly World _world;
         protected readonly int _seed;
 
-        public Biome(BiomeTemperature temperature, int minHeight, int maxHeight, Color4 grassColor, World world,
+        public Biome(string id, BiomeTemperature temperature, int minHeight, int maxHeight, Color4 grassColor, World world,
             int seed) {
+            _id = id;
             _temperature = temperature;
             _minHeight = minHeight;
             _maxHeight = maxHeight;
@@ -23,6 +25,8 @@ namespace CMineNew.Map.Generator.Biomes{
             _world = world;
             _seed = seed;
         }
+
+        public string Id => _id;
 
         public BiomeTemperature Temperature => _temperature;
 
