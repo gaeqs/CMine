@@ -33,7 +33,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             }
 
             if (y == columnHeight) {
-                if (y > 60) {
+                if (y > 59) {
                     if (_random.NextDouble() > 0.9995) {
                         _treeGenerator.TryToGenerate(position + new Vector3i(0, 1, 0), _world);
                     }

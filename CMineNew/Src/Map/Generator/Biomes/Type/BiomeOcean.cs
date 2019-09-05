@@ -28,7 +28,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             }
 
             if (y == columnHeight) {
-                if (y > 60) {
+                if (y > 59) {
                     return new BlockSnapshotGrass(grassColor);
                 }
 

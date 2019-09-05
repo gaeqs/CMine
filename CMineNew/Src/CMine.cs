@@ -36,7 +36,7 @@ namespace CMineNew{
                     Pointer.Load();
                     var world = new World("test");
 
-                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 20));
+                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 10));
                     world.StaticTexts.Add(new PositionViewer(ttf));
 
                     world.StaticTexts.Add(new FpsViewer(ttf));
