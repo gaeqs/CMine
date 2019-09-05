@@ -1,3 +1,5 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using OpenTK;
 using OpenTK.Graphics;
@@ -25,6 +27,14 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
             return false;
+        }
+
+        public override void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
+            //Air blocks are empty, no need to load anything.
+        }
+
+        public override void Save(Stream stream, BinaryFormatter formatter) {
+            //Air blocks are empty, no need to save anything.
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

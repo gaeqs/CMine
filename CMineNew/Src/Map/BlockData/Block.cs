@@ -87,9 +87,18 @@ namespace CMineNew.Map.BlockData{
         }
 
         public virtual void Save(Stream stream, BinaryFormatter formatter) {
+            formatter.Serialize(stream, _textureFilter.R);
+            formatter.Serialize(stream, _textureFilter.G);
+            formatter.Serialize(stream, _textureFilter.B);
+            formatter.Serialize(stream, _textureFilter.A);
         }
 
         public virtual void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
+            var r = (float) formatter.Deserialize(stream);
+            var g = (float) formatter.Deserialize(stream);
+            var b = (float) formatter.Deserialize(stream);
+            var a = (float) formatter.Deserialize(stream);
+            _textureFilter = new Color4(r, g, b, a);
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

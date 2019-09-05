@@ -1,10 +1,11 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotWater : BlockSnapshot{
-
         private int _waterLevel;
 
         public BlockSnapshotWater(int waterLevel) : base("default:water") {
@@ -29,6 +30,14 @@ namespace CMineNew.Map.BlockData.Snapshot{
 
         public override BlockSnapshot Clone() {
             return new BlockSnapshotWater(_waterLevel);
+        }
+
+        public override void Save(Stream stream, BinaryFormatter formatter) {
+            formatter.Serialize(stream, _waterLevel);
+        }
+
+        public override void Load(Stream stream, BinaryFormatter formatter) {
+            _waterLevel = (int) formatter.Deserialize(stream);
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 
@@ -20,5 +22,11 @@ namespace CMineNew.Map.BlockData.Snapshot{
         public abstract bool CanBePlaced(Vector3i position, World world);
 
         public abstract BlockSnapshot Clone();
+
+        public virtual void Save(Stream stream, BinaryFormatter formatter) {
+        }
+
+        public virtual void Load(Stream stream, BinaryFormatter formatter) {
+        }
     }
 }

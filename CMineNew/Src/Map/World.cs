@@ -65,6 +65,7 @@ namespace CMineNew.Map{
             _entities.Add(_player);
 
             _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
+            _unloadedChunkGenerationManager.Load();
             _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
             _asyncChunkTrashCan.StartThread();
             _asyncChunkGenerator = new AsyncChunkGenerator(this);
@@ -331,6 +332,7 @@ namespace CMineNew.Map{
                         foreach (var region in _regions2d.Values) {
                             region.Save();
                         }
+                        _unloadedChunkGenerationManager.Save();
                     }
 
                     break;

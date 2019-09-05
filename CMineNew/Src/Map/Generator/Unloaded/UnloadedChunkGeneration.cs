@@ -1,4 +1,5 @@
-using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Snapshot.Interface;
@@ -34,13 +35,13 @@ namespace CMineNew.Map.Generator.Unloaded{
                 var data = _data[x, y, z];
                 if (data == null) return;
                 if (data.OverrideBlocks) {
-                    chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunk.World, chunkPos + pos, region), pos);
+                    chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunkPos + pos, region), pos);
                     return;
                 }
 
                 var block = chunk.GetBlock(pos);
                 if (block != null && !(block is BlockAir) && !(block is BlockTallGrass)) return;
-                chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunk.World, chunkPos + pos, region), pos);
+                chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunkPos + pos, region), pos);
             });
         }
 
@@ -56,7 +57,7 @@ namespace CMineNew.Map.Generator.Unloaded{
                         empty = false;
                     }
 
-                    snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, chunk.World, blockPos, region2d);
+                    snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
                     return;
                 }
 
@@ -67,12 +68,36 @@ namespace CMineNew.Map.Generator.Unloaded{
                     empty = false;
                 }
 
-                snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, chunk.World, blockPos, region2d);
+                snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
             });
             return empty;
         }
 
-        private BlockSnapshot UpdateSnapshot(BlockSnapshot snapshot, World world, Vector3i position, World2dRegion region) {
+        public void Save(Stream stream, BinaryFormatter formatter) {
+            for (var x = 0; x < Chunk.ChunkLength; x++) {
+                for (var y = 0; y < Chunk.ChunkLength; y++) {
+                    for (var z = 0; z < Chunk.ChunkLength; z++) {
+                        var data = _data[x, y, z];
+                        formatter.Serialize(stream, data == null ? (byte) 0 : (byte) 1);
+                        data?.Save(stream, formatter);
+                    }
+                }
+            }
+        }
+
+        public void Load(Stream stream, BinaryFormatter formatter) {
+            for (var x = 0; x < Chunk.ChunkLength; x++) {
+                for (var y = 0; y < Chunk.ChunkLength; y++) {
+                    for (var z = 0; z < Chunk.ChunkLength; z++) {
+                        if ((byte) formatter.Deserialize(stream) == 0) continue;
+                        _data[x, y, z] = new UnloadedChunkGenerationBlock(stream, formatter);
+                    }
+                }
+            }
+        }
+
+        private BlockSnapshot UpdateSnapshot(BlockSnapshot snapshot, Vector3i position,
+            World2dRegion region) {
             if (!(snapshot is IGrass grass)) return snapshot;
             var pos2d = new Vector2i(position.X, position.Z);
             var relative = pos2d - (region.Position << World2dRegion.WorldPositionShift);

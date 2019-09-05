@@ -1,3 +1,5 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot.Interface;
@@ -30,6 +32,21 @@ namespace CMineNew.Map.BlockData.Snapshot{
         public Color4 GrassColor {
             get => _grassColor;
             set => _grassColor = value;
+        }
+        
+        public override void Save(Stream stream, BinaryFormatter formatter) {
+            formatter.Serialize(stream, _grassColor.R);
+            formatter.Serialize(stream, _grassColor.G);
+            formatter.Serialize(stream, _grassColor.B);
+            formatter.Serialize(stream, _grassColor.A);
+        }
+
+        public override void Load(Stream stream, BinaryFormatter formatter) {
+            var r = (float) formatter.Deserialize(stream);
+            var g = (float) formatter.Deserialize(stream);
+            var b = (float) formatter.Deserialize(stream);
+            var a = (float) formatter.Deserialize(stream);
+            _grassColor = new Color4(r, g, b, a);
         }
     }
 }
