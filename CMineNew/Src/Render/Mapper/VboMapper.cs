@@ -6,7 +6,6 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Mapper{
     public class VboMapper<TKey>{
-    
         private VertexBufferObject _vbo;
         private VertexArrayObject _vao;
 
@@ -80,7 +79,15 @@ namespace CMineNew.Render.Mapper{
                 }
             }
         }
- 
+
+        public int getPointer(TKey key) {
+            if (!_offsets.TryGetValue(key, out var point)) {
+                return -1;
+            }
+
+            return point;
+        }
+
 
         public void AddTask(VboMapperTask<TKey> task) {
             lock (_backgroundLock) {
@@ -192,7 +199,7 @@ namespace CMineNew.Render.Mapper{
                 return;
             }
 
-            _vbo.MoveMapData(_elementSize * (_amount - 1), _elementSize * point, _elementSize);
+            _vbo.MoveMapDataFloat(_elementSize * (_amount - 1), _elementSize * point, _elementSize);
 
             var lastKey = _keys[_amount - 1];
             _offsets[lastKey] = point;

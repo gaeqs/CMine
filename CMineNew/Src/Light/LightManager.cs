@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CMineNew.Map;
 using CMineNew.Render;
@@ -76,7 +77,7 @@ namespace CMineNew.Light{
         public void AddPointLight(PointLight light) {
             _pointLights.Add(light);
             _pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Add,
-                light, light.ToData(), 0));
+                light, light.Data, 0));
         }
 
         /// <summary>
@@ -145,13 +146,26 @@ namespace CMineNew.Light{
             gBuffer.BindPositionAndNormalTextures();
 
             var inverseViewProjection = camera.ViewProjection.Inverted();
-            
+
             _directionalVao.Bind();
             _directionalShader.Use();
             _directionalShader.SetUVector("cameraPosition", camera.Position);
             _directionalShader.SetUMatrix("invertedViewProjection", inverseViewProjection);
             _directionalMapper.FlushQueue();
             _directionalVao.DrawnArraysInstanced(0, 6, _directionalMapper.Amount);
+
+            foreach (var light in _pointLights) {
+                if (camera.IsVisible(light.Position, light.Radius)) {
+                    if (!_pointMapper.ContainsKey(light)) {
+                        _pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Add, light, light.Data, 0));
+                    }
+                }
+                else {
+                    if (_pointMapper.ContainsKey(light)) {
+                        //_pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Remove, light, null, 0));
+                    }
+                }
+            }
 
             _pointVao.Bind();
             _pointShader.Use();
@@ -192,14 +206,16 @@ namespace CMineNew.Light{
         /// Configures all OpenGL objects necessary to render point lights.
         /// </summary>
         private void ConfigurePointLights() {
+            const int structSize = 20;
+            const int structBytes = structSize * 4;
             _pointVao = WorldGBuffer.GenerateQuadVao();
             var uniformBuffer = new VertexBufferObject();
-            uniformBuffer.BindBase(BufferTarget.UniformBuffer, 0);
-            uniformBuffer.SetData(BufferTarget.UniformBuffer, 80 * 200, BufferUsageHint.DynamicDraw);
-            var loc = GL.GetUniformBlockIndex(_pointShader.Id, "LightsBlock");
-            GL.UniformBlockBinding(_pointShader.Id, loc, 0);
-            _pointMapper = new VboMapper<PointLight>(uniformBuffer, _pointVao, 20, 200,
-                (o, buffer, newBuffer) => { }, BufferTarget.UniformBuffer);
+            uniformBuffer.BindBase(BufferTarget.ShaderStorageBuffer, 0);
+            uniformBuffer.SetData(BufferTarget.ShaderStorageBuffer, structBytes * 2000, BufferUsageHint.DynamicDraw);
+            var loc = GL.GetProgramResourceIndex(_pointShader.Id, ProgramInterface.ShaderStorageBlock, "LightsBlock");
+            GL.ShaderStorageBlockBinding(_pointShader.Id, loc, 0);
+            _pointMapper = new VboMapper<PointLight>(uniformBuffer, _pointVao, structSize, 2000,
+                (o, buffer, newBuffer) => { }, BufferTarget.ShaderStorageBuffer);
         }
 
         /// <summary>

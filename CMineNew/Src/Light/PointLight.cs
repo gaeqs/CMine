@@ -13,6 +13,7 @@ namespace CMineNew.Light{
         protected float _constantAttenuation, _linearAttenuation, _quadraticAttenuation;
 
         protected float _radius;
+        protected float[] _data;
 
         /// <summary>
         /// Creates a point light.
@@ -34,6 +35,7 @@ namespace CMineNew.Light{
             _linearAttenuation = linearAttenuation;
             _quadraticAttenuation = quadraticAttenuation;
             CalculateRadius();
+            ToData();
         }
 
         /// <summary>
@@ -41,7 +43,10 @@ namespace CMineNew.Light{
         /// </summary>
         public Vector3 Position {
             get => _position;
-            set => _position = value;
+            set {
+                _position = value;
+                ToData();
+            }
         }
 
         /// <summary>
@@ -49,7 +54,10 @@ namespace CMineNew.Light{
         /// </summary>
         public Vector3 AmbientColor {
             get => _ambientColor;
-            set => _ambientColor = value;
+            set {
+                _ambientColor = value;
+                ToData();
+            }
         }
 
         /// <summary>
@@ -57,7 +65,10 @@ namespace CMineNew.Light{
         /// </summary>
         public Vector3 DiffuseColor {
             get => _diffuseColor;
-            set => _diffuseColor = value;
+            set {
+                _diffuseColor = value;
+                ToData();
+            }
         }
 
         /// <summary>
@@ -65,7 +76,10 @@ namespace CMineNew.Light{
         /// </summary>
         public Vector3 SpecularColor {
             get => _specularColor;
-            set => _specularColor = value;
+            set {
+                _specularColor = value;
+                ToData();
+            }
         }
 
         /// <summary>
@@ -76,6 +90,7 @@ namespace CMineNew.Light{
             set {
                 _constantAttenuation = value;
                 CalculateRadius();
+                ToData();
             }
         }
 
@@ -87,6 +102,7 @@ namespace CMineNew.Light{
             set {
                 _linearAttenuation = value;
                 CalculateRadius();
+                ToData();
             }
         }
 
@@ -98,6 +114,7 @@ namespace CMineNew.Light{
             set {
                 _quadraticAttenuation = value;
                 CalculateRadius();
+                ToData();
             }
         }
 
@@ -105,6 +122,8 @@ namespace CMineNew.Light{
         /// The radius of the light.
         /// </summary>
         public float Radius => _radius;
+
+        public float[] Data => _data;
         
         /// <summary>
         /// Sets the data of the light into a shader's uniforms.
@@ -120,12 +139,12 @@ namespace CMineNew.Light{
             shader.SetUFloat("light.quadraticAttenuation", _quadraticAttenuation);
         }
         
-        public virtual float[] ToData() {
-            return new[] {_position.X, _position.Y, _position.Z, 0, 
+        protected virtual void ToData() {
+            _data = new[] {_position.X, _position.Y, _position.Z, 0, 
                 _ambientColor.X, _ambientColor.Y, _ambientColor.Z, 0,
                 _diffuseColor.X, _diffuseColor.Y, _diffuseColor.Z, 0,
                 _specularColor.X, _specularColor.Y, _specularColor.Z, 0,
-                _constantAttenuation, _linearAttenuation, _quadraticAttenuation
+                _constantAttenuation, _linearAttenuation, _quadraticAttenuation, 0
             };
         }
 

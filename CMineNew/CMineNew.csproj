@@ -60,6 +60,7 @@
     <Compile Include="Src\CMine.cs" />
     <Compile Include="Src\Collision\Aabb.cs" />
     <Compile Include="Src\Collision\CollisionData.cs" />
+    <Compile Include="Src\DataStructure\ArrayMapper.cs" />
     <Compile Include="Src\DataStructure\IECollection.cs" />
     <Compile Include="Src\DataStructure\List\EArrayList.cs" />
     <Compile Include="Src\DataStructure\List\ELinkedList.cs" />

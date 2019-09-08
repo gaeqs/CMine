@@ -16,7 +16,7 @@ namespace CMineNew.Render.Object{
         }
 
         private int _id;
-        private unsafe float* _pointer;
+        private unsafe void* _pointer;
         private volatile bool _mapping;
         private volatile int _size;
         private volatile object _lock = new object();
@@ -36,7 +36,7 @@ namespace CMineNew.Render.Object{
 
         public int Id => _id;
 
-        public unsafe float* Pointer => _pointer;
+        public unsafe void* Pointer => _pointer;
 
         public bool Mapping => _mapping;
 
@@ -102,7 +102,7 @@ namespace CMineNew.Render.Object{
                 Bind(target);
                 unsafe {
                     GL.GetError();
-                    _pointer = (float*) GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
+                    _pointer = GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
                     var error = GL.GetError();
                     if (error != ErrorCode.NoError) {
                         Console.WriteLine("---  VBO MAPPING ERROR --- ");
@@ -143,7 +143,63 @@ namespace CMineNew.Render.Object{
             lock (_lock) {
                 if (!_mapping) return false;
                 unsafe {
-                    var p = _pointer + offset;
+                    var p = (float*) _pointer + offset;
+                    foreach (var f in data) {
+                        *p++ = f;
+                    }
+                }
+
+                return true;
+            }
+        }
+        
+        public bool AddToMap(IEnumerable<int> data, int offset) {
+            lock (_lock) {
+                if (!_mapping) return false;
+                unsafe {
+                    var p = (int*) _pointer + offset;
+                    foreach (var f in data) {
+                        *p++ = f;
+                    }
+                }
+
+                return true;
+            }
+        }
+        
+        public bool AddToMap(IEnumerable<uint> data, int offset) {
+            lock (_lock) {
+                if (!_mapping) return false;
+                unsafe {
+                    var p = (uint*) _pointer + offset;
+                    foreach (var f in data) {
+                        *p++ = f;
+                    }
+                }
+
+                return true;
+            }
+        }
+        
+        public bool AddToMap(IEnumerable<byte> data, int offset) {
+            lock (_lock) {
+                if (!_mapping) return false;
+                unsafe {
+                    var p = (byte*) _pointer + offset;
+                    foreach (var f in data) {
+                        *p++ = f;
+                    }
+                }
+
+                return true;
+            }
+        }
+        
+        public bool AddToMap(IEnumerable<bool> data, int offset) {
+            lock (_lock) {
+                if (!_mapping) return false;
+                unsafe {
+                    var p = (bool*) _pointer + offset;
                     foreach (var f in data) {
                         *p++ = f;
                     }
@@ -157,8 +213,23 @@ namespace CMineNew.Render.Object{
             lock (_lock) {
                 if (!_mapping) return false;
                 unsafe {
-                    var pF = _pointer + offset;
-                    var pI = _pointer + toOffset;
+                    var pF = (byte*) _pointer + offset;
+                    var pI = (byte*) _pointer + toOffset;
+                    for (var i = 0; i < length; i++) {
+                        *pI++ = *pF++;
+                    }
+                }
+
+                return true;
+            }
+        }
+        
+        public bool MoveMapDataFloat(int offset, int toOffset, int length) {
+            lock (_lock) {
+                if (!_mapping) return false;
+                unsafe {
+                    var pF = (float*) _pointer + offset;
+                    var pI = (float*) _pointer + toOffset;
                     for (var i = 0; i < length; i++) {
                         *pI++ = *pF++;
                     }
