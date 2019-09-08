@@ -319,10 +319,15 @@ namespace CMineNew.Map{
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:
-                    _renderData.LightManager.AddPointLight(new PointLight(
-                        _player.Position + new Vector3(0, _player.EyesHeight, 0),
-                        new Vector3(1, 1, 1), new Vector3(1, 1, 1),
-                        new Vector3(1, 1, 1), 1, 0.5f, 0.3f));
+                    for (var x = -7; x < 7; x++) {
+                        for (var z = -7; z < 7; z++) {
+                            _renderData.LightManager.AddPointLight(new PointLight(
+                                _player.Position + new Vector3(x * 5, _player.EyesHeight, z * 5),
+                                new Vector3(1, 1, 1), new Vector3(1, 1, 1),
+                                new Vector3(1, 1, 1), 1, 0.5f, 0.3f));
+                        }
+                    }
+
                     break;
                 case Key.L:
                     lock (_regionsLock) {
