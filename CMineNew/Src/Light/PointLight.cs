@@ -121,10 +121,10 @@ namespace CMineNew.Light{
         }
         
         public virtual float[] ToData() {
-            return new[] {_position.X, _position.Y, _position.Z, 
-                _ambientColor.X, _ambientColor.Y, _ambientColor.Z,
-                _diffuseColor.X, _diffuseColor.Y, _diffuseColor.Z,
-                _specularColor.X, _specularColor.Y, _specularColor.Z,
+            return new[] {_position.X, _position.Y, _position.Z, 0, 
+                _ambientColor.X, _ambientColor.Y, _ambientColor.Z, 0,
+                _diffuseColor.X, _diffuseColor.Y, _diffuseColor.Z, 0,
+                _specularColor.X, _specularColor.Y, _specularColor.Z, 0,
                 _constantAttenuation, _linearAttenuation, _quadraticAttenuation
             };
         }

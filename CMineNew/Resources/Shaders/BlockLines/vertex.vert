@@ -2,8 +2,6 @@
 
 layout (location = 0) in vec3 position;
 
-out vec3 fragPos;
-
 uniform mat4 viewProjection;
 uniform vec3 worldPosition;
 
@@ -12,5 +10,4 @@ void main () {
     vec4 modelPosition = model * vec4(position, 1);
     gl_Position = viewProjection * modelPosition;
     gl_Position.z -= 0.0005;
-    fragPos = modelPosition.xyz;
 }

@@ -208,8 +208,9 @@ namespace CMineNew.Map{
                 region.CalculateInterpolatedHeightsAndColors();
             }
             else {
-                Console.WriteLine("REGION "+regionPosition+" LOADED.");
+                Console.WriteLine("REGION " + regionPosition + " LOADED.");
             }
+
             _regions2d.Add(regionPosition, region);
             return region;
         }
@@ -332,6 +333,7 @@ namespace CMineNew.Map{
                         foreach (var region in _regions2d.Values) {
                             region.Save();
                         }
+
                         _unloadedChunkGenerationManager.Save();
                     }
 

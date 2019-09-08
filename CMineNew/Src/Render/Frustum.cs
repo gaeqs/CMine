@@ -143,11 +143,7 @@ namespace CMineNew.Render{
 
         public void GenerateMatrix() {
             if (_projective) {
-                _matrix = new Matrix4(2 * _near / (_right - _left), 0, 0, 0,
-                    0, 2 * _near / (_top - _bottom), 0, 0,
-                    (_right + _left) / (_right - _left), (_top + _bottom) / (_top - _bottom),
-                    -(_far + _near) / (_far - _near), -1,
-                    0, 0, -2 * _far * _near / (_far - _near), 0);
+                _matrix = Matrix4.CreatePerspectiveOffCenter(_left, _right, _bottom, _top, _near, _far);
             }
             else {
                 _matrix = new Matrix4(2 / (_right - _left), 0, 0, 0,

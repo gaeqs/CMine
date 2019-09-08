@@ -133,20 +133,16 @@ namespace CMineNew.Render.Object{
 
         public void SetupForPostRender() {
             Use();
-            SetUInt("gAmbient", 0);
-            SetUInt("gDiffuse", 1);
-            SetUInt("gSpecular", 2);
-            SetUInt("gPosition", 3);
-            SetUInt("gNormal", 4);
-            SetUInt("gAmbientBrightness", 5);
-            SetUInt("gDiffuseBrightness", 6);
-            SetUInt("gSpecularBrightness", 7);
-            SetUInt("skyBox", 8);
+            SetUInt("gAlbedo", 0);
+            SetUInt("gDepth", 1);
+            SetUInt("gNormal", 2);
+            SetUInt("gBrightness", 3);
+            SetUInt("skyBox", 4);
         }
 
         public void SetupForLight() {
             Use();
-            SetUInt("gPosition", 0);
+            SetUInt("gDepth", 0);
             SetUInt("gNormal", 1);
         }
     }

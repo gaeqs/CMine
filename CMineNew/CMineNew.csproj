@@ -208,8 +208,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Shaders\Background\fragment.frag" />
-    <Content Include="Resources\Shaders\Background\vertex.vert" />
     <Content Include="Resources\Shaders\BlockLines\fragment.frag" />
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />

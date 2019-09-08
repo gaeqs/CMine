@@ -6,15 +6,12 @@ in vec3 fragLightPosition, fragLightDirection, fragAmbientColor, fragDiffuseColo
 in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
 in float fragCutOff, fragOuterCutOff;
 
-layout (location = 5) out vec3 gAmbientBrightness;
-layout (location = 6) out vec3 gDiffuseBrightness;
-layout (location = 7) out vec3 gSpecularBrightness;
+layout (location = 2) out vec3 gBrightness;
 
-uniform sampler2D gPosition;
+uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 
 uniform vec3 cameraPosition;
-
 
 void main() {
 
@@ -22,12 +19,10 @@ void main() {
     vec3 normal = normalFull.rgb;
 
     if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
-        gAmbientBrightness = vec3(1);
-        gDiffuseBrightness = vec3(1);
-        gSpecularBrightness = vec3(1);
+        gBrightness = vec3(1);
     }
     else {
-        vec3 position = texture(gPosition, fragTexCoords).rgb;
+        vec3 position = texture(gDepth, fragTexCoords).rgb;
         float specularWeight = normalFull.a;
         vec3 direction = normalize(cameraPosition -  position);
 
@@ -47,8 +42,6 @@ void main() {
 
         float intensityAttenuation = intensity * attenuation;
 
-        gAmbientBrightness = fragAmbientColor * intensityAttenuation;
-        gDiffuseBrightness = fragDiffuseColor  * diff * intensityAttenuation;
-        gSpecularBrightness = fragSpecularColor * spec * intensityAttenuation;
+        gBrightness = fragAmbientColor * intensityAttenuation + fragDiffuseColor  * diff * intensityAttenuation + fragSpecularColor * spec * intensityAttenuation;
     }
 }

@@ -9,10 +9,10 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.RayTrace{
     public class Pointer{
         private static readonly Vertex[] Vertices = {
-            new Vertex(-0.005f, -0.005f, 0, 0, 0, 0, 0, 0),
-            new Vertex(-0.005f, 0.005f, 0, 0, 0, 0, 0, 1),
-            new Vertex(0.005f, -0.005f, 0, 0, 0, 0, 1, 0),
-            new Vertex(0.005f, 0.005f, 0, 0, 0, 0, 1, 1)
+            new Vertex(-0.01f, -0.01f, 1, 0, 0, 0, 0, 0),
+            new Vertex(-0.01f, 0.01f, 1, 0, 0, 0, 0, 1),
+            new Vertex(0.01f, -0.01f, 1, 0, 0, 0, 1, 0),
+            new Vertex(0.01f, 0.01f, 1, 0, 0, 0, 1, 1)
         };
 
         private static readonly int[] Indices = {0, 2, 3, 0, 1, 3};
@@ -26,10 +26,12 @@ namespace CMineNew.RayTrace{
         public static void Load() {
             VertexArrayObject = new VertexArrayObject(Vertices, Indices);
             Shader = new ShaderProgram(Shaders.pointer_vertex, Shaders.pointer_fragment);
+            Shader.SetUInt("pointer", 0);
             Texture =  ImageLoader.Load(Textures.pointer);
         }
 
         public static void Draw(Camera camera) {
+            GL.Disable(EnableCap.DepthTest);
             Shader.Use();
             VertexArrayObject.Bind();
             Shader.SetUFloat("aspectRatio", camera.Frustum.AspectRatio);

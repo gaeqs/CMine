@@ -63,56 +63,12 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///uniform vec4 background;
-        ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
-        ///
-        ///void main() {
-        ///    gAmbient = background;
-        ///    gDiffuse = vec4(0);
-        ///    gSpecular = vec4(0);
-        ///    gPosition = vec3(0);
-        ///    gNormal = vec4(0); // normal = Zero represents that the pixel is from the background.
-        ///}.
-        /// </summary>
-        internal static string background_fragment {
-            get {
-                return ResourceManager.GetString("background_fragment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
-        ///
-        ///layout (location = 0) in vec2 position;
-        ///
-        ///void main () {
-        ///    gl_Position = vec4(position.xy, -1, 1);
-        ///}
-        ///.
-        /// </summary>
-        internal static string background_vertex {
-            get {
-                return ResourceManager.GetString("background_vertex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
-        ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
         ///in vec4 fragColorFilter;
         ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
+        ///layout (location = 0) out vec4 gNormal;
+        ///layout (location = 1) out vec3 gAlbedo;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -120,7 +76,12 @@ namespace CMineNew.Resources.Shaders {
         ///    vec4 texture = texture(sampler, fragTexCoord);
         ///    if (texture.w &lt; 0.1) discard;
         ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
+        ///        texture = fragColorFilter * texture.r;
+        ///    }
+        ///
+        ///    gAlbedo = texture.rgb;
+        ///    //W = Specular  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -131,20 +92,12 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///in vec3 fragPos;
-        ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
+        ///layout (location = 0) out vec4 gNormal;
+        ///layout (location = 1) out vec3 gAlbedo;
         ///
         ///void main() {
-        ///    gAmbient = vec4(0, 0, 0, 1);
-        ///    gDiffuse = vec4(0, 0, 0, 1);
-        ///    gSpecular = vec4(0, 0, 0, 1);
-        ///    gPosition = fragPos;
-        ///    //32 = Specular Weight
+        ///    gAlbedo = vec3(0, 0, 0);
+        ///    //W = Specular Weight
         ///    gNormal = vec4(0, 1, 0, 8);
         ///}.
         /// </summary>
@@ -159,8 +112,6 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///layout (location = 0) in vec3 position;
         ///
-        ///out vec3 fragPos;
-        ///
         ///uniform mat4 viewProjection;
         ///uniform vec3 worldPosition;
         ///
@@ -169,7 +120,6 @@ namespace CMineNew.Resources.Shaders {
         ///    vec4 modelPosition = model * vec4(position, 1);
         ///    gl_Position = viewProjection * modelPosition;
         ///    gl_Position.z -= 0.0005;
-        ///    fragPos = modelPosition.xyz;
         ///}
         ///.
         /// </summary>
@@ -207,23 +157,23 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///in vec2 fragTexCoords;
+        ///in vec2 fragPosition, fragTexCoords;
         ///in vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
         ///
-        ///layout (location = 5) out vec3 gAmbientBrightness;
-        ///layout (location = 6) out vec3 gDiffuseBrightness;
-        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///layout (location = 2) out vec3 gBrightness;
         ///
-        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///
+        ///uniform mat4 invertedViewProjection;
         ///uniform vec3 cameraPosition;
         ///
         ///void main() {
         ///    vec4 normalFull = texture(gNormal, fragTexCoords);
         ///    vec3 normal = normalFull.rgb;
         ///    
-        ///    if(normal.x == [rest of string was truncated]&quot;;.
+        ///    if(normal.x == 0 &amp;&amp; normal.y == 0 &amp;&amp; normal.z == 0) {
+        ///        gAmbientBright [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string directional_light_fragment {
             get {
@@ -241,14 +191,12 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 4) in vec3 diffuseColor;
         ///layout (location = 5) in vec3 specularColor;
         ///
-        ///out vec2 fragTexCoords;
+        ///out vec2 fragPosition, fragTexCoords;
         ///out vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
         ///
         ///void main () {
         ///    gl_Position = vec4(position.xy, 0, 1);
-        ///    fragTexCoords = texturePosition;
-        ///
-        ///    f [rest of string was truncated]&quot;;.
+        ///    fragPosition = position.xy; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string directional_light_vertex {
             get {
@@ -265,14 +213,17 @@ namespace CMineNew.Resources.Shaders {
         ///in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
         ///in float fragCutOff, fragOuterCutOff;
         ///
-        ///layout (location = 5) out vec3 gAmbientBrightness;
-        ///layout (location = 6) out vec3 gDiffuseBrightness;
-        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///layout (location = 2) out vec3 gBrightness;
         ///
-        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///
-        ///uniform vec3 camer [rest of string was truncated]&quot;;.
+        ///uniform vec3 cameraPosition;
+        ///
+        ///void main() {
+        ///
+        ///    vec4 normalFull = texture(gNormal, fragTexCoords);
+        ///    vec3 normal = normalFull [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string flash_light_fragment {
             get {
@@ -304,21 +255,28 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///in vec2 fragTexCoords;
-        ///in vec3 fragLightPosition, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
-        ///in float fragConstantAttenuation, fragLinearAttenuation, fragQuadraticAttenuation;
+        ///struct PointLight {
+        ///    vec3 position;          // 16
+        ///    vec3 ambientColor;      // 16
+        ///    vec3 diffuseColor;      // 16
+        ///    vec3 specularColor;     // 16
         ///
-        ///layout (location = 5) out vec3 gAmbientBrightness;
-        ///layout (location = 6) out vec3 gDiffuseBrightness;
-        ///layout (location = 7) out vec3 gSpecularBrightness;
+        ///    float constantAttenuation;  // 4
+        ///    float linearAttenuation;    // 4
+        ///    float quadraticAttenuation; // 4
+        ///    
+        ///    // 64 + 12 = 76 =&gt; 80 bytes =&gt; 20 floats
+        ///};
         ///
-        ///uniform sampler2D gPosition;
+        ///in vec2 fragPosition, fragTexCoords;
+        ///
+        ///layout (location = 2) out vec3 gBrightness;
+        ///
+        ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///
-        ///uniform vec3 cameraPosition;
         ///
-        ///void main() {
-        ///    vec4 normalFull = texture(gN [rest of string was truncated]&quot;;.
+        ///uniform ve [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string point_light_fragment {
             get {
@@ -331,16 +289,15 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
-        ///layout (location = 2) in vec3 lightPosition;
-        ///layout (location = 3) in vec3 ambientColor;
-        ///layout (location = 4) in vec3 diffuseColor;
-        ///layout (location = 5) in vec3 specularColor;
-        ///layout (location = 6) in float constantAttenuation;
-        ///layout (location = 7) in float linearAttenuation;
-        ///layout (location = 8) in float quadraticAttenuation;
         ///
-        ///out vec2 fragTexCoords;
-        ///out vec3 fragLightPosition, fragAmb [rest of string was truncated]&quot;;.
+        ///out vec2 fragPosition, fragTexCoords;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position.xy, 0, 1);
+        ///    fragPosition = position.xy;
+        ///    fragTexCoords = texturePosition;
+        ///}
+        ///.
         /// </summary>
         internal static string point_light_vertex {
             get {
@@ -398,24 +355,24 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 400 core
         ///
-        ///in vec2 fragTexCoords;
+        ///in vec2 fragPos, fragTexCoords;
         ///out vec4 FragColor;
         ///
-        ///uniform sampler2D gAmbient;
-        ///uniform sampler2D gDiffuse;
-        ///uniform sampler2D gSpecular;
-        ///uniform sampler2D gPosition;
+        ///uniform sampler2D gAlbedo;
+        ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
-        ///uniform sampler2D gAmbientBrightness;
-        ///uniform sampler2D gDiffuseBrightness;
-        ///uniform sampler2D gSpecularBrightness;
+        ///uniform sampler2D gBrightness;
         ///uniform samplerCube skyBox;
         ///
         ///uniform vec3 cameraPosition;
         ///uniform float ambientStrength;
         ///uniform vec3 ambientColor;
         ///
-        ///uniform float viewDistanceSquared, viewDistanceOffsetSqua [rest of string was truncated]&quot;;.
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+        ///uniform mat4 invertedViewProjection;
+        ///
+        ///vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
+        ///    return ambientStrengt [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_fragment {
             get {
@@ -429,10 +386,11 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
         ///
-        ///out vec2 fragTexCoords;
+        ///out vec2 fragPos, fragTexCoords;
         ///
         ///void main () {
         ///    gl_Position = vec4(position.xy, 0, 1);
+        ///    fragPos = position.xy;
         ///    fragTexCoords = texturePosition;
         ///}
         ///.
@@ -448,20 +406,15 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///in vec3 fragTexCoord;
         ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
+        ///layout (location = 0) out vec4 gNormal;
+        ///layout (location = 1) out vec3 gAlbedo;
         ///
         ///uniform samplerCube skyBox;
         ///
         ///void main() {
-        ///    gAmbient = texture(skyBox, fragTexCoord);
-        ///    gDiffuse = vec4(0);
-        ///    gSpecular = vec4(0);
-        ///    gPosition = vec3(0);
-        ///    gNormal = vec4(0); // normal = Zero represents that the pixel is from the backg [rest of string was truncated]&quot;;.
+        ///    gAlbedo = texture(skyBox, fragTexCoord).rgb;
+        ///    gNormal = vec4(0);// normal = Zero represents that the pixel is from the background.
+        ///}.
         /// </summary>
         internal static string sky_box_fragment {
             get {
@@ -498,11 +451,8 @@ namespace CMineNew.Resources.Shaders {
         ///in vec2 fragTexCoord;
         ///in vec4 fragColorFilter;
         ///
-        ///layout (location = 0) out vec3 gPosition;
-        ///layout (location = 1) out vec4 gNormal;
-        ///layout (location = 2) out vec4 gAmbient;
-        ///layout (location = 3) out vec4 gDiffuse;
-        ///layout (location = 4) out vec4 gSpecular;
+        ///layout (location = 0) out vec4 gNormal;
+        ///layout (location = 1) out vec3 gAlbedo;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -510,7 +460,13 @@ namespace CMineNew.Resources.Shaders {
         ///    vec4 texture = texture(sampler, fragTexCoord);
         ///    if (texture.w &lt; 0.1) discard;
         ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fra [rest of string was truncated]&quot;;.
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
+        ///        texture = fragColorFilter * texture.r;
+        ///    }
+        ///
+        ///    gAlbedo = texture.rgb;
+        ///
+        ///    //W = Specula [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string slab_fragment {
             get {

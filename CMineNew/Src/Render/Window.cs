@@ -67,6 +67,7 @@ namespace CMineNew.Render{
 
         private void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity,
             int length, IntPtr message, IntPtr userParam) {
+            if(type != DebugType.DebugTypeError) return;
             unsafe {
                 Console.WriteLine("--- DEBUG ---");
                 Console.WriteLine(new string((sbyte*) message.ToPointer(), 0, length, Encoding.ASCII));

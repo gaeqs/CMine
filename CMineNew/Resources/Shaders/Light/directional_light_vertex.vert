@@ -7,11 +7,12 @@ layout (location = 3) in vec3 ambientColor;
 layout (location = 4) in vec3 diffuseColor;
 layout (location = 5) in vec3 specularColor;
 
-out vec2 fragTexCoords;
+out vec2 fragPosition, fragTexCoords;
 out vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
 
 void main () {
     gl_Position = vec4(position.xy, 0, 1);
+    fragPosition = position.xy;
     fragTexCoords = texturePosition;
 
     fragLightDirection = lightDirection;

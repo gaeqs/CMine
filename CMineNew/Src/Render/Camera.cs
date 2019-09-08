@@ -9,7 +9,7 @@ namespace CMineNew.Render{
         protected Vector3 _position, _lookAt, _up;
         protected Vector2 _rotation;
         protected Vector3 _n, _v, _u;
-        protected Matrix4 _matrix, _invertedMatrix, _viewProjection;
+        protected Matrix4 _matrix, _invertedMatrix, _viewProjection, _invertedViewProjection;
         protected Frustum _frustum;
         protected bool _requiresRecalculation;
 
@@ -89,6 +89,16 @@ namespace CMineNew.Render{
             }
         }
 
+        public Matrix4 InvertedViewProjection {
+            get {
+                if (_requiresRecalculation) {
+                    GenerateMatrix();
+                }
+
+                return _invertedViewProjection;
+            }
+        }
+
         public bool IsVisible(ChunkRegion region) {
             if (_requiresRecalculation) {
                 GenerateMatrix();
@@ -111,6 +121,7 @@ namespace CMineNew.Render{
             }
             else {
                 _viewProjection = _matrix * _frustum.Matrix;
+                _invertedViewProjection = _frustum.Matrix.Inverted() * _invertedMatrix;
             }
         }
 

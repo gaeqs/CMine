@@ -6,12 +6,15 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Mapper{
     public class VboMapper<TKey>{
+    
         private VertexBufferObject _vbo;
         private VertexArrayObject _vao;
 
         private readonly int _elementSize;
 
         private OnResize _onResize;
+
+        private BufferTarget _bufferTarget;
 
         private int _amount;
         private int _maximumAmount;
@@ -26,13 +29,15 @@ namespace CMineNew.Render.Mapper{
         private readonly object _backgroundLock = new object();
 
         public VboMapper(VertexBufferObject vbo, VertexArrayObject vao, int elementSize, int maximumAmount,
-            OnResize onResize) {
+            OnResize onResize, BufferTarget bufferTarget = BufferTarget.ArrayBuffer) {
             _vbo = vbo;
             _vao = vao;
 
             _elementSize = elementSize;
 
             _onResize = onResize;
+
+            _bufferTarget = bufferTarget;
 
             _amount = 0;
             _maximumAmount = maximumAmount;
@@ -75,7 +80,7 @@ namespace CMineNew.Render.Mapper{
                 }
             }
         }
-
+ 
 
         public void AddTask(VboMapperTask<TKey> task) {
             lock (_backgroundLock) {

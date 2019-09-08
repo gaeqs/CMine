@@ -61,7 +61,7 @@ namespace CMineNew.Map{
         }
 
         public void DrawGBuffer(bool waterShader) {
-            _gBuffer.Draw(_camera.Position, Vector3.One, 0.2f, waterShader, _skyBox);
+            _gBuffer.Draw(_camera, Vector3.One, 0.2f, waterShader, _skyBox);
         }
 
         public void CameraTick(Player player, long delay) {

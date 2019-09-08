@@ -4,11 +4,8 @@ in vec3 fragPos, fragNormal;
 in vec2 fragTexCoord;
 in vec4 fragColorFilter;
 
-layout (location = 0) out vec3 gPosition;
-layout (location = 1) out vec4 gNormal;
-layout (location = 2) out vec4 gAmbient;
-layout (location = 3) out vec4 gDiffuse;
-layout (location = 4) out vec4 gSpecular;
+layout (location = 0) out vec4 gNormal;
+layout (location = 1) out vec3 gAlbedo;
 
 uniform sampler2D sampler;
 
@@ -20,11 +17,7 @@ void main() {
         texture = fragColorFilter * texture.r;
     }
 
-    gAmbient = vec4(texture.rgb, 1);
-    gDiffuse = vec4(texture.rgb, 1);
-    gSpecular = vec4(texture.rgb, 1);
-    gPosition = fragPos;
-    
+    gAlbedo = texture.rgb;
     //W = Specular Weight
     gNormal = vec4(fragNormal, 2);
 }

@@ -136,28 +136,35 @@ namespace CMineNew.Light{
         /// <param name="gBuffer">The GBuffer.</param>
         public void Draw(Camera camera, WorldGBuffer gBuffer) {
             gBuffer.Bind();
-            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(false);
             GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             gBuffer.BindPositionAndNormalTextures();
 
+            var inverseViewProjection = camera.ViewProjection.Inverted();
+            
             _directionalVao.Bind();
             _directionalShader.Use();
             _directionalShader.SetUVector("cameraPosition", camera.Position);
+            _directionalShader.SetUMatrix("invertedViewProjection", inverseViewProjection);
             _directionalMapper.FlushQueue();
             _directionalVao.DrawnArraysInstanced(0, 6, _directionalMapper.Amount);
 
             _pointVao.Bind();
             _pointShader.Use();
             _pointShader.SetUVector("cameraPosition", camera.Position);
+            _pointShader.SetUMatrix("invertedViewProjection", inverseViewProjection);
+            _pointShader.SetUInt("lightAmount", _pointLights.Count);
             _pointMapper.FlushQueue();
-            _pointVao.DrawnArraysInstanced(0, 6, _pointMapper.Amount);
+            _pointVao.DrawArrays(0, 6);
 
             _flashVao.Bind();
             _flashShader.Use();
             _flashShader.SetUVector("cameraPosition", camera.Position);
+            _flashShader.SetUMatrix("invertedViewProjection", inverseViewProjection);
             _flashMapper.FlushQueue();
             _flashVao.DrawnArraysInstanced(0, 6, _flashMapper.Amount);
         }
@@ -186,21 +193,13 @@ namespace CMineNew.Light{
         /// </summary>
         private void ConfigurePointLights() {
             _pointVao = WorldGBuffer.GenerateQuadVao();
-            var pointVbo = new VertexBufferObject();
-            _pointVao.LinkBuffer(pointVbo);
-            _pointMapper = new VboMapper<PointLight>(pointVbo, _pointVao, 15,
-                1000, (o, buffer, newBuffer) => { });
-            _pointVao.Bind();
-            pointVbo.Bind(BufferTarget.ArrayBuffer);
-            pointVbo.SetData(BufferTarget.ArrayBuffer, 1000 * 15 * sizeof(float), BufferUsageHint.StreamDraw);
-            var builder = new AttributePointerBuilder(_pointVao, 15, 2);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(3, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
+            var uniformBuffer = new VertexBufferObject();
+            uniformBuffer.BindBase(BufferTarget.UniformBuffer, 0);
+            uniformBuffer.SetData(BufferTarget.UniformBuffer, 80 * 200, BufferUsageHint.DynamicDraw);
+            var loc = GL.GetUniformBlockIndex(_pointShader.Id, "LightsBlock");
+            GL.UniformBlockBinding(_pointShader.Id, loc, 0);
+            _pointMapper = new VboMapper<PointLight>(uniformBuffer, _pointVao, 20, 200,
+                (o, buffer, newBuffer) => { }, BufferTarget.UniformBuffer);
         }
 
         /// <summary>

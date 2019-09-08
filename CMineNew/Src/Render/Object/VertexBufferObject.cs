@@ -53,6 +53,19 @@ namespace CMineNew.Render.Object{
             }
         }
 
+        public void BindBase(BufferTarget target, int index) {
+            GL.GetError();
+            GL.BindBufferBase(target, index, _id);
+            var error = GL.GetError();
+            if (error != ErrorCode.NoError) {
+                Console.WriteLine("---  VBO BIND ERROR --- ");
+                Console.WriteLine("VBO: " + _id);
+                Console.WriteLine(error);
+                Console.WriteLine("------------------------");
+                throw new System.Exception("Error while binding VBO.");
+            }
+        }
+
         public void SetData(BufferTarget target, float[] data, BufferUsageHint usageHint) {
             BufferMemory -= _size;
             _size = data.Length * sizeof(float);
@@ -83,13 +96,13 @@ namespace CMineNew.Render.Object{
 
         #region mapping
 
-        public void StartMapping() {
+        public void StartMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
             lock (_lock) {
                 if (_mapping) return;
-                Bind(BufferTarget.ArrayBuffer);
+                Bind(target);
                 unsafe {
                     GL.GetError();
-                    _pointer = (float*) GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite).ToPointer();
+                    _pointer = (float*) GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
                     var error = GL.GetError();
                     if (error != ErrorCode.NoError) {
                         Console.WriteLine("---  VBO MAPPING ERROR --- ");
@@ -104,13 +117,13 @@ namespace CMineNew.Render.Object{
             }
         }
 
-        public void FinishMapping() {
+        public void FinishMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
             lock (_lock) {
                 unsafe {
                     if (!_mapping) return;
                     GL.GetError();
-                    Bind(BufferTarget.ArrayBuffer);
-                    GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+                    Bind(target);
+                    GL.UnmapBuffer(target);
                     _pointer = null;
                     _mapping = false;
 
