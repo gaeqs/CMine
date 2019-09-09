@@ -23,11 +23,11 @@ namespace CMineNew.Map{
 
         public ChunkRegion ChunkRegion => _chunkRegion;
 
-        public void AddData(int mapper, Block block) {
+        public void AddData(int mapper, Block block, int light) {
             lock (_lock) {
                 _deleted = false;
             }
-            GetOrCreateRender(block.BlockModel)?.AddData(mapper, block);
+            GetOrCreateRender(block.BlockModel)?.AddData(mapper, block, light);
         }
 
         public void RemoveData(int mapper, Block block) {

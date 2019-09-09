@@ -56,6 +56,10 @@ namespace CMineNew.Map{
                     throw new ArgumentOutOfRangeException(nameof(face), face, null);
             }
         }
+
+        public static bool IsSide(BlockFace face) {
+            return face != BlockFace.Down && face != BlockFace.Up;
+        }
     }
 
     public static class BlockFaceVertices{

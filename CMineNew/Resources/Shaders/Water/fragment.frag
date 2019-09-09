@@ -3,6 +3,7 @@
 in vec3 fragPos, fragNormal;
 in vec2 fragTexCoords;
 in vec4 fragColorFilter;
+in float fragLight;
 
 out vec4 FragColor;
 
@@ -18,7 +19,9 @@ void main() {
         ambient = fragColorFilter * ambient.r;
     }
 
-    FragColor = ambient;
+    float light = fragLight * 0.8;
+    light+= 0.2;
+    FragColor = ambient * light;
     
     vec3 distance = fragPos - cameraPosition;
     float lengthSquared = dot(distance, distance);

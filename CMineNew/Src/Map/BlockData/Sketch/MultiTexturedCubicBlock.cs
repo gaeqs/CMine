@@ -7,14 +7,14 @@ namespace CMineNew.Map.BlockData.Sketch{
         protected readonly Area2d[] _textureAreas;
 
         public MultiTexturedCubicBlock(string id, Chunk chunk, Vector3i position, Area2d[] textureAreas,
-            Color4 textureFilter, bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
+            Color4 textureFilter, bool passable = false,  bool lightSource = false, int blockLight = 0, int blockLightReduction = 1)
+            : base(id, chunk, position, textureFilter, passable, lightSource, blockLight, blockLightReduction) {
             _textureAreas = textureAreas;
         }
 
         public MultiTexturedCubicBlock(string id, Chunk chunk, Vector3i position, IReadOnlyList<string> textureAreas,
-            Color4 textureFilter, bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
+            Color4 textureFilter, bool passable = false,  bool lightSource = false, int blockLight = 0, int blockLightReduction = 1)
+            : base(id, chunk, position, textureFilter, passable, lightSource, blockLight, blockLightReduction) {
             _textureAreas = new Area2d[textureAreas.Count];
             for (var i = 0; i < textureAreas.Count; i++) {
                 _textureAreas[i] = CMine.Textures.Areas[textureAreas[i]];

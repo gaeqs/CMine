@@ -151,7 +151,7 @@ namespace CMineNew.Map.BlockData.Type{
                 }
                 else if (!_visibleFaces[(int) relative]) {
                     _visibleFaces[(int) relative] = true;
-                    render.AddData((int) relative, this);
+                    render.AddData((int) relative, this, _blockLight);
                 }
             }
             else {
@@ -162,7 +162,7 @@ namespace CMineNew.Map.BlockData.Type{
                 var newData = to == null || !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
                 _visibleFaces[(int) relative] = newData;
                 if (newData) {
-                    render.AddData((int) relative, this);
+                    render.AddData((int) relative, this, _blockLight);
                 }
                 else {
                     render.RemoveData((int) relative, this);
@@ -206,7 +206,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public void UpdateWaterLevel() {
             var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.AddData(face, this));
+            ForEachVisibleFaceInt(face => render.AddData(face, this, _blockLight));
         }
 
         private void UpdateWaterVertices(bool updateSelf, bool ln, bool rn, bool ls, bool rs) {
@@ -284,6 +284,28 @@ namespace CMineNew.Map.BlockData.Type{
                 waterC._vertexWaterLevel[c] = level;
                 waterC.UpdateWaterLevel();
             }
+        }
+        
+        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
+            if(light <= _blockLight) return;
+            _blockLight = light;
+            _blockLightSource = source;
+            light -= _blockLightReduction;
+            
+            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
+                _position - (_chunk.Position << Chunk.WorldPositionShift));
+            for (var i = 0; i < blocks.Length; i++) {
+                var face = (BlockFace) i;
+                var opposite = BlockFaceMethods.GetOpposite(face);
+                var block = blocks[i];
+                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
+                if (light > 0) {
+                    block?.OnLightChange(opposite, this, light, source);
+                }
+            }
+        }
+
+        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
         }
     }
 }

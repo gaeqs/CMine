@@ -7,6 +7,9 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
     public abstract class Block{
+        public const int MaxBlockLight = 16;
+        public const float MaxBlockLightF = MaxBlockLight;
+
         protected readonly string _id;
         protected readonly BlockModel _blockModel;
 
@@ -17,8 +20,14 @@ namespace CMineNew.Map.BlockData{
         protected Color4 _textureFilter;
         protected float _blockHeight, _blockYOffset;
 
+        protected bool _lightSource;
+        protected Vector3i _blockLightSource;
+        protected int _blockLight;
+        protected int _blockLightReduction;
+
         public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
-            Color4 textureFilter, bool passable = false, float blockHeight = 1, float blockYOffset = 0) {
+            Color4 textureFilter, bool passable = false, float blockHeight = 1, float blockYOffset = 0,
+            bool lightSource = false, int blockLight = 0, int blockLightReduction = 1) {
             _id = id;
             _blockModel = blockModel;
             _chunk = chunk;
@@ -28,6 +37,11 @@ namespace CMineNew.Map.BlockData{
             _textureFilter = textureFilter;
             _blockHeight = blockHeight;
             _blockYOffset = blockYOffset;
+
+            _lightSource = lightSource;
+            _blockLightSource = position;
+            _blockLight = blockLight;
+            _blockLightReduction = blockLightReduction;
         }
 
         public string Id => _id;
@@ -59,16 +73,53 @@ namespace CMineNew.Map.BlockData{
             set => _textureFilter = value;
         }
 
+        public bool LightSource {
+            get => _lightSource;
+            set => _lightSource = value;
+        }
+
+        public Vector3i BlockLightSource {
+            get => _blockLightSource;
+            set => _blockLightSource = value;
+        }
+
+        public int BlockLight {
+            get => _blockLight;
+            set => _blockLight = value;
+        }
+
+        public int BlockLightReduction {
+            get => _blockLightReduction;
+            set => _blockLightReduction = value;
+        }
+
         public abstract Vector3 CollisionBoxPosition { get; }
 
         public void OnPlace0(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
+            var light = 0;
+            Block brightestBlock = null;
+            BlockFace brightestBlockFace = BlockFace.Down;
             for (var i = 0; i < neighbours.Length; i++) {
                 var face = (BlockFace) i;
-                var side = neighbours[i] != null &&
+                var neighbour = neighbours[i];
+                var side = neighbour != null &&
                            face != BlockFace.Up && face != BlockFace.Down &&
                            (_blockHeight > neighbours[i]?._blockHeight
                             || _blockYOffset < neighbours[i]._blockYOffset);
-                _collidableFaces[i] = side || neighbours[i] == null || neighbours[i]._passable;
+                _collidableFaces[i] = side || neighbour == null || neighbour._passable;
+
+                if (_lightSource) {
+                    neighbour?.OnLightChange(BlockFaceMethods.GetOpposite(face), this, _blockLight, _position);
+                }
+                else if (neighbour != null && light < neighbour._blockLight) {
+                    light = neighbour._blockLight;
+                    brightestBlock = neighbour;
+                    brightestBlockFace = face;
+                }
+            }
+
+            if (brightestBlock != null) {
+                OnLightChange(brightestBlockFace, brightestBlock, light, brightestBlock._blockLightSource);
             }
 
             OnPlace(oldBlock, neighbours, triggerWorldUpdates);
@@ -109,5 +160,9 @@ namespace CMineNew.Map.BlockData{
         public abstract bool IsFaceOpaque(BlockFace face);
 
         public abstract void RemoveFromRender();
+
+        public abstract void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source);
+        
+        public abstract void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source);
     }
 }

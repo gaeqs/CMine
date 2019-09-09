@@ -52,6 +52,7 @@ void main() {
 
             vec3 lightPosition = light.position - position;
             float lightDistance = length(lightPosition);
+            if(lightDistance > 15) continue;
             vec3 lightDirection = lightPosition / lightDistance;
 
             float diffuseStrength = max(dot(normal, lightDirection), 0.0);

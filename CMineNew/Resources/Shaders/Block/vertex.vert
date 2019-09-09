@@ -6,10 +6,12 @@ layout (location = 2) in vec2 texturePosition;
 layout (location = 3) in vec3 worldPosition;
 layout (location = 4) in vec4 textureArea;
 layout (location = 5) in vec4 blockColorFilter;
+layout (location = 6) in float blockLight;
 
 out vec3 fragPos, fragNormal;
 out vec2 fragTexCoord;
 out vec4 fragColorFilter;
+out float fragLight;
 
 uniform mat4 viewProjection;
 
@@ -26,4 +28,5 @@ void main () {
     
     fragTexCoord = min + texturePosition * size;
     fragColorFilter = blockColorFilter;
+    fragLight = blockLight;
 }

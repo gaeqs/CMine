@@ -30,13 +30,15 @@ namespace CMineNew.Map.BlockData.Sketch{
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = neighbours[i];
+                var face = (BlockFace) i;
 
-                var visibleBySlab = i == (int) BlockFace.Up && !_upside || i == (int) BlockFace.Down && _upside;
+                var visibleBySlab = face == BlockFace.Up && !_upside || face == BlockFace.Down && _upside;
 
                 _visibleFaces[i] = visibleBySlab || block == null ||
                                    !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 if (_visibleFaces[i]) {
-                    render.AddData(i, this);
+                    var light = visibleBySlab || block == null ? _blockLight : block.BlockLight;
+                    render.AddData(i, this, light);
                 }
                 else {
                     render.RemoveData(i, this);
@@ -52,14 +54,13 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
-            if (relative == BlockFace.Up && !_upside || relative == BlockFace.Down && _upside) return;
+            var slabFace = relative == BlockFace.Up && !_upside || relative == BlockFace.Down && _upside;
+            if (slabFace) return;
             var faceInt = (int) relative;
-            var oldVisible = _visibleFaces[faceInt];
-            var newVisible = to == null || !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
-            if (oldVisible == newVisible) return;
+            var newVisible = !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
             _visibleFaces[faceInt] = newVisible;
             if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this);
+                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight);
             }
             else {
                 _chunk.Region.Render.RemoveData(faceInt, this);
@@ -108,6 +109,42 @@ namespace CMineNew.Map.BlockData.Sketch{
                 if (_visibleFaces[i]) {
                     action.Invoke(i);
                 }
+            }
+        }
+
+        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
+            if (IsFaceOpaque(from)) return;
+            if (BlockFaceMethods.IsSide(from) && fromBlock is SlabBlock slab && slab._upside != _upside) return;
+            if (light <= _blockLight) return;
+            _blockLight = light;
+            _blockLightSource = source;
+            light -= _blockLightReduction;
+
+            if (_upside && from == BlockFace.Down || !_upside && from == BlockFace.Up) {
+                _chunk.Region.Render.AddData((int) from, this, _blockLight);
+            }
+
+            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
+                _position - (_chunk.Position << Chunk.WorldPositionShift));
+            for (var i = 0; i < blocks.Length; i++) {
+                var face = (BlockFace) i;
+                var opposite = BlockFaceMethods.GetOpposite(face);
+                if (IsFaceOpaque(face)) continue;
+                var block = blocks[i];
+                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
+                if (light > 0) {
+                    block?.OnLightChange(opposite, this, light, source);
+                }
+            }
+        }
+
+        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
+            if (_upside && relative == BlockFace.Down || !_upside && relative == BlockFace.Up) {
+                return;
+            }
+
+            if (_visibleFaces[(int) relative]) {
+                _chunk.Region.Render.AddData((int) relative, this, light);
             }
         }
     }

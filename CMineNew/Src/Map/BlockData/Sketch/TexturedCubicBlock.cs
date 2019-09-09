@@ -6,14 +6,14 @@ namespace CMineNew.Map.BlockData.Sketch{
         protected Area2d _textureArea;
 
         public TexturedCubicBlock(string id, Chunk chunk, Vector3i position, Area2d texture, Color4 textureFilter,
-            bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
+            bool passable = false, bool lightSource = false, int blockLight = 0, int blockLightReduction = 1)
+            : base(id, chunk, position, textureFilter, passable, lightSource, blockLight, blockLightReduction) {
             _textureArea = texture;
         }
 
         public TexturedCubicBlock(string id, Chunk chunk, Vector3i position, string texture, Color4 textureFilter,
-            bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
+            bool passable = false, bool lightSource = false, int blockLight = 0, int blockLightReduction = 1)
+            : base(id, chunk, position, textureFilter, passable, lightSource, blockLight, blockLightReduction) {
             _textureArea = CMine.Textures.Areas[texture];
         }
 

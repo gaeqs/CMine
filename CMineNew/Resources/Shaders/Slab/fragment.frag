@@ -3,6 +3,7 @@
 in vec3 fragPos, fragNormal;
 in vec2 fragTexCoord;
 in vec4 fragColorFilter;
+in float fragLight;
 
 layout (location = 0) out vec4 gNormal;
 layout (location = 1) out vec3 gAlbedo;
@@ -17,7 +18,9 @@ void main() {
         texture = fragColorFilter * texture.r;
     }
 
-    gAlbedo = texture.rgb;
+    float light = fragLight * 0.8;
+    light+= 0.2;
+    gAlbedo = texture.rgb * light;
 
     //W = Specular Weight
     gNormal = vec4(fragNormal, 8);
