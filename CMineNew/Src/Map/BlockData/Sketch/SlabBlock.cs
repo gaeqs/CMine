@@ -120,7 +120,13 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
         
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
-            //TODO UPDATE RENDER
+            if(!_visibleFaces[(int) relative]) return;
+            if(relative == BlockFace.Down && !_upside || relative == BlockFace.Up && _upside) return;
+            _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light);
+        }
+
+        public override void OnSelfLightChange() {
+            _chunk.Region.Render.AddData((int) (_upside ? BlockFace.Down : BlockFace.Up), this, _blockLight.Light);
         }
     }
 }
