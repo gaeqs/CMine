@@ -35,7 +35,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public BlockWater(Chunk chunk, Vector3i position, int level)
             : base("default:water", BlockModelManager.GetModelOrNull(WaterBlockModel.Key), chunk, position,
-                Color4.Transparent, true) {
+                Color4.Transparent, true, 1, 0, false, 0, 2) {
             _visibleFaces = new bool[6];
             _waterLevel = level;
             _vertexWaterLevel = new float[4];
@@ -151,7 +151,7 @@ namespace CMineNew.Map.BlockData.Type{
                 }
                 else if (!_visibleFaces[(int) relative]) {
                     _visibleFaces[(int) relative] = true;
-                    render.AddData((int) relative, this, _blockLight);
+                    render.AddData((int) relative, this, 0);
                 }
             }
             else {
@@ -159,10 +159,11 @@ namespace CMineNew.Map.BlockData.Type{
                     _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
                 }
 
-                var newData = to == null || !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
+                var newData = to == null ||
+                              !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
                 _visibleFaces[(int) relative] = newData;
                 if (newData) {
-                    render.AddData((int) relative, this, _blockLight);
+                    render.AddData((int) relative, this, 0);
                 }
                 else {
                     render.RemoveData((int) relative, this);
@@ -206,7 +207,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public void UpdateWaterLevel() {
             var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.AddData(face, this, _blockLight));
+            ForEachVisibleFaceInt(face => render.AddData(face, this, 0));
         }
 
         private void UpdateWaterVertices(bool updateSelf, bool ln, bool rn, bool ls, bool rs) {
@@ -286,26 +287,15 @@ namespace CMineNew.Map.BlockData.Type{
             }
         }
         
-        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
-            if(light <= _blockLight) return;
-            _blockLight = light;
-            _blockLightSource = source;
-            light -= _blockLightReduction;
-            
-            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
-                _position - (_chunk.Position << Chunk.WorldPositionShift));
-            for (var i = 0; i < blocks.Length; i++) {
-                var face = (BlockFace) i;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                var block = blocks[i];
-                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
-                if (light > 0) {
-                    block?.OnLightChange(opposite, this, light, source);
-                }
-            }
+        public override bool CanLightPassThrough(BlockFace face) {
+            return true;
+        }
+        
+        public override bool CanLightBePassedFrom(BlockFace face, Block from) {
+            return true;
         }
 
-        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
+        public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
@@ -44,26 +45,15 @@ namespace CMineNew.Map.BlockData.Type{
         public override void RemoveFromRender() {
         }
         
-        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
-            if(light <= _blockLight) return;
-            _blockLight = light;
-            _blockLightSource = source;
-            light -= _blockLightReduction;
-            
-            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
-                _position - (_chunk.Position << Chunk.WorldPositionShift));
-            for (var i = 0; i < blocks.Length; i++) {
-                var face = (BlockFace) i;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                var block = blocks[i];
-                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
-                if (light > 0) {
-                    block?.OnLightChange(opposite, this, light, source);
-                }
-            }
+        public override bool CanLightPassThrough(BlockFace face) {
+            return true;
+        }
+        
+        public override bool CanLightBePassedFrom(BlockFace face, Block from) {
+            return true;
         }
 
-        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
+        public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
     }
 }

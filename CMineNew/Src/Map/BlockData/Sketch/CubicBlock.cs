@@ -23,7 +23,7 @@ namespace CMineNew.Map.BlockData.Sketch{
                 var block = neighbours[i];
                 _visibleFaces[i] = block == null || !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 if (_visibleFaces[i]) {
-                    render.AddData(i, this, block?.BlockLight ?? _blockLight);
+                    render.AddData(i, this, 0);
                 }
                 else {
                     render.RemoveData(i, this);
@@ -45,7 +45,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             if (oldVisible == newVisible) return;
             _visibleFaces[faceInt] = newVisible;
             if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight);
+                _chunk.Region.Render.AddData(faceInt, this, 0);
             }
             else {
                 _chunk.Region.Render.RemoveData(faceInt, this);
@@ -84,30 +84,16 @@ namespace CMineNew.Map.BlockData.Sketch{
             }
         }
 
-        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
-            if (IsFaceOpaque(from)) return;
-            if (light <= _blockLight) return;
-            _blockLight = light;
-            _blockLightSource = source;
-            light -= _blockLightReduction;
-
-            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
-                _position - (_chunk.Position << Chunk.WorldPositionShift));
-            for (var i = 0; i < blocks.Length; i++) {
-                var face = (BlockFace) i;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                var block = blocks[i];
-                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
-                if (light > 0) {
-                    block?.OnLightChange(opposite, this, light, source);
-                }
-            }
+        public override bool CanLightPassThrough(BlockFace face) {
+            return _blockLight.IsSource || !IsFaceOpaque(face);
         }
 
-        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
-            if (_visibleFaces[(int) relative]) {
-                _chunk.Region.Render.AddData((int) relative, this, light);
-            }
+        public override bool CanLightBePassedFrom(BlockFace face, Block from) {
+            return !IsFaceOpaque(face);
+        }
+        
+        public override void OnNeighbourLightChange(BlockFace relative, Block block) {
+            //TODO UPDATE RENDER
         }
     }
 }

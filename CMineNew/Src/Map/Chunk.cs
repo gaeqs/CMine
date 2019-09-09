@@ -78,7 +78,7 @@ namespace CMineNew.Map{
 
             var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
 
-            old?.OnRemove(block);
+            old?.OnRemove0(block, neighbours);
             block?.OnPlace0(old, neighbours, true);
             for (var i = 0; i < neighbours.Length; i++) {
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,

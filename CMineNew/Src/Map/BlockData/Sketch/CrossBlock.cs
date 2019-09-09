@@ -1,3 +1,4 @@
+using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
@@ -16,7 +17,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
-            render.AddData(0, this, _blockLight);
+            render.AddData(0, this, _blockLight.Light);
         }
 
         public override void OnRemove(Block newBlock) {
@@ -41,31 +42,16 @@ namespace CMineNew.Map.BlockData.Sketch{
             if (_chunk.Region.Deleted) return;
             _chunk.Region.Render.RemoveData(0, this);
         }
-
-        public override void OnLightChange(BlockFace from, Block fromBlock, int light, Vector3i source) {
-            if (light <= _blockLight) return;
-            _blockLight = light;
-            _blockLightSource = source;
-            light -= _blockLightReduction;
-
-            foreach (var blockFace in BlockFaceMethods.All) {
-                _chunk.Region.Render.AddData((int) blockFace, this, _blockLight);
-            }
-
-            var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
-                _position - (_chunk.Position << Chunk.WorldPositionShift));
-            for (var i = 0; i < blocks.Length; i++) {
-                var face = (BlockFace) i;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                var block = blocks[i];
-                block?.OnNeighbourLightChange(opposite, this, _blockLight, source);
-                if (light > 0) {
-                    block?.OnLightChange(opposite, this, light, source);
-                }
-            }
+        
+        public override bool CanLightPassThrough(BlockFace face) {
+            return true;
+        }
+        
+        public override bool CanLightBePassedFrom(BlockFace face, Block from) {
+            return true;
         }
 
-        public override void OnNeighbourLightChange(BlockFace relative, Block block, int light, Vector3i source) {
+        public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
     }
 }
