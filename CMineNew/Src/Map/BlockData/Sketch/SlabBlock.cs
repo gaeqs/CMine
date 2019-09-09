@@ -120,9 +120,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             _blockLightSource = source;
             light -= _blockLightReduction;
 
-            if (_upside && from == BlockFace.Down || !_upside && from == BlockFace.Up) {
-                _chunk.Region.Render.AddData((int) from, this, _blockLight);
-            }
+            _chunk.Region.Render.AddData((int) (_upside ? BlockFace.Down : BlockFace.Up), this, _blockLight);
 
             var blocks = _chunk.GetNeighbourBlocks(new Block[6], _position,
                 _position - (_chunk.Position << Chunk.WorldPositionShift));
