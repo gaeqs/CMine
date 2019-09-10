@@ -8,12 +8,10 @@ using OpenTK;
 using OpenTK.Input;
 
 namespace CMineNew.Entities.Controller{
-    
     /// <summary>
     /// Represents a PlayerControlled that translates mouse and keyboard inputs intro player's actions.
     /// </summary>
     public class LocalPlayerController : PlayerController{
-
         private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
@@ -31,7 +29,7 @@ namespace CMineNew.Entities.Controller{
         public override void Tick(long dif) {
             //Handle mouse movement.
             HandleMouseMovement();
-            
+
             //Calculates the movement's direction.
             var direction = Vector3.Zero;
             if (_w && !_s) {
@@ -128,11 +126,11 @@ namespace CMineNew.Entities.Controller{
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 var block = _player.World.GetBlock(position);
 
-                if (block != null) {
-                    foreach (var source in block.BlockLight.Sources) {
-                        Console.WriteLine(source.Key+" -> "+ source.Value);
-                    }
+                var source = block?.BlockLight.Source;
+                if (source != null) {
+                    Console.WriteLine(source.Block.Position + " -> " + block.BlockLight.Light);
                 }
+
                 if (!matInstance.CanBePlaced(position, _player.World)) return;
                 if (!matInstance.Passable &&
                     _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
@@ -161,7 +159,7 @@ namespace CMineNew.Entities.Controller{
                 if (rotation.X > Camera.ExtremePitch) rotation.X = Camera.ExtremePitch;
                 else if (rotation.X < -Camera.ExtremePitch) rotation.X = -Camera.ExtremePitch;
                 _player.HeadRotation = rotation;
-                
+
                 //Moves the cursor to the center of the window.
                 Mouse.SetPosition(window.X + window.Width / 2, window.Y + window.Height / 2);
             }

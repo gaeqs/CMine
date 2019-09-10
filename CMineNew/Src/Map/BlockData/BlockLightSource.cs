@@ -20,18 +20,6 @@ namespace CMineNew.Map.BlockData{
         
         public Collection<BlockLight> Blocks => _blocks;
 
-        public void RemoveSource() {
-            foreach (var blockLight in _blocks) {
-                blockLight.RemoveSource(this);
-            }
-            _blocks.Clear();
-        }
-
-        public void Reset() {
-            RemoveSource();
-            _block.StartLightExpansion();
-        }
-
         protected bool Equals(BlockLightSource other) {
             return _block.Position.Equals(other.Block.Position);
         }

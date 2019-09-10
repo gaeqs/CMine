@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
@@ -39,13 +37,10 @@ namespace CMineNew.Map.BlockData{
             _textureFilter = textureFilter;
             _blockHeight = blockHeight;
             _blockYOffset = blockYOffset;
-            _blockLight = new BlockLight(lightPassReduction, (light) => TriggerLightChange());
-            _blockLightSource = isSource ? new BlockLightSource(this, sourceLight) : null;
             _neighbours = new Block[6];
 
-            if (_blockLightSource != null) {
-                _blockLight.AddSource(_blockLightSource, _blockLightSource.SourceLight);
-            }
+            _blockLight = new BlockLight(lightPassReduction);
+            _blockLightSource = isSource ? new BlockLightSource(this, sourceLight) : null;
         }
 
         public string Id => _id;
@@ -72,14 +67,16 @@ namespace CMineNew.Map.BlockData{
 
         public bool[] CollidableFaces => _collidableFaces;
 
-        public BlockLight BlockLight => _blockLight;
-
         public Color4 TextureFilter {
             get => _textureFilter;
             set => _textureFilter = value;
         }
 
         public abstract Vector3 CollisionBoxPosition { get; }
+
+        public BlockLight BlockLight => _blockLight;
+
+        public BlockLightSource BlockLightSource => _blockLightSource;
 
         public Block[] Neighbours {
             get => _neighbours;
@@ -100,23 +97,21 @@ namespace CMineNew.Map.BlockData{
                             || _blockYOffset < _neighbours[i]._blockYOffset);
                 _collidableFaces[i] = side || neighbour == null || neighbour._passable;
             }
-            
+
+            if (_blockLightSource != null) {
+                BlockLightMethods.ExpandFrom(this, _blockLightSource,
+                    _blockLightSource.SourceLight - _blockLight.LightPassReduction);
+            }
+
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
-            
-            StartLightExpansion();
-            CalculateBlockLight();
         }
 
         public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates);
 
         public void OnRemove0(Block newBlock) {
-            _blockLightSource?.RemoveSource();
-            var list = new List<BlockLightSource>(_blockLight.Sources.Keys);
-            foreach (var source in list) {
-                source.Blocks.Remove(_blockLight);
-                source.Reset();
+            if (_blockLightSource != null) {
+                BlockLightMethods.RemoveLightSource(_blockLightSource);
             }
-
             OnRemove(newBlock);
         }
 
@@ -146,55 +141,10 @@ namespace CMineNew.Map.BlockData{
             _textureFilter = new Color4(r, g, b, a);
         }
 
-        public void StartLightExpansion() {
-            if (_blockLightSource == null) return;
-            var now = DateTime.Now.Ticks;
-            for (var i = 0; i < _neighbours.Length; i++) {
-                var opposite = BlockFaceMethods.GetOpposite((BlockFace) i);
-                var neighbour = _neighbours[i];
-                neighbour?.ExpandLight(_blockLightSource,
-                    _blockLightSource.SourceLight - _blockLight.LightPassReduction, opposite, this);
-            }
-
-            Console.WriteLine((DateTime.Now.Ticks - now) * 1000 / CMine.TicksPerSecondF);
-        }
-
-        private void CalculateBlockLight() {
-            for (var i = 0; i < _neighbours.Length; i++) {
-                var neighbour = _neighbours[i];
-                var face = (BlockFace) i;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                if (neighbour == null ||
-                    !neighbour.CanLightPassThrough(opposite)) continue;
-                foreach (var source in neighbour._blockLight.Sources) {
-                    var light = source.Value - neighbour.BlockLight.LightPassReduction;
-                    if(light <= 0) continue;
-                    ExpandLight(source.Key, light, face, neighbour);
-                }
-            }
-        }
-
-        private void TriggerLightChange() {
+        public void TriggerLightChange() {
             OnSelfLightChange();
             for (var i = 0; i < _neighbours.Length; i++) {
                 _neighbours[i]?.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
-            }
-        }
-
-        private void ExpandLight(BlockLightSource source, int light, BlockFace from, Block fromBlock) {
-            if (!CanLightBePassedFrom(from, fromBlock)) return;
-
-            var added = _blockLight.AddSource(source, light);
-            if (!added) return;
-
-            var passLight = light - _blockLight.LightPassReduction;
-            if (passLight <= 0) return;
-            for (var i = 0; i < _neighbours.Length; i++) {
-                var face = (BlockFace) i;
-                if (!CanLightPassThrough(face)) continue;
-                var opposite = BlockFaceMethods.GetOpposite(face);
-                var neighbour = _neighbours[i];
-                neighbour?.ExpandLight(source, passLight, opposite, this);
             }
         }
 
