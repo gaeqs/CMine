@@ -85,8 +85,13 @@ namespace CMineNew.Map{
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
-            old?.OnRemove0(block);
+            var list = old?.OnRemove0(block);
             block?.OnPlace0(old, true);
+
+            list?.Remove(old);
+            list?.Add(block);
+            
+            BlockLightMethods.ExpandNearbyLights(list);
 
             _modified = true;
             _natural = false;

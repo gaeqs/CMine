@@ -1,5 +1,6 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using OpenTK;
@@ -103,16 +104,25 @@ namespace CMineNew.Map.BlockData{
                     _blockLightSource.SourceLight - _blockLight.LightPassReduction);
             }
 
+            var light = CalculateLightFromNeighbours(out var fromFace);
+            if (light > 0) {
+                var neighbour = _neighbours[(int) fromFace];
+                var source = neighbour._blockLight.Source;
+                BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
+            }
+
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
 
         public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates);
 
-        public void OnRemove0(Block newBlock) {
+        public ELinkedList<Block> OnRemove0(Block newBlock) {
             if (_blockLightSource != null) {
                 BlockLightMethods.RemoveLightSource(_blockLightSource);
             }
+            var list = BlockLightMethods.RemoveLightFromBlock(this, false);
             OnRemove(newBlock);
+            return list;
         }
 
         public abstract void OnRemove(Block newBlock);
@@ -146,6 +156,25 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 _neighbours[i]?.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
             }
+        }
+
+        public int CalculateLightFromNeighbours(out BlockFace face) {
+            var light = 0;
+            face = BlockFace.Down;
+            for (var i = 0; i < _neighbours.Length; i++) {
+                var nFace = (BlockFace) i;
+                var nOpposite = BlockFaceMethods.GetOpposite(nFace);
+                var neighbour = _neighbours[i];
+                if(neighbour == null 
+                   || !CanLightBePassedFrom(nFace, neighbour)
+                   || !neighbour.CanLightPassThrough(nOpposite)) continue;
+                var nLight = neighbour.BlockLight.Light - neighbour.BlockLight.LightPassReduction;
+                if(nLight <= light) continue;
+                light = nLight;
+                face = nFace;
+            }
+
+            return light;
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

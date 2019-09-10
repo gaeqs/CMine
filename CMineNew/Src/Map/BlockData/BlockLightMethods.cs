@@ -25,14 +25,29 @@ namespace CMineNew.Map.BlockData{
             Expand(queue, to, source, light, from, fromFace);
             UpdateRender(queue);
         }
-        
-        
+
+
         public static void RemoveLightSource(BlockLightSource source) {
             var queue = new Queue<Block>();
             var list = new ELinkedQueue<Block>();
             RemoveLight(list, source.Block, source);
-            ExpandNearbyLights(queue, list);
+            GetNearbyLights(queue, list);
+            ExpandNearbyLights(list);
             UpdateRender(queue);
+        }
+
+        public static ELinkedList<Block> RemoveLightFromBlock(Block block, bool expand = true) {
+            if (block.BlockLight.Source == null) return null;
+            var queue = new Queue<Block>();
+            var list = new ELinkedQueue<Block>();
+            RemoveLight(list, block, block.BlockLight.Source);
+            GetNearbyLights(queue, list);
+            if (expand) {
+                ExpandNearbyLights(list);
+            }
+
+            UpdateRender(queue);
+            return list;
         }
 
         private static void Expand(Queue<Block> updatedBlocks, Block to, BlockLightSource source,
@@ -59,6 +74,7 @@ namespace CMineNew.Map.BlockData{
         private static void RemoveLight(ELinkedList<Block> removedBlocksList, Block block, BlockLightSource source) {
             var light = block.BlockLight;
             if (!source.Equals(light.Source)) return;
+            var oldLight = Equals(block.BlockLightSource, source) ? Block.MaxBlockLight : light.Light;
             light.Light = 0;
             light.Source = null;
             removedBlocksList.Add(block);
@@ -66,13 +82,16 @@ namespace CMineNew.Map.BlockData{
             var neighbours = block.Neighbours;
             for (var i = 0; i < neighbours.Length; i++) {
                 var face = (BlockFace) i;
-                if (!block.CanLightPassThrough(face)) continue;
-                if(neighbours[i] == null) continue;
-                RemoveLight(removedBlocksList, neighbours[i], source);
+                var opposite = BlockFaceMethods.GetOpposite(face);
+                var neighbour = neighbours[i];
+                if (neighbour == null) continue;
+                if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
+                if (oldLight < neighbour.BlockLight.Light || !Equals(neighbour.BlockLight.Source, source)) continue;
+                RemoveLight(removedBlocksList, neighbour, source);
             }
         }
 
-        private static void ExpandNearbyLights(Queue<Block> updateQueue, ELinkedList<Block> list) {
+        private static void GetNearbyLights(Queue<Block> updateQueue, ELinkedList<Block> list) {
             var enumerator = (ELinkedList<Block>.ELinkedListEnumerator<Block>) list.GetEnumerator();
             while (enumerator.MoveNext()) {
                 var elem = enumerator.Current;
@@ -82,29 +101,18 @@ namespace CMineNew.Map.BlockData{
                     enumerator.Remove();
                 }
             }
+        }
 
+        public static void ExpandNearbyLights(ELinkedList<Block> list) {
+            if(list == null) return;
+            var enumerator = (ELinkedList<Block>.ELinkedListEnumerator<Block>) list.GetEnumerator();
             enumerator.Reset();
             while (enumerator.MoveNext()) {
                 var elem = enumerator.Current;
                 if (elem == null) continue;
-                var neighbours = elem.Neighbours;
-                var light = 0;
-                Block block = null;
-                var face = BlockFace.Down;
-                for (var i = 0; i < neighbours.Length; i++) {
-                    var neighbour = neighbours[i];
-                    if (neighbour == null) {
-                        continue;
-                    }
-                    var bLight = neighbour.BlockLight;
-                    var nLight = bLight.Light - bLight.LightPassReduction;
-                    if (light >= nLight) continue;
-                    light = nLight;
-                    block = neighbour;
-                    face = (BlockFace) i;
-                }
-
-                if (block == null) continue;
+                var light = elem.CalculateLightFromNeighbours(out var face);
+                if (light <= 0) continue;
+                var block = elem.Neighbours[(int) face];
                 Expand(null, elem, block.BlockLight.Source, light, block, face);
             }
         }
