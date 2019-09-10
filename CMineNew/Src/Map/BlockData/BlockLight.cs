@@ -1,54 +1,57 @@
 using System.Collections.Generic;
 using System.Linq;
-using CMineNew.Geometry;
 
 namespace CMineNew.Map.BlockData{
     public class BlockLight{
-        private readonly Dictionary<Vector3i, int> _sources;
-        private Vector3i _source;
+        private readonly Dictionary<BlockLightSource, int> _sources;
+        private BlockLightSource _source;
         private int _light;
 
-        private bool _isSource;
-        private int _sourceLight;
-        private int _lightPassReduction;
+        private readonly int _lightPassReduction;
+        private readonly UpdateRender _updateRender;
 
-        public BlockLight(bool isSource, int sourceLight, int lightPassReduction) {
-            _sources = new Dictionary<Vector3i, int>();
-            _isSource = isSource;
-            _sourceLight = sourceLight;
+        public BlockLight(int lightPassReduction, UpdateRender updateRender) {
+            _sources = new Dictionary<BlockLightSource, int>();
             _lightPassReduction = lightPassReduction;
+            _updateRender = updateRender;
         }
 
-        public Vector3i Source => _source;
+        public BlockLightSource Source => _source;
 
-        public Dictionary<Vector3i, int> Sources => _sources;
+        public Dictionary<BlockLightSource, int> Sources => _sources;
 
         public int Light => _light;
-
-        public bool IsSource => _isSource;
-
-        public int SourceLight => _sourceLight;
-
         public int LightPassReduction => _lightPassReduction;
 
-        public bool TryGetSourceLight(Vector3i source, out int light) {
+        public bool TryGetSourceLight(BlockLightSource source, out int light) {
             return _sources.TryGetValue(source, out light);
         }
 
-        public bool AddSource(Vector3i source, int light) {
+        public bool ContainsBrightestSource(BlockLightSource source, int light) {
+            return _sources.TryGetValue(source, out var oldLight) && oldLight >= light;
+        }
+        
+        public bool AddSource(BlockLightSource source, int light) {
             if (_sources.TryGetValue(source, out var oldLight) && oldLight >= light) {
                 return false;
             }
 
+            source.Blocks.Add(this);
             _sources[source] = light;
-            return CalculateLight();
+            if (CalculateLight()) {
+                _updateRender.Invoke(_light);
+            }
+
+            return true;
         }
 
-        public bool RemoveSource(Vector3i source) {
+
+        public void RemoveSource(BlockLightSource source) {
             _sources.Remove(source);
-            return _source == source && CalculateLight();
+            if (CalculateLight()) {
+                _updateRender.Invoke(_light);
+            }
         }
-
 
         private bool CalculateLight() {
             var oldLight = _light;
@@ -58,7 +61,10 @@ namespace CMineNew.Map.BlockData{
                 _source = source.Key;
             }
 
-            return _light == oldLight;
+            return _light != oldLight;
         }
+
+
+        public delegate void UpdateRender(int light);
     }
 }

@@ -53,5 +53,9 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
+        
+        public override void OnSelfLightChange() {
+            _chunk.Region.Render.AddData(0, this, _blockLight.Light);
+        }
     }
 }

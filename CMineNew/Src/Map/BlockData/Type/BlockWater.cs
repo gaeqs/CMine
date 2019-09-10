@@ -297,5 +297,14 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
+
+        public override void OnSelfLightChange() {
+            foreach (var blockFace in BlockFaceMethods.All) {
+                var i = (int) blockFace;
+                if (_visibleFaces[i]) {
+                    
+                }
+            }
+        }
     }
 }

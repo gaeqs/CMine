@@ -77,13 +77,16 @@ namespace CMineNew.Map{
             _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
 
             var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
-
-            old?.OnRemove0(block, neighbours);
-            block?.OnPlace0(old, neighbours, true);
+            if (block != null) {
+                block.Neighbours = neighbours;
+            }
+            
             for (var i = 0; i < neighbours.Length; i++) {
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
+            old?.OnRemove0(block);
+            block?.OnPlace0(old, true);
 
             _modified = true;
             _natural = false;
@@ -116,9 +119,13 @@ namespace CMineNew.Map{
         public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates) {
             var blocks = new Block[6];
             ForEachChunkPosition((x, y, z, block) => {
-                if (block == null || block is BlockAir) return;
                 GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
-                block.OnPlace0(null, blocks, triggerWorldUpdates);
+                block.Neighbours = blocks;
+            });
+            ForEachChunkPosition((x, y, z, block) => {
+                if(block == null) return;
+                block.OnPlace0(null, triggerWorldUpdates);
+                blocks = block?.Neighbours;
                 if (x == 0) {
                     blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
                 }
@@ -173,25 +180,6 @@ namespace CMineNew.Map{
                 ? World.GetBlock(position - new Vector3i(0, 1, 0))
                 : _blocks[chunkPosition.X, chunkPosition.Y - 1, chunkPosition.Z];
             return blocks;
-        }
-
-        public void RefreshEdgeBlocks() {
-            var blocks = new Block[6];
-            for (var x = 0; x < ChunkLength; x++) {
-                var edgeX = x == 0 || x == 15;
-                for (var y = 0; y < ChunkLength; y++) {
-                    var edgeY = y == 0 || y == 15;
-                    for (var z = 0; z < ChunkLength; z++) {
-                        if (edgeX || edgeY || z == 0 || z == 15) {
-                            var block = _blocks[x, y, z];
-                            if (block == null || block is BlockAir) continue;
-                            block.OnPlace0(null,
-                                GetNeighbourBlocks(blocks, block.Position,
-                                    new Vector3i(x, y, z)), false);
-                        }
-                    }
-                }
-            }
         }
 
         public void Save(Stream stream, BinaryFormatter formatter) {

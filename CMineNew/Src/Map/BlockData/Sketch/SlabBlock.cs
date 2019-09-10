@@ -112,7 +112,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
         
         public override bool CanLightPassThrough(BlockFace face) {
-            return _blockLight.IsSource || !IsFaceOpaque(face);
+            return _blockLightSource != null || !IsFaceOpaque(face);
         }
 
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {

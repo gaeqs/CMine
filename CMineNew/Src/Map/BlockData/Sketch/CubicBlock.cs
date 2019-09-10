@@ -23,7 +23,7 @@ namespace CMineNew.Map.BlockData.Sketch{
                 var block = neighbours[i];
                 _visibleFaces[i] = block == null || !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 if (_visibleFaces[i]) {
-                    render.AddData(i, this, 0);
+                    render.AddData(i, this, neighbours[i]?.BlockLight.Light ?? 0);
                 }
                 else {
                     render.RemoveData(i, this);
@@ -45,7 +45,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             if (oldVisible == newVisible) return;
             _visibleFaces[faceInt] = newVisible;
             if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, 0);
+                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light);
             }
             else {
                 _chunk.Region.Render.RemoveData(faceInt, this);
@@ -85,15 +85,20 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override bool CanLightPassThrough(BlockFace face) {
-            return _blockLight.IsSource || !IsFaceOpaque(face);
+            return _blockLightSource != null || !IsFaceOpaque(face);
         }
 
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {
-            return !IsFaceOpaque(face);
+            return true;
         }
-        
+
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
-            //TODO UPDATE RENDER
+            if (_visibleFaces[(int) relative]) {
+                _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light);
+            }
+        }
+
+        public override void OnSelfLightChange() {
         }
     }
 }

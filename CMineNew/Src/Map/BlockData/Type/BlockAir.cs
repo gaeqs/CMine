@@ -55,5 +55,8 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
         }
+
+        public override void OnSelfLightChange() {
+        }
     }
 }
