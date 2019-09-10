@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
@@ -66,6 +67,7 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < neighbours.Length; i++) {
                 var face = (BlockFace) i;
                 if (!block.CanLightPassThrough(face)) continue;
+                if(neighbours[i] == null) continue;
                 RemoveLight(removedBlocksList, neighbours[i], source);
             }
         }
@@ -91,6 +93,9 @@ namespace CMineNew.Map.BlockData{
                 var face = BlockFace.Down;
                 for (var i = 0; i < neighbours.Length; i++) {
                     var neighbour = neighbours[i];
+                    if (neighbour == null) {
+                        continue;
+                    }
                     var bLight = neighbour.BlockLight;
                     var nLight = bLight.Light - bLight.LightPassReduction;
                     if (light >= nLight) continue;
