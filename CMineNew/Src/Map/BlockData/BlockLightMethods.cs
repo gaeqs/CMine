@@ -32,7 +32,7 @@ namespace CMineNew.Map.BlockData{
             var list = new ELinkedQueue<Block>();
             RemoveLight(list, source.Block, source);
             GetNearbyLights(queue, list);
-            ExpandNearbyLights(list);
+            ExpandNearbyLights(list, null);
             UpdateRender(queue);
         }
 
@@ -43,7 +43,7 @@ namespace CMineNew.Map.BlockData{
             RemoveLight(list, block, block.BlockLight.Source);
             GetNearbyLights(queue, list);
             if (expand) {
-                ExpandNearbyLights(list);
+                ExpandNearbyLights(list, null);
             }
 
             UpdateRender(queue);
@@ -103,7 +103,7 @@ namespace CMineNew.Map.BlockData{
             }
         }
 
-        public static void ExpandNearbyLights(ELinkedList<Block> list) {
+        public static void ExpandNearbyLights(ELinkedList<Block> list, Queue<Block> queue) {
             if(list == null) return;
             var enumerator = (ELinkedList<Block>.ELinkedListEnumerator<Block>) list.GetEnumerator();
             enumerator.Reset();
@@ -113,7 +113,7 @@ namespace CMineNew.Map.BlockData{
                 var light = elem.CalculateLightFromNeighbours(out var face);
                 if (light <= 0) continue;
                 var block = elem.Neighbours[(int) face];
-                Expand(null, elem, block.BlockLight.Source, light, block, face);
+                Expand(queue, elem, block.BlockLight.Source, light, block, face);
             }
         }
 

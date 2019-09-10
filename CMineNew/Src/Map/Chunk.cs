@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
@@ -80,18 +81,23 @@ namespace CMineNew.Map{
             if (block != null) {
                 block.Neighbours = neighbours;
             }
-            
+
             for (var i = 0; i < neighbours.Length; i++) {
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
+            
             var list = old?.OnRemove0(block);
             block?.OnPlace0(old, true);
-
             list?.Remove(old);
             list?.Add(block);
+
+            var queue = new Queue<Block>();            
+            BlockLightMethods.ExpandNearbyLights(list, queue);
             
-            BlockLightMethods.ExpandNearbyLights(list);
+            while (queue.Count > 0) {
+                queue.Dequeue().TriggerLightChange();
+            }
 
             _modified = true;
             _natural = false;
