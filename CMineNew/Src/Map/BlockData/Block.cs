@@ -110,6 +110,7 @@ namespace CMineNew.Map.BlockData{
                 var source = neighbour._blockLight.Source;
                 BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
             }
+            TriggerLightChange(false);
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
@@ -151,8 +152,11 @@ namespace CMineNew.Map.BlockData{
             _textureFilter = new Color4(r, g, b, a);
         }
 
-        public void TriggerLightChange() {
-            OnSelfLightChange();
+        public void TriggerLightChange(bool self = true) {
+            if (self) {
+                OnSelfLightChange();
+            }
+
             for (var i = 0; i < _neighbours.Length; i++) {
                 _neighbours[i]?.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
             }
