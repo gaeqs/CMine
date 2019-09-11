@@ -91,5 +91,9 @@
     <data name="sand" type="System.Resources.ResXFileRef">
         <value>sand.png;System.Byte[]</value>
     </data>
-    
+
+    <data name="torch" type="System.Resources.ResXFileRef">
+        <value>torch.png;System.Byte[]</value>
+    </data>
+
 </root>

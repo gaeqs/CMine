@@ -120,7 +120,7 @@ namespace CMineNew.Entities.Controller{
                 _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
             }
             else if (args.Button == MouseButton.Middle) {
-                var matInstance = new BlockSnapshotSand();
+                var matInstance = new BlockSnapshotTorch();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);

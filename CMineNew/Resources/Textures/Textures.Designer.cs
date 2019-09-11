@@ -233,6 +233,16 @@ namespace CMineNew.Resources.Textures {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] torch {
+            get {
+                object obj = ResourceManager.GetObject("torch", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] water {
             get {
                 object obj = ResourceManager.GetObject("water", resourceCulture);

@@ -42,6 +42,10 @@ namespace CMineNew.Map.BlockData{
 
             _blockLight = new BlockLight(lightPassReduction);
             _blockLightSource = isSource ? new BlockLightSource(this, sourceLight) : null;
+            if (isSource) {
+                _blockLight.Light = _blockLightSource.SourceLight;
+                _blockLight.Source = _blockLightSource;
+            }
         }
 
         public string Id => _id;

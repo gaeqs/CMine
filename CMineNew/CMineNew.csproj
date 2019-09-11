@@ -95,9 +95,11 @@
     <Compile Include="Src\Map\BlockData\Model\BlockModelManager.cs" />
     <Compile Include="Src\Map\BlockData\Model\CrossBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\SlabBlockModel.cs" />
+    <Compile Include="Src\Map\BlockData\Model\TorchBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\WaterBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Render\CrossBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Render\SlabBlockRender.cs" />
+    <Compile Include="Src\Map\BlockData\Render\TorchBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Render\WaterBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Sketch\CrossBlock.cs" />
     <Compile Include="Src\Map\BlockData\Sketch\CubicBlock.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotSand.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotStone.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTallGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTorch.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\Interface\IGrass.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
@@ -130,6 +133,7 @@
     <Compile Include="Src\Map\BlockData\Type\BlockSand.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockStone.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockTallGrass.cs" />
+    <Compile Include="Src\Map\BlockData\Type\BlockTorch.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockWater.cs" />
     <Compile Include="Src\Map\BlockFace.cs" />
     <Compile Include="Src\Map\BlockData\Block.cs" />
@@ -251,6 +255,7 @@
     <Content Include="Resources\Textures\SkyBox\top.png" />
     <Content Include="Resources\Textures\stone.png" />
     <Content Include="Resources\Textures\tall_grass.png" />
+    <Content Include="Resources\Textures\torch.png" />
     <Content Include="Resources\Textures\water.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

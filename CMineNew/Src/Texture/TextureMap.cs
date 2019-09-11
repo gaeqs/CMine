@@ -27,6 +27,8 @@ namespace CMineNew.Texture{
             bitmaps.Add("default:oak_log_top", ToBitmap(Textures.oak_log_top));
             bitmaps.Add("default:oak_leaves", ToBitmap(Textures.oak_leaves));
             bitmaps.Add("default:sand", ToBitmap(Textures.sand));
+            bitmaps.Add("default:torch", ToBitmap(Textures.torch));
+            
 
             CreateTextureMap(bitmaps);
         }
