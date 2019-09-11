@@ -7,6 +7,7 @@ in float fragLight;
 
 layout (location = 0) out vec4 gNormal;
 layout (location = 1) out vec3 gAlbedo;
+layout (location = 2) out vec3 gBrightness;
 
 uniform sampler2D sampler;
 
@@ -18,9 +19,9 @@ void main() {
         texture = fragColorFilter * texture.r;
     }
     
-    float light = fragLight * 0.8;
-    light+= 0.2;
-    gAlbedo = texture.rgb * light;
+    float light = 0.2 + fragLight * 0.8;
+    gBrightness = vec3(1) * light;
+    gAlbedo = texture.rgb;
     
     //W = Specular Weight
     gNormal = vec4(fragNormal, 2);

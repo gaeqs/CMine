@@ -34,7 +34,7 @@ void main() {
         vec4 position4 = invertedViewProjection * projected;
         vec3 position = position4.xyz / position4.w;
 
-        vec3 brightness = texture2D(gBrightness, fragTexCoords).rgb;
+        vec3 brightness = clamp(texture2D(gBrightness, fragTexCoords).rgb, 0, 1);
 
         vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
 
