@@ -25,8 +25,7 @@ namespace CMineNew.Map{
         };
 
         private int _id;
-        private readonly ShaderProgram _postRenderShader;
-        private readonly ShaderProgram _directionalShader, _pointShader, _flashShader;
+        private readonly ShaderProgram _postRenderShader, _postRenderWaterShader;
 
         private VertexArrayObject _quadVao;
         private int _width, _height;
@@ -36,12 +35,8 @@ namespace CMineNew.Map{
         public WorldGBuffer(INativeWindow window) {
             _postRenderShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_fragment);
             _postRenderShader.SetupForPostRender();
-            _directionalShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.directional_light_fragment);
-            _pointShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.point_light_fragment);
-            _flashShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.flash_light_fragment);
-            _directionalShader.SetupForLight();
-            _pointShader.SetupForLight();
-            _flashShader.SetupForLight();
+            _postRenderWaterShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_water_fragment);
+            _postRenderWaterShader.SetupForPostRender();
             _width = window.Width;
             _height = window.Height;
             _quadVao = GenerateQuadVao();
@@ -80,7 +75,7 @@ namespace CMineNew.Map{
             GL.DepthMask(false);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _quadVao.Bind();
-            _postRenderShader.Use();
+            UsePostRenderShader(waterShader);
             _postRenderShader.SetUVector("cameraPosition", camera.Position);
             _postRenderShader.SetUMatrix("invertedViewProjection", camera.InvertedViewProjection);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
@@ -88,7 +83,6 @@ namespace CMineNew.Map{
 
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
-            _postRenderShader.SetUFloat("waterShader", waterShader ? 1 : 0);
             _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
             _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
 
@@ -106,6 +100,14 @@ namespace CMineNew.Map{
             DrawQuad();
         }
 
+        private void UsePostRenderShader(bool water) {
+            if (water) {
+                _postRenderWaterShader.Use();
+            }
+            else {
+                _postRenderShader.Use();
+            }
+        }
 
         #region constructor methods
 

@@ -31,27 +31,7 @@ float getWaterLevel () {
 
 void main () {
     mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y, worldPosition.z, 1);
-    vec4 modelPosition = model * vec4(position, 1);
-    
-    if (position.x == 0) {
-        modelPosition.x -= 0.0003;
-    }
-    if (position.y == 0) {
-        modelPosition.y -= 0.0003;
-    }
-    if (position.z == 0) {
-        modelPosition.z -= 0.0003;
-    }
-
-    if (position.x == 1) {
-        modelPosition.x += 0.0003;
-    }
-    if (position.y == 1) {
-        modelPosition.y += 0.0003;
-    }
-    if (position.z == 1) {
-        modelPosition.z += 0.0003;
-    }
+    vec4 modelPosition = model * vec4(clamp(position, 0.0003, 0.9997), 1);
 
     if (position.y > 0.5) {
         float level = getWaterLevel() + 1;

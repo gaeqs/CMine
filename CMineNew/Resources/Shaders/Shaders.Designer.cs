@@ -66,6 +66,7 @@ namespace CMineNew.Resources.Shaders {
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
         ///in vec4 fragColorFilter;
+        ///in float fragLight;
         ///
         ///layout (location = 0) out vec4 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
@@ -79,9 +80,8 @@ namespace CMineNew.Resources.Shaders {
         ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
         ///        texture = fragColorFilter * texture.r;
         ///    }
-        ///
-        ///    gAlbedo = texture.rgb;
-        ///    //W = Specular  [rest of string was truncated]&quot;;.
+        ///    
+        ///    float light = frag [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -138,15 +138,17 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 3) in vec3 worldPosition;
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
+        ///layout (location = 6) in float blockLight;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
         ///out vec4 fragColorFilter;
+        ///out float fragLight;
         ///
         ///uniform mat4 viewProjection;
         ///
         ///void main () {
-        ///    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y [rest of string was truncated]&quot;;.
+        ///    mat4 model = mat4(1, [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_vertex {
             get {
@@ -173,7 +175,7 @@ namespace CMineNew.Resources.Shaders {
         ///    vec3 normal = normalFull.rgb;
         ///    
         ///    if(normal.x == 0 &amp;&amp; normal.y == 0 &amp;&amp; normal.z == 0) {
-        ///        gAmbientBright [rest of string was truncated]&quot;;.
+        ///        gBrightness =  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string directional_light_fragment {
             get {
@@ -253,19 +255,17 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 430 core
         ///
         ///struct PointLight {
-        ///    vec3 position;          // 16
-        ///    vec3 ambientColor;      // 16
-        ///    vec3 diffuseColor;      // 16
-        ///    vec3 specularColor;     // 16
+        ///    vec3 position;// 12
+        ///    vec3 ambientColor;// 12
+        ///    vec3 diffuseColor;// 12
+        ///    vec3 specularColor;// 12
         ///
-        ///    float constantAttenuation;  // 4
-        ///    float linearAttenuation;    // 4
-        ///    float quadraticAttenuation; // 4
-        ///    
-        ///    // 64 + 12 = 76 =&gt; 80 bytes =&gt; 20 floats
+        ///    float constantAttenuation;// 4
+        ///    float linearAttenuation;// 4
+        ///    float quadraticAttenuation;// 4
         ///};
         ///
         ///in vec2 fragPosition, fragTexCoords;
@@ -276,7 +276,10 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gNormal;
         ///
         ///
-        ///uniform ve [rest of string was truncated]&quot;;.
+        ///uniform vec3 cameraPosition;
+        ///uniform mat4 invertedViewProjection;
+        ///uniform int lightAmount;
+        ///la [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string point_light_fragment {
             get {
@@ -368,11 +371,11 @@ namespace CMineNew.Resources.Shaders {
         ///uniform float ambientStrength;
         ///uniform vec3 ambientColor;
         ///
-        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared;
         ///uniform mat4 invertedViewProjection;
         ///
         ///vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
-        ///    return ambientStrengt [rest of string was truncated]&quot;;.
+        ///    return ambientStrength * ambientCo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_fragment {
             get {
@@ -398,6 +401,34 @@ namespace CMineNew.Resources.Shaders {
         internal static string post_render_vertex {
             get {
                 return ResourceManager.GetString("post_render_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///in vec2 fragPos, fragTexCoords;
+        ///out vec4 FragColor;
+        ///
+        ///uniform sampler2D gAlbedo;
+        ///uniform sampler2D gDepth;
+        ///uniform sampler2D gNormal;
+        ///uniform sampler2D gBrightness;
+        ///uniform samplerCube skyBox;
+        ///
+        ///uniform vec3 cameraPosition;
+        ///uniform float ambientStrength;
+        ///uniform vec3 ambientColor;
+        ///
+        ///uniform float viewDistanceSquared, viewDistanceOffsetSquared;
+        ///uniform mat4 invertedViewProjection;
+        ///
+        ///vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
+        ///    return ambientStrength * ambientCo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string post_render_water_fragment {
+            get {
+                return ResourceManager.GetString("post_render_water_fragment", resourceCulture);
             }
         }
         
@@ -450,6 +481,7 @@ namespace CMineNew.Resources.Shaders {
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
         ///in vec4 fragColorFilter;
+        ///in float fragLight;
         ///
         ///layout (location = 0) out vec4 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
@@ -464,9 +496,7 @@ namespace CMineNew.Resources.Shaders {
         ///        texture = fragColorFilter * texture.r;
         ///    }
         ///
-        ///    gAlbedo = texture.rgb;
-        ///
-        ///    //W = Specula [rest of string was truncated]&quot;;.
+        ///    float light = fragLigh [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string slab_fragment {
             get {
@@ -483,17 +513,17 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 3) in vec3 worldPosition;
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
-        ///layout (location = 6) in float upside;
+        ///layout (location = 6) in float blockLight;
+        ///layout (location = 7) in float upside;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
         ///out vec4 fragColorFilter;
+        ///out float fragLight;
         ///
         ///uniform mat4 viewProjection;
         ///
-        ///void main () {
-        ///    float height = upside &gt; 0.5 ? 0.5 : 0;
-        ///    ma [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string slab_vertex {
             get {
@@ -557,6 +587,7 @@ namespace CMineNew.Resources.Shaders {
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoords;
         ///in vec4 fragColorFilter;
+        ///in float fragLight;
         ///
         ///out vec4 FragColor;
         ///
@@ -569,10 +600,7 @@ namespace CMineNew.Resources.Shaders {
         ///void main() {
         ///    vec4 ambient = texture(sampler, fragTexCoords);
         ///    if (ambient.r == ambient.g &amp;&amp; ambient.r == ambient.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
-        ///        ambient = fragColorFilter * ambient.r;
-        ///    }
-        ///
-        ///    Fr [rest of string was truncated]&quot;;.
+        ///        ambient = fragColorFilter * ambien [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_fragment {
             get {
@@ -589,16 +617,15 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 3) in vec3 worldPosition;
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
-        ///layout (location = 6) in vec4 waterLevels;
+        ///layout (location = 6) in float blockLight;
+        ///layout (location = 7) in vec4 waterLevels;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoords;
         ///out vec4 fragColorFilter;
+        ///out float fragLight;
         ///
-        ///uniform mat4 viewProjection;
-        ///
-        ///float getWaterLevel () {
-        ///    if (position.x &lt; 0.5 &amp;&amp; positio [rest of string was truncated]&quot;;.
+        ///uniform mat4 viewProjection [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_vertex {
             get {

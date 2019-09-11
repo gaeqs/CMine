@@ -31,13 +31,7 @@ void main() {
     }
     else if (lengthSquared > viewDistanceSquared) {
         vec4 color = texture(skyBox, distance);
-
-        if (lengthSquared > viewDistanceOffsetSquared) {
-            FragColor = color;
-        }
-        else {
-            float a = 1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared);
-            FragColor = mix(FragColor, color, a);
-        }
+        float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
+        FragColor = mix(FragColor, color, a);
     }
 }

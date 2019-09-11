@@ -64,6 +64,10 @@
         <value>PostRender/fragment.frag;System.String</value>
     </data>
 
+    <data name="post_render_water_fragment" type="System.Resources.ResXFileRef">
+        <value>PostRender/water_fragment.frag;System.String</value>
+    </data>
+    
     <data name="directional_light_vertex" type="System.Resources.ResXFileRef">
         <value>Light/directional_light_vertex.vert;System.String</value>
     </data>
