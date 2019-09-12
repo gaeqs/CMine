@@ -25,6 +25,8 @@ namespace CMineNew.Map{
         private readonly int[,] _heights, _interpolatedHeights;
         private readonly Color4[,] _interpolatedGrassColors;
 
+        private readonly int[,] _maxBlockHeight;
+
         public World2dRegion(World world, Vector2i position) {
             _world = world;
             _position = position;
@@ -32,6 +34,7 @@ namespace CMineNew.Map{
             _heights = new int[RegionLength, RegionLength];
             _interpolatedHeights = new int[RegionLength, RegionLength];
             _interpolatedGrassColors = new Color4[RegionLength, RegionLength];
+            _maxBlockHeight = new int[RegionLength, RegionLength];
         }
 
         public World World => _world;
@@ -46,6 +49,15 @@ namespace CMineNew.Map{
 
         public Color4[,] InterpolatedGrassColors => _interpolatedGrassColors;
 
+        public int[,] MaxBlockHeight => _maxBlockHeight;
+
+        public void TryEditMaxBlockHeight(Vector2i position, int height) {
+            var old = _maxBlockHeight[position.X, position.Y];
+            if (height > old) {
+                _maxBlockHeight[position.X, position.Y] = height;
+            }
+        }
+        
         public void CalculateBiomes() {
             var worldPosition = _position << WorldPositionShift;
             var grid = _world.WorldGenerator.BiomeGrid;
@@ -76,6 +88,7 @@ namespace CMineNew.Map{
                     Interpolate(regions, position, local, out var height, out var grassColor);
                     _interpolatedHeights[x, z] = height;
                     _interpolatedGrassColors[x, z] = grassColor;
+                    _maxBlockHeight[x, z] = height;
                 }
             }
         }
@@ -97,6 +110,7 @@ namespace CMineNew.Map{
                     var height = _heights[x, z];
                     var interpolatedHeight = _interpolatedHeights[x, z];
                     var interpolatedColor = _interpolatedGrassColors[x, z];
+                    var maxBlockHeight = _maxBlockHeight[x, z];
                     formatter.Serialize(stream, biome.Id);
                     formatter.Serialize(stream, height);
                     formatter.Serialize(stream, interpolatedHeight);
@@ -104,8 +118,10 @@ namespace CMineNew.Map{
                     formatter.Serialize(stream, interpolatedColor.G);
                     formatter.Serialize(stream, interpolatedColor.B);
                     formatter.Serialize(stream, interpolatedColor.A);
+                    formatter.Serialize(stream, maxBlockHeight);
                 }
             }
+
             stream.Close();
         }
 
@@ -130,10 +146,12 @@ namespace CMineNew.Map{
                         (float) formatter.Deserialize(stream),
                         (float) formatter.Deserialize(stream),
                         (float) formatter.Deserialize(stream));
+                    _maxBlockHeight[x, z] = (int) formatter.Deserialize(stream);
                 }
             }
+
             stream.Close();
-            
+
             return true;
         }
 

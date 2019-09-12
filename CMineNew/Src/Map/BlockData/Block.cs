@@ -1,8 +1,10 @@
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Type;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -93,6 +95,7 @@ namespace CMineNew.Map.BlockData{
         }
 
         public void OnPlace0(Block oldBlock, bool triggerWorldUpdates) {
+            Check2dRegionHeight();
             for (var i = 0; i < _neighbours.Length; i++) {
                 var neighbour = _neighbours[i];
                 var face = (BlockFace) i;
@@ -191,6 +194,16 @@ namespace CMineNew.Map.BlockData{
             }
 
             return light;
+        }
+
+        private void Check2dRegionHeight() {
+            if (this is BlockAir) {
+                //TODO REMOVE FROM BLOCK HEIGHT
+                return;
+            }
+            var region = _chunk.Region.World2dRegion;
+            var regionPos = new Vector2i(_position.X, _position.Z) - (region.Position << World2dRegion.WorldPositionShift);
+            region.TryEditMaxBlockHeight(regionPos, _position.Y);
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);
