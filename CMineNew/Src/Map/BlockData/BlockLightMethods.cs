@@ -67,6 +67,13 @@ namespace CMineNew.Map.BlockData{
                 if (!to.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
                 var neighbour = neighbours[i];
+                if (neighbour == null) {
+                    neighbour = to.World.GetBlock(to.Position + BlockFaceMethods.GetRelative(face));
+                    neighbours[i] = neighbour;
+                    if (neighbour == null) {
+                        continue;
+                    }
+                }
                 Expand(updatedBlocks, neighbour, source, toLight, to, opposite);
             }
         }
@@ -84,7 +91,13 @@ namespace CMineNew.Map.BlockData{
                 var face = (BlockFace) i;
                 var opposite = BlockFaceMethods.GetOpposite(face);
                 var neighbour = neighbours[i];
-                if (neighbour == null) continue;
+                if (neighbour == null) {
+                    neighbour = block.World.GetBlock(block.Position + BlockFaceMethods.GetRelative(face));
+                    neighbours[i] = neighbour;
+                    if (neighbour == null) {
+                        continue;
+                    }
+                }
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
                 if (oldLight < neighbour.BlockLight.Light || !Equals(neighbour.BlockLight.Source, source)) continue;
                 RemoveLight(removedBlocksList, neighbour, source);

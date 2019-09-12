@@ -154,19 +154,6 @@ namespace CMineNew.Light{
             _directionalMapper.FlushQueue();
             _directionalVao.DrawnArraysInstanced(0, 6, _directionalMapper.Amount);
 
-            foreach (var light in _pointLights) {
-                if (camera.IsVisible(light.Position, light.Radius)) {
-                    if (!_pointMapper.ContainsKey(light)) {
-                        _pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Add, light, light.Data, 0));
-                    }
-                }
-                else {
-                    if (_pointMapper.ContainsKey(light)) {
-                        //_pointMapper.AddTask(new VboMapperTask<PointLight>(VboMapperTaskType.Remove, light, null, 0));
-                    }
-                }
-            }
-
             _pointVao.Bind();
             _pointShader.Use();
             _pointShader.SetUVector("cameraPosition", camera.Position);

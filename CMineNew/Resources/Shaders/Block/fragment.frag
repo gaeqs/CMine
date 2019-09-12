@@ -19,7 +19,7 @@ void main() {
         texture = fragColorFilter * texture.r;
     }
     
-    float light = 0.2 + fragLight * 0.8;
+    float light = 0.05 + fragLight * 0.95;
     gBrightness = vec3(1) * light;
     gAlbedo = texture.rgb;
     

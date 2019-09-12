@@ -162,7 +162,15 @@ namespace CMineNew.Map.BlockData{
             }
 
             for (var i = 0; i < _neighbours.Length; i++) {
-                _neighbours[i]?.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
+                var neighbour = _neighbours[i];
+                if (neighbour == null) {
+                    neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace)i));
+                    _neighbours[i] = neighbour;
+                    if (neighbour == null) {
+                        continue;
+                    }
+                }
+                neighbour.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
             }
         }
 

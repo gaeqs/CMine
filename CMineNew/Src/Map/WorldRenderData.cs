@@ -23,8 +23,8 @@ namespace CMineNew.Map{
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
 
             var vec = new Vector3(0.5f, 0.5f, 0.5f);
-            _lightManager.AddDirectionalLight(new DirectionalLight(new Vector3(-1, -1, 0),
-                vec, vec, vec));
+            //_lightManager.AddDirectionalLight(new DirectionalLight(new Vector3(-1, -1, 0),
+            //    vec, vec, vec));
         }
 
         public PhysicCamera Camera => _camera;
@@ -61,7 +61,7 @@ namespace CMineNew.Map{
         }
 
         public void DrawGBuffer(bool waterShader) {
-            _gBuffer.Draw(_camera, Vector3.One, 0.2f, waterShader, _skyBox);
+            _gBuffer.Draw(_camera, Vector3.One, 0.000f, waterShader, _skyBox);
         }
 
         public void CameraTick(Player player, long delay) {
