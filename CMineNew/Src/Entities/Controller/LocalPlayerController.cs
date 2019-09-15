@@ -105,7 +105,7 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMousePush(MouseButtonEventArgs args) {
             //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotTorch();
+                var matInstance = new BlockSnapshotBricks();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -126,9 +126,13 @@ namespace CMineNew.Entities.Controller{
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 var block = _player.World.GetBlock(position);
 
-                var source = block?.BlockLight.Source;
-                if (source != null) {
-                    Console.WriteLine(source.Block.Position + " -> " + block.BlockLight.Light);
+                var light = block?.BlockLight;
+                if (light != null) {
+                    var regionInPos = block.Position - (block.Chunk.Region.Position << ChunkRegion.WorldPositionShift);
+                    var lightData = block.Chunk.Region.World2dRegion.SunlightData[regionInPos.X, regionInPos.Z];
+                    var light2d = lightData.GetLightFor(block.Position.Y);
+                    Console.WriteLine(light.Sunlight +" -> "+light2d);
+                    Console.WriteLine(lightData);
                 }
 
                 //if (!matInstance.CanBePlaced(position, _player.World)) return;

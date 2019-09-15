@@ -5,7 +5,8 @@ using OpenTK.Graphics;
 namespace CMineNew.Map.BlockData.Type{
     public class BlockOakLeaves : TexturedCubicBlock{
         public BlockOakLeaves(Chunk chunk, Vector3i position)
-            : base("default:oak_leaves", chunk, position, "default:oak_leaves", Color4.Green) {
+            : base("default:oak_leaves", chunk, position, "default:oak_leaves", Color4.Green,
+                false, false, 0, 1, 1) {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

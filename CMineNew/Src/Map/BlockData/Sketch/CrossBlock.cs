@@ -6,9 +6,10 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CrossBlock : Block{
-        public CrossBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false)
+        public CrossBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false,
+            bool lightSource = false, int blockLightPassReduction = 1, int sunlightPassReduction = 0)
             : base(id, BlockModelManager.GetModelOrNull(CrossBlockModel.Key), chunk, position, textureFilter,
-                passable) {
+                passable, 1, 0, lightSource, blockLightPassReduction, sunlightPassReduction) {
         }
 
 
@@ -17,7 +18,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
-            render.AddData(0, this, _blockLight.Light);
+            render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
         }
 
         public override void OnRemove(Block newBlock) {
@@ -55,7 +56,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
         
         public override void OnSelfLightChange() {
-            _chunk.Region.Render.AddData(0, this, _blockLight.Light);
+            _chunk.Region.Render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
         }
     }
 }

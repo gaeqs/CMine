@@ -42,7 +42,7 @@ namespace CMineNew.Map.Generator{
             }
 
             empty &= _world.UnloadedChunkGenerationManager.PostGenerateChunk(chunk, _buffer, region2d);
-            chunk.FillWithBlocks(_buffer, empty);
+            chunk.FillWithBlocks(_buffer);
             return empty;
         }
     }

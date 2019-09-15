@@ -4,7 +4,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
-using CMineNew.Map.BlockData.Type;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -30,7 +29,8 @@ namespace CMineNew.Map.BlockData{
 
         public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
             Color4 textureFilter, bool passable = false, float blockHeight = 1, float blockYOffset = 0,
-            bool isSource = false, int sourceLight = 0, int lightPassReduction = 1) {
+            bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
+            int sunlightPassReduction = 0) {
             _id = id;
             _blockModel = blockModel;
             _chunk = chunk;
@@ -42,9 +42,9 @@ namespace CMineNew.Map.BlockData{
             _blockYOffset = blockYOffset;
             _neighbours = new Block[6];
 
-            _blockLight = new BlockLight(lightPassReduction);
-            _blockLightSource = isSource ? new BlockLightSource(this, sourceLight) : null;
-            if (isSource) {
+            _blockLight = new BlockLight(blockLightPassReduction, sunlightPassReduction);
+            _blockLightSource = lightSource ? new BlockLightSource(this, sourceLight) : null;
+            if (lightSource) {
                 _blockLight.Light = _blockLightSource.SourceLight;
                 _blockLight.Source = _blockLightSource;
             }
@@ -94,8 +94,7 @@ namespace CMineNew.Map.BlockData{
             }
         }
 
-        public void OnPlace0(Block oldBlock, bool triggerWorldUpdates) {
-            Check2dRegionHeight();
+        public void OnPlace0(Block oldBlock, bool triggerWorldUpdates, bool expandSunlight) {
             for (var i = 0; i < _neighbours.Length; i++) {
                 var neighbour = _neighbours[i];
                 var face = (BlockFace) i;
@@ -108,7 +107,7 @@ namespace CMineNew.Map.BlockData{
 
             if (_blockLightSource != null) {
                 BlockLightMethods.ExpandFrom(this, _blockLightSource,
-                    _blockLightSource.SourceLight - _blockLight.LightPassReduction);
+                    _blockLightSource.SourceLight - _blockLight.BlockLightPassReduction);
             }
 
             var light = CalculateLightFromNeighbours(out var fromFace);
@@ -117,6 +116,8 @@ namespace CMineNew.Map.BlockData{
                 var source = neighbour._blockLight.Source;
                 BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
             }
+
+            UpdateSunlight(expandSunlight);
             TriggerLightChange(false);
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
@@ -128,6 +129,7 @@ namespace CMineNew.Map.BlockData{
             if (_blockLightSource != null) {
                 BlockLightMethods.RemoveLightSource(_blockLightSource);
             }
+
             var list = BlockLightMethods.RemoveLightFromBlock(this, false);
             OnRemove(newBlock);
             return list;
@@ -167,12 +169,13 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 var neighbour = _neighbours[i];
                 if (neighbour == null) {
-                    neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace)i));
+                    neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace) i));
                     _neighbours[i] = neighbour;
                     if (neighbour == null) {
                         continue;
                     }
                 }
+
                 neighbour.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
             }
         }
@@ -184,11 +187,11 @@ namespace CMineNew.Map.BlockData{
                 var nFace = (BlockFace) i;
                 var nOpposite = BlockFaceMethods.GetOpposite(nFace);
                 var neighbour = _neighbours[i];
-                if(neighbour == null 
-                   || !CanLightBePassedFrom(nFace, neighbour)
-                   || !neighbour.CanLightPassThrough(nOpposite)) continue;
-                var nLight = neighbour.BlockLight.Light - neighbour.BlockLight.LightPassReduction;
-                if(nLight <= light) continue;
+                if (neighbour == null
+                    || !CanLightBePassedFrom(nFace, neighbour)
+                    || !neighbour.CanLightPassThrough(nOpposite)) continue;
+                var nLight = neighbour.BlockLight.Light - neighbour.BlockLight.BlockLightPassReduction;
+                if (nLight <= light) continue;
                 light = nLight;
                 face = nFace;
             }
@@ -196,14 +199,18 @@ namespace CMineNew.Map.BlockData{
             return light;
         }
 
-        private void Check2dRegionHeight() {
-            if (this is BlockAir) {
-                //TODO REMOVE FROM BLOCK HEIGHT
-                return;
+        private void UpdateSunlight(bool expand) {
+            var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
+            var sunlight = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
+            var upLight = sunlight.GetLightFor(_position.Y + 1) + 1;
+            var light = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
+            _blockLight.Sunlight = Math.Max(_blockLight.Sunlight, light);
+            sunlight.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
+
+
+            if (expand) {
+                //TODO EXPAND
             }
-            var region = _chunk.Region.World2dRegion;
-            var regionPos = new Vector2i(_position.X, _position.Z) - (region.Position << World2dRegion.WorldPositionShift);
-            region.TryEditMaxBlockHeight(regionPos, _position.Y);
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

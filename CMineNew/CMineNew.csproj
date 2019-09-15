@@ -165,6 +165,7 @@
     <Compile Include="Src\Map\Generator\Unloaded\UnloadedChunkGenerationBlock.cs" />
     <Compile Include="Src\Map\Generator\Unloaded\UnloadedChunkGenerationManager.cs" />
     <Compile Include="Src\Map\Generator\WorldGenerator.cs" />
+    <Compile Include="Src\Map\SunlightData.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskExpandWater.cs" />
     <Compile Include="Src\Map\Task\Type\WorldTaskRemoveWater.cs" />
     <Compile Include="Src\Map\Task\WorldTask.cs" />

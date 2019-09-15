@@ -86,15 +86,15 @@ namespace CMineNew.Map{
                 neighbours[i]?.OnNeighbourBlockChange0(old, block,
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
-            
+
             var list = old?.OnRemove0(block);
-            block?.OnPlace0(old, true);
+            block?.OnPlace0(old, true, true);
             list?.Remove(old);
             list?.Add(block);
 
-            var queue = new Queue<Block>();            
+            var queue = new Queue<Block>();
             BlockLightMethods.ExpandNearbyLights(list, queue);
-            
+
             while (queue.Count > 0) {
                 queue.Dequeue().TriggerLightChange();
             }
@@ -113,7 +113,7 @@ namespace CMineNew.Map{
             return SetBlock(snapshot, worldPosition - (_position << WorldPositionShift), canBeReplaced);
         }
 
-        public void FillWithBlocks(BlockSnapshot[,,] snapshots, bool empty) {
+        public void FillWithBlocks(BlockSnapshot[,,] snapshots) {
             var pos = _position << WorldPositionShift;
             ForEachChunkPosition((x, y, z) => {
                 var snapshot = snapshots[x, y, z];
@@ -121,8 +121,7 @@ namespace CMineNew.Map{
                 var block = snapshot == null ? new BlockAir(this, blockPos) : snapshot.ToBlock(this, blockPos);
                 _blocks[x, y, z] = block;
             });
-
-            if (empty) return;
+            
             SendOnPlaceEventToAllBlocks(false);
             _modified = true;
         }
@@ -134,8 +133,8 @@ namespace CMineNew.Map{
                 block.Neighbours = blocks;
             });
             ForEachChunkPosition((x, y, z, block) => {
-                if(block == null) return;
-                block.OnPlace0(null, triggerWorldUpdates);
+                if (block == null) return;
+                block.OnPlace0(null, triggerWorldUpdates, false);
                 blocks = block?.Neighbours;
                 if (x == 0) {
                     blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
@@ -247,7 +246,7 @@ namespace CMineNew.Map{
 
         private void ForEachChunkPosition(Action<int, int, int, Block> action) {
             for (var x = 0; x < ChunkLength; x++) {
-                for (var y = 0; y < ChunkLength; y++) {
+                for (var y = ChunkLength - 1; y >= 0; y--) {
                     for (var z = 0; z < ChunkLength; z++) {
                         action.Invoke(x, y, z, _blocks[x, y, z]);
                     }

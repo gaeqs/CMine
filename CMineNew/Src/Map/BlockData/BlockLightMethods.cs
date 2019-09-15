@@ -59,7 +59,7 @@ namespace CMineNew.Map.BlockData{
             blockLight.Source = source;
             updatedBlocks?.Enqueue(to);
 
-            var toLight = light - blockLight.LightPassReduction;
+            var toLight = light - blockLight.BlockLightPassReduction;
             var neighbours = to.Neighbours;
 
             for (var i = 0; i < neighbours.Length; i++) {

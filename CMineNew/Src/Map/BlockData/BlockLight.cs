@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace CMineNew.Map.BlockData{
     public class BlockLight{
         private BlockLightSource _source;
-        private int _light;
-        private readonly int _lightPassReduction;
+        private int _blockLight, _sunlight;
+        private readonly int _blockLightPassReduction, _sunlightPassReduction;
 
-        public BlockLight(int lightPassReduction) {
-            _lightPassReduction = lightPassReduction;
-            _light = 0;
+        public BlockLight(int blockLightPassReduction, int sunlightPassReduction) {
+            _blockLightPassReduction = blockLightPassReduction;
+            _sunlightPassReduction = sunlightPassReduction;
+            _blockLight = 0;
+            _sunlight = 0;
         }
 
 
@@ -17,12 +16,19 @@ namespace CMineNew.Map.BlockData{
             get => _source;
             set => _source = value;
         }
-        
+
         public int Light {
-            get => _light;
-            set => _light = value;
+            get => _blockLight;
+            set => _blockLight = value;
         }
 
-        public int LightPassReduction => _lightPassReduction;
+        public int Sunlight {
+            get => _sunlight;
+            set => _sunlight = value;
+        }
+
+        public int BlockLightPassReduction => _blockLightPassReduction;
+
+        public int SunlightPassReduction => _sunlightPassReduction;
     }
 }

@@ -37,7 +37,12 @@ namespace CMineNew.Map.BlockData.Sketch{
                 _visibleFaces[i] = visibleBySlab || block == null ||
                                    !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 if (_visibleFaces[i]) {
-                    render.AddData(i, this, 0);
+                    if (visibleBySlab) {
+                        render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
+                    }
+
+                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
+                        block?.BlockLight.Sunlight ?? 0);
                 }
                 else {
                     render.RemoveData(i, this);
@@ -59,7 +64,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             var newVisible = !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
             _visibleFaces[faceInt] = newVisible;
             if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, 0);
+                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light, to.BlockLight.Sunlight);
             }
             else {
                 _chunk.Region.Render.RemoveData(faceInt, this);
@@ -110,7 +115,7 @@ namespace CMineNew.Map.BlockData.Sketch{
                 }
             }
         }
-        
+
         public override bool CanLightPassThrough(BlockFace face) {
             return _blockLightSource != null || !IsFaceOpaque(face);
         }
@@ -118,15 +123,16 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {
             return !IsFaceOpaque(face);
         }
-        
+
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
-            if(!_visibleFaces[(int) relative]) return;
-            if(relative == BlockFace.Down && !_upside || relative == BlockFace.Up && _upside) return;
-            _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light);
+            if (!_visibleFaces[(int) relative]) return;
+            if (relative == BlockFace.Down && !_upside || relative == BlockFace.Up && _upside) return;
+            _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light, block.BlockLight.Sunlight);
         }
 
         public override void OnSelfLightChange() {
-            _chunk.Region.Render.AddData((int) (_upside ? BlockFace.Down : BlockFace.Up), this, _blockLight.Light);
+            _chunk.Region.Render.AddData((int) (_upside ? BlockFace.Down : BlockFace.Up),
+                this, _blockLight.Light, _blockLight.Sunlight);
         }
     }
 }

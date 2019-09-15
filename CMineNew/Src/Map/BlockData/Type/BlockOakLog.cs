@@ -9,7 +9,8 @@ namespace CMineNew.Map.BlockData.Type{
                 new[] {
                     "default:oak_log_top", "default:oak_log_top", "default:oak_log_side",
                     "default:oak_log_side", "default:oak_log_side", "default:oak_log_side"
-                }, Color4.Green) {
+                }, Color4.Green,
+                false, false, 0, MaxBlockLight, MaxBlockLight) {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

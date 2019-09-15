@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.Map.BlockData.Render{
     public class WaterBlockRender : BlockRender{
         private const int MaxFaces = 750;
-        private const int InstanceDataLength = 3 + 4 + 4 + 1 + 4;
+        private const int InstanceDataLength = 3 + 4 + 4 + 1 + 1 + 4; 
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
         private readonly ChunkRegion _chunkRegion;
@@ -35,7 +35,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public ChunkRegion ChunkRegion => _chunkRegion;
 
-        public override void AddData(int mapperIndex, Block block, int light) {
+        public override void AddData(int mapperIndex, Block block, int blockLight, int sunlight) {
             if (!(block is BlockWater water)) return;
             var mapper = _mappers[mapperIndex];
             var pos = block.Position;
@@ -46,7 +46,8 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
-                    filter.R, filter.G, filter.B, filter.A, light / Block.MaxBlockLightF,
+                    filter.R, filter.G, filter.B, filter.A, blockLight / Block.MaxBlockLightF,
+                    sunlight / Block.MaxBlockLightF,
                     t ? 8 : levels[0], t ? 8 : levels[1], t ? 8 : levels[2], t ? 8 : levels[3]
                 }, 0));
         }
@@ -116,6 +117,7 @@ namespace CMineNew.Map.BlockData.Render{
                 builder.AddPointer(4, true);
                 builder.AddPointer(4, true);
                 builder.AddPointer(1, true);
+                builder.AddPointer(1, true);
                 builder.AddPointer(4, true);
                 VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
                 VertexArrayObject.Unbind();
@@ -141,6 +143,7 @@ namespace CMineNew.Map.BlockData.Render{
             builder.AddPointer(3, true);
             builder.AddPointer(4, true);
             builder.AddPointer(4, true);
+            builder.AddPointer(1, true);
             builder.AddPointer(1, true);
             builder.AddPointer(4, true);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);

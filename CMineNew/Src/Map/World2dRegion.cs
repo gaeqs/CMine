@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -25,7 +24,7 @@ namespace CMineNew.Map{
         private readonly int[,] _heights, _interpolatedHeights;
         private readonly Color4[,] _interpolatedGrassColors;
 
-        private readonly int[,] _maxBlockHeight;
+        private readonly SunlightData[,] _sunlightData;
 
         public World2dRegion(World world, Vector2i position) {
             _world = world;
@@ -34,7 +33,7 @@ namespace CMineNew.Map{
             _heights = new int[RegionLength, RegionLength];
             _interpolatedHeights = new int[RegionLength, RegionLength];
             _interpolatedGrassColors = new Color4[RegionLength, RegionLength];
-            _maxBlockHeight = new int[RegionLength, RegionLength];
+            _sunlightData = new SunlightData[RegionLength, RegionLength];
         }
 
         public World World => _world;
@@ -49,15 +48,8 @@ namespace CMineNew.Map{
 
         public Color4[,] InterpolatedGrassColors => _interpolatedGrassColors;
 
-        public int[,] MaxBlockHeight => _maxBlockHeight;
+        public SunlightData[,] SunlightData => _sunlightData;
 
-        public void TryEditMaxBlockHeight(Vector2i position, int height) {
-            var old = _maxBlockHeight[position.X, position.Y];
-            if (height > old) {
-                _maxBlockHeight[position.X, position.Y] = height;
-            }
-        }
-        
         public void CalculateBiomes() {
             var worldPosition = _position << WorldPositionShift;
             var grid = _world.WorldGenerator.BiomeGrid;
@@ -68,12 +60,13 @@ namespace CMineNew.Map{
             }
         }
 
-        public void CalculateHeights() {
+        public void CalculateHeightsAndCreateSunlightData() {
             var worldPosition = _position << WorldPositionShift;
             for (var x = 0; x < RegionLength; x++) {
                 for (var z = 0; z < RegionLength; z++) {
                     var local = new Vector2i(x, z);
                     _heights[x, z] = _biomes[x, z].GetColumnHeight(worldPosition + local);
+                    _sunlightData[x, z] = new SunlightData(this, new Vector2i(x, z));
                 }
             }
         }
@@ -88,7 +81,6 @@ namespace CMineNew.Map{
                     Interpolate(regions, position, local, out var height, out var grassColor);
                     _interpolatedHeights[x, z] = height;
                     _interpolatedGrassColors[x, z] = grassColor;
-                    _maxBlockHeight[x, z] = height;
                 }
             }
         }
@@ -110,7 +102,7 @@ namespace CMineNew.Map{
                     var height = _heights[x, z];
                     var interpolatedHeight = _interpolatedHeights[x, z];
                     var interpolatedColor = _interpolatedGrassColors[x, z];
-                    var maxBlockHeight = _maxBlockHeight[x, z];
+
                     formatter.Serialize(stream, biome.Id);
                     formatter.Serialize(stream, height);
                     formatter.Serialize(stream, interpolatedHeight);
@@ -118,7 +110,7 @@ namespace CMineNew.Map{
                     formatter.Serialize(stream, interpolatedColor.G);
                     formatter.Serialize(stream, interpolatedColor.B);
                     formatter.Serialize(stream, interpolatedColor.A);
-                    formatter.Serialize(stream, maxBlockHeight);
+                    _sunlightData[x, z].Save(stream, formatter);
                 }
             }
 
@@ -146,7 +138,10 @@ namespace CMineNew.Map{
                         (float) formatter.Deserialize(stream),
                         (float) formatter.Deserialize(stream),
                         (float) formatter.Deserialize(stream));
-                    _maxBlockHeight[x, z] = (int) formatter.Deserialize(stream);
+
+                    var light = new SunlightData(this, new Vector2i(x, z));
+                    light.Load(stream, formatter);
+                    _sunlightData[x, z] = light;
                 }
             }
 

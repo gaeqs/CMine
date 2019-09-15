@@ -6,12 +6,13 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
-        private bool[] _visibleFaces;
+        private readonly bool[] _visibleFaces;
 
         public CubicBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false,
-            bool lightSource = false, int blockLight = 0, int blockLightReduction = 1)
+            bool lightSource = false, int blockLight = 0, int blockLightPassReduction = 1, int sunlightPassReduction = 0)
             : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position, textureFilter,
-                passable, 1, 0, lightSource, blockLight, blockLightReduction) {
+                passable, 1, 0, lightSource, 
+                blockLight, blockLightPassReduction, sunlightPassReduction) {
             _visibleFaces = new bool[6];
         }
 
@@ -23,7 +24,8 @@ namespace CMineNew.Map.BlockData.Sketch{
                 var block = neighbours[i];
                 _visibleFaces[i] = block == null || !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
                 if (_visibleFaces[i]) {
-                    render.AddData(i, this, neighbours[i]?.BlockLight.Light ?? 0);
+                    render.AddData(i, this, block?.BlockLight.Light ?? 0, 
+                        block?.BlockLight.Sunlight ?? 0);
                 }
                 else {
                     render.RemoveData(i, this);
@@ -45,7 +47,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             if (oldVisible == newVisible) return;
             _visibleFaces[faceInt] = newVisible;
             if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light);
+                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light, to.BlockLight.Sunlight);
             }
             else {
                 _chunk.Region.Render.RemoveData(faceInt, this);
@@ -94,7 +96,8 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
             if (_visibleFaces[(int) relative]) {
-                _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light);
+                _chunk.Region.Render.AddData((int) relative, 
+                    this, block.BlockLight.Light, block.BlockLight.Sunlight);
             }
         }
 

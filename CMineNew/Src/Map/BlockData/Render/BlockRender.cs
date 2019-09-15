@@ -1,6 +1,6 @@
 namespace CMineNew.Map.BlockData.Render{
     public abstract class BlockRender{
-        public abstract void AddData(int mapper, Block block, int light);
+        public abstract void AddData(int mapper, Block block, int blockLight, int sunlight);
 
         public abstract void RemoveData(int mapper, Block block);
 

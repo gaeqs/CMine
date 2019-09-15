@@ -11,7 +11,7 @@ namespace CMineNew.Test{
 
         public override void Tick(long dif, Room room) {
             if (room is World dRoom) {
-                Text = dRoom.Camera.Position + " [" + dRoom.Camera.Rotation + "]";
+                Text = dRoom.Player.Position + " [" + dRoom.Camera.Rotation + "]";
             }
         }
     }

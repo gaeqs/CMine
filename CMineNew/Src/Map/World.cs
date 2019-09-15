@@ -204,7 +204,7 @@ namespace CMineNew.Map{
             var region = new World2dRegion(this, regionPosition);
             if (!region.Load()) {
                 region.CalculateBiomes();
-                region.CalculateHeights();
+                region.CalculateHeightsAndCreateSunlightData();
                 region.CalculateInterpolatedHeightsAndColors();
             }
             else {

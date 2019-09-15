@@ -7,7 +7,8 @@ layout (location = 3) in vec3 worldPosition;
 layout (location = 4) in vec4 textureArea;
 layout (location = 5) in vec4 blockColorFilter;
 layout (location = 6) in float blockLight;
-layout (location = 7) in vec4 waterLevels;
+layout (location = 7) in float sunlight;
+layout (location = 8) in vec4 waterLevels;
 
 out vec3 fragPos, fragNormal;
 out vec2 fragTexCoords;
@@ -42,7 +43,13 @@ void main () {
 
     fragPos = modelPosition.xyz;
     fragNormal = mat3(transpose(inverse(model))) * normal;
-    fragTexCoords = vec2(texturePosition.x > 0 ? textureArea.x : textureArea.z, texturePosition.y > 0 ? textureArea.w : textureArea.y);
+    
+    vec2 minT = textureArea.xy;
+    vec2 maxT = textureArea.zw;
+    vec2 size = maxT - minT;
+
+    fragTexCoords = minT + texturePosition * size;
+    
     fragColorFilter = blockColorFilter;
-    fragLight = blockLight;
+    fragLight = max(blockLight, sunlight);
 }

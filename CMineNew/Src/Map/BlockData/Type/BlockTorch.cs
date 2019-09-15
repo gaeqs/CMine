@@ -20,7 +20,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
-            render.AddData(0, this, _blockLight.Light);
+            render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
         }
 
         public override void OnRemove(Block newBlock) {
@@ -63,7 +63,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnSelfLightChange() {
-            _chunk.Region.Render.AddData(0, this, _blockLight.Light);
+            _chunk.Region.Render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
         }
     }
 }
