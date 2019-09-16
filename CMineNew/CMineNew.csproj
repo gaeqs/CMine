@@ -123,6 +123,7 @@
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotTorch.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\BlockSnapshotWater.cs" />
     <Compile Include="Src\Map\BlockData\Snapshot\Interface\IGrass.cs" />
+    <Compile Include="Src\Map\BlockData\SunlightMethods.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockAir.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockBricks.cs" />
     <Compile Include="Src\Map\BlockData\Type\BlockBricksSlab.cs" />

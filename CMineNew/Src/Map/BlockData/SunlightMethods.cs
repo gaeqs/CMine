@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
 using CMineNew.DataStructure.Queue;
+using CMineNew.Geometry;
 
 namespace CMineNew.Map.BlockData{
-    public static class BlockLightMethods{
-        public static void ExpandFrom(Block from, BlockLightSource source, int light) {
+    public static class SunlightMethods{
+        public static void ExpandFrom(Block from, Vector3i source, int light) {
             var queue = new Queue<Block>();
             var neighbours = from.Neighbours;
             for (var i = 0; i < neighbours.Length; i++) {
@@ -19,27 +20,30 @@ namespace CMineNew.Map.BlockData{
             UpdateRender(queue);
         }
 
-        public static void Expand(Block to, BlockLightSource source, int light, Block from, BlockFace fromFace) {
+        public static void Expand(Block to, Vector3i source, int light, Block from, BlockFace fromFace) {
             var queue = new Queue<Block>();
             Expand(queue, to, source, light, from, fromFace);
             UpdateRender(queue);
         }
 
 
-        public static void RemoveLightSource(BlockLightSource source) {
+        public static void RemoveLightSource(Vector3i source, Block sourceBlock) {
             var queue = new Queue<Block>();
             var list = new ELinkedQueue<Block>();
-            RemoveLight(list, source.Block, source);
+            RemoveLight(list, sourceBlock, source);
             GetNearbyLights(queue, list);
             ExpandNearbyLights(list, null);
             UpdateRender(queue);
         }
 
-        public static ELinkedList<Block> RemoveLightFromBlock(Block block, bool expand = true) {
+        public static ELinkedList<Block> RemoveLightFromBlock(Block block, bool expand = true, ELinkedList<Block> list = null) {
             if (block.BlockLight.Source == null) return null;
             var queue = new Queue<Block>();
-            var list = new ELinkedQueue<Block>();
-            RemoveLight(list, block, block.BlockLight.Source);
+            if (list == null) {
+                list = new ELinkedQueue<Block>();
+            }
+
+            RemoveLight(list, block, block.BlockLight.SunlightSource);
             GetNearbyLights(queue, list);
             if (expand) {
                 ExpandNearbyLights(list, null);
@@ -49,13 +53,13 @@ namespace CMineNew.Map.BlockData{
             return list;
         }
 
-        private static void Expand(Queue<Block> updatedBlocks, Block to, BlockLightSource source,
+        private static void Expand(Queue<Block> updatedBlocks, Block to, Vector3i source,
             int light, Block from, BlockFace fromFace) {
             if (to == null || !to.CanLightBePassedFrom(fromFace, from)) return;
             var blockLight = to.BlockLight;
-            if (blockLight.Light >= light) return;
-            blockLight.Light = light;
-            blockLight.Source = source;
+            if (blockLight.Sunlight >= light) return;
+            blockLight.Sunlight = light;
+            blockLight.SunlightSource = source;
             updatedBlocks?.Enqueue(to);
 
             var toLight = light - blockLight.BlockLightPassReduction;
@@ -77,12 +81,12 @@ namespace CMineNew.Map.BlockData{
             }
         }
 
-        private static void RemoveLight(ELinkedList<Block> removedBlocksList, Block block, BlockLightSource source) {
+        private static void RemoveLight(ELinkedList<Block> removedBlocksList, Block block, Vector3i source) {
             var light = block.BlockLight;
-            if (!source.Equals(light.Source)) return;
-            var oldLight = Equals(block.BlockLightSource, source) ? Block.MaxBlockLight : light.Light;
-            light.Light = 0;
-            light.Source = null;
+            if (!source.Equals(light.SunlightSource)) return;
+            var oldLight = Equals(block.Position, source) ? Block.MaxBlockLight : light.Light;
+            light.Sunlight = light.LinearSunlight;
+            light.SunlightSource = block.Position;
             removedBlocksList.Add(block);
 
             var neighbours = block.Neighbours;
@@ -98,7 +102,7 @@ namespace CMineNew.Map.BlockData{
                     }
                 }
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
-                if (oldLight < neighbour.BlockLight.Light || !Equals(neighbour.BlockLight.Source, source)) continue;
+                if (oldLight < neighbour.BlockLight.Sunlight || !Equals(neighbour.BlockLight.SunlightSource, source)) continue;
                 RemoveLight(removedBlocksList, neighbour, source);
             }
         }
@@ -109,7 +113,7 @@ namespace CMineNew.Map.BlockData{
                 var elem = enumerator.Current;
                 updateQueue.Enqueue(elem);
 
-                if (elem == null || elem.Neighbours.All(n => n?.BlockLight.Source == null)) {
+                if (elem == null || elem.Neighbours.All(n => n?.BlockLight.Sunlight == 0)) {
                     enumerator.Remove();
                 }
             }
@@ -122,10 +126,10 @@ namespace CMineNew.Map.BlockData{
             while (enumerator.MoveNext()) {
                 var elem = enumerator.Current;
                 if (elem == null) continue;
-                var light = elem.CalculateLightFromNeighbours(out var face);
+                var light = elem.CalculateSunlightFromNeighbours(out var face);
                 if (light <= 0) continue;
                 var block = elem.Neighbours[(int) face];
-                Expand(queue, elem, block.BlockLight.Source, light, block, face);
+                Expand(queue, elem, block.BlockLight.SunlightSource, light, block, face);
             }
         }
 

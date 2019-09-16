@@ -110,15 +110,24 @@ namespace CMineNew.Map.BlockData{
                     _blockLightSource.SourceLight - _blockLight.BlockLightPassReduction);
             }
 
+            //Block light
             var light = CalculateLightFromNeighbours(out var fromFace);
             if (light > 0) {
                 var neighbour = _neighbours[(int) fromFace];
                 var source = neighbour._blockLight.Source;
                 BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
             }
-
+            //Sunlight
             UpdateSunlight(expandSunlight);
+            light = CalculateSunlightFromNeighbours(out fromFace);
+            if (light > _blockLight.Sunlight) {
+                var neighbour = _neighbours[(int) fromFace];
+                var source = neighbour._blockLight.SunlightSource;
+                SunlightMethods.Expand(this, source, light, neighbour, fromFace);
+            }
+            
             TriggerLightChange(false);
+            
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
@@ -129,8 +138,10 @@ namespace CMineNew.Map.BlockData{
             if (_blockLightSource != null) {
                 BlockLightMethods.RemoveLightSource(_blockLightSource);
             }
+            SunlightMethods.RemoveLightSource(_position, this);
 
             var list = BlockLightMethods.RemoveLightFromBlock(this, false);
+            SunlightMethods.RemoveLightFromBlock(this, false, list);
             OnRemove(newBlock);
             return list;
         }
@@ -198,19 +209,54 @@ namespace CMineNew.Map.BlockData{
 
             return light;
         }
+        
+        public int CalculateSunlightFromNeighbours(out BlockFace face) {
+            var light = 0;
+            face = BlockFace.Down;
+            for (var i = 0; i < _neighbours.Length; i++) {
+                var nFace = (BlockFace) i;
+                var nOpposite = BlockFaceMethods.GetOpposite(nFace);
+                var neighbour = _neighbours[i];
+                if (neighbour == null
+                    || !CanLightBePassedFrom(nFace, neighbour)
+                    || !neighbour.CanLightPassThrough(nOpposite)) continue;
+                var nLight = neighbour.BlockLight.Sunlight - neighbour.BlockLight.BlockLightPassReduction;
+                if (nLight <= light) continue;
+                light = nLight;
+                face = nFace;
+            }
+
+            return light;
+        }
 
         private void UpdateSunlight(bool expand) {
+            //Calculate the linear sunlight.
             var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
-            var sunlight = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-            var upLight = sunlight.GetLightFor(_position.Y + 1) + 1;
-            var light = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
-            _blockLight.Sunlight = Math.Max(_blockLight.Sunlight, light);
-            sunlight.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
+            var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
+            var upLight = sunlightData.GetLightFor(_position.Y + 1) + 1;
+            var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
+            _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
+            sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
+            
+            //Calculates the sunlight.
+            var sunlight = _blockLight.LinearSunlight;
+            var source = _position;
 
-
-            if (expand) {
-                //TODO EXPAND
+            foreach (var neighbour in _neighbours) {
+                if(neighbour == null) continue;
+                var nLight = neighbour.BlockLight.Sunlight - neighbour.BlockLight.BlockLightPassReduction;
+                if (sunlight < nLight) {
+                    sunlight = nLight;
+                    source = neighbour.BlockLight.SunlightSource;
+                }
             }
+
+            _blockLight.Sunlight = sunlight;
+            _blockLight.SunlightSource = source;
+
+            if(!expand) return;
+            
+            //Expands the light.
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

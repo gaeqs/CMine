@@ -85,7 +85,8 @@ namespace CMineNew.Map{
                     for (var by = 15; by >= 0; by--) {
                         var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
                         if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
-                        block.BlockLight.Sunlight = GetLightFor(block.Position.Y);
+                        //TODO UPDATE LINEAR SUNLIGHT
+                        block.BlockLight.LinearSunlight = GetLightFor(block.Position.Y);
                         block.TriggerLightChange();
                     }
                 }
@@ -158,7 +159,8 @@ namespace CMineNew.Map{
                             lastLight = nLight;
                         }
 
-                        bLight.Sunlight = lastLight + 1;
+                        //TODO UPDATE LINEAR SUNLIGHT
+                        bLight.LinearSunlight = lastLight + 1;
                         list.Add(block);
                     }
                 }
