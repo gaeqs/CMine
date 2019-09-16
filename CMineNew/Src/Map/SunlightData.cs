@@ -37,10 +37,10 @@ namespace CMineNew.Map{
         }
 
         public void SetBlock(int y, int lightReduction) {
-            var list = RemovePreviousBlock(y,  lightReduction);
+            var list = RemovePreviousBlock(y, lightReduction);
 
             var old0Height = _lightMinHeight[0];
-            
+
             if (lightReduction > 0) {
                 var light = GetLightFor(y);
                 var newLight = Math.Max(0, light - lightReduction) - 1;
@@ -54,13 +54,12 @@ namespace CMineNew.Map{
                     _lightMinHeight[i] = y;
                 }
             }
-            
-            if(lightReduction == 0 && list.Count == 0) return;
-            
-            //Update block
-            
 
-           
+            if (lightReduction == 0 && list.Count == 0) return;
+
+            //Update block
+
+
             var chunkPositionInRegion = _position >> Chunk.WorldPositionShift;
             var worldPositionInChunk = _position - (chunkPositionInRegion << Chunk.WorldPositionShift);
             var regionPosition = _region.Position;
@@ -74,7 +73,7 @@ namespace CMineNew.Map{
                     where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
                     select region);
             }
-            
+
             regions.Sort((r1, r2) => r2.Position.Y - r1.Position.Y);
 
             foreach (var chunks in regions.Select(region => region.Chunks)) {
@@ -85,8 +84,7 @@ namespace CMineNew.Map{
                     for (var by = 15; by >= 0; by--) {
                         var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
                         if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
-                        //TODO UPDATE LINEAR SUNLIGHT
-                        block.BlockLight.LinearSunlight = GetLightFor(block.Position.Y);
+                        block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
                         block.TriggerLightChange();
                     }
                 }
@@ -104,21 +102,20 @@ namespace CMineNew.Map{
                 if (lightY == y) {
                     add++;
                 }
-                
+
                 _lightMinHeight[Math.Min(14, i + add)] = lightY;
             }
 
             if (add == 15) {
                 add--;
             }
-            
+
             return add < 1
                 ? new List<Block>()
                 : Check(add, _lightMinHeight[add], newReduction);
         }
 
         private List<Block> Check(int lastLight, int y, int newReduction) {
-
             var list = new List<Block>();
             var regionY = y >> ChunkRegion.WorldPositionShift;
             var chunkY = y >> Chunk.WorldPositionShift;
@@ -159,8 +156,7 @@ namespace CMineNew.Map{
                             lastLight = nLight;
                         }
 
-                        //TODO UPDATE LINEAR SUNLIGHT
-                        bLight.LinearSunlight = lastLight + 1;
+                        block.UpdateLinearSunlight(lastLight + 1);
                         list.Add(block);
                     }
                 }

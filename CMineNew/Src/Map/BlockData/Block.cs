@@ -118,7 +118,7 @@ namespace CMineNew.Map.BlockData{
                 BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
             }
             //Sunlight
-            UpdateSunlight(expandSunlight);
+            UpdateSunlight(expandSunlight, true);
             light = CalculateSunlightFromNeighbours(out fromFace);
             if (light > _blockLight.Sunlight) {
                 var neighbour = _neighbours[(int) fromFace];
@@ -170,6 +170,10 @@ namespace CMineNew.Map.BlockData{
             var b = (float) formatter.Deserialize(stream);
             var a = (float) formatter.Deserialize(stream);
             _textureFilter = new Color4(r, g, b, a);
+        }
+
+        public void UpdateLinearSunlight(int light) {
+            _blockLight.LinearSunlight = light;
         }
 
         public void TriggerLightChange(bool self = true) {
@@ -229,15 +233,17 @@ namespace CMineNew.Map.BlockData{
             return light;
         }
 
-        private void UpdateSunlight(bool expand) {
+        private void UpdateSunlight(bool expand, bool calculateLinearLight) {
             //Calculate the linear sunlight.
-            var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
-            var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-            var upLight = sunlightData.GetLightFor(_position.Y + 1) + 1;
-            var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
-            _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
-            sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
-            
+            if (calculateLinearLight) {
+                var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
+                var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
+                var upLight = sunlightData.GetLightFor(_position.Y + 1) + 1;
+                var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
+                _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
+                sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
+            }
+
             //Calculates the sunlight.
             var sunlight = _blockLight.LinearSunlight;
             var source = _position;
