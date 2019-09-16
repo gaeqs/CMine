@@ -87,16 +87,22 @@ namespace CMineNew.Map{
                     BlockFaceMethods.GetOpposite((BlockFace) i));
             }
 
-            var list = old?.OnRemove0(block);
-            block?.OnPlace0(old, true, true);
-            list?.Remove(old);
-            list?.Add(block);
-
-            var queue = new Queue<Block>();
-            BlockLightMethods.ExpandNearbyLights(list, queue);
-
-            while (queue.Count > 0) {
-                queue.Dequeue().TriggerLightChange();
+            if (old != null) {
+                old.OnRemove0(block, out var blockList, out var sunList);
+                block?.OnPlace0(old, true, true);
+                blockList?.Remove(old);
+                blockList?.Add(block);
+                sunList?.Remove(old);
+                sunList?.Add(block);
+                var queue = new Queue<Block>();
+                BlockLightMethods.ExpandNearbyLights(blockList, queue);
+                SunlightMethods.ExpandNearbyLights(sunList, queue);
+                while (queue.Count > 0) {
+                    queue.Dequeue().TriggerLightChange();
+                }
+            }
+            else {
+                block?.OnPlace0(old, true, true);
             }
 
             _modified = true;

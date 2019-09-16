@@ -130,8 +130,7 @@ namespace CMineNew.Entities.Controller{
                 if (light != null) {
                     var regionInPos = block.Position - (block.Chunk.Region.Position << ChunkRegion.WorldPositionShift);
                     var lightData = block.Chunk.Region.World2dRegion.SunlightData[regionInPos.X, regionInPos.Z];
-                    var light2d = lightData.GetLightFor(block.Position.Y);
-                    Console.WriteLine(light.Sunlight +" -> "+light2d);
+                    Console.WriteLine(light.Sunlight +" -> "+light.SunlightSource);
                 }
 
                 //if (!matInstance.CanBePlaced(position, _player.World)) return;

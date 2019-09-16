@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
@@ -36,12 +37,10 @@ namespace CMineNew.Map.BlockData{
             UpdateRender(queue);
         }
 
-        public static ELinkedList<Block> RemoveLightFromBlock(Block block, bool expand = true, ELinkedList<Block> list = null) {
-            if (block.BlockLight.Source == null) return null;
+        public static ELinkedList<Block> RemoveLightFromBlock(Block block, bool expand = true) {
+            if (block.BlockLight.Sunlight == 0) return null;
             var queue = new Queue<Block>();
-            if (list == null) {
-                list = new ELinkedQueue<Block>();
-            }
+            var list = new ELinkedQueue<Block>();
 
             RemoveLight(list, block, block.BlockLight.SunlightSource);
             GetNearbyLights(queue, list);
@@ -84,7 +83,7 @@ namespace CMineNew.Map.BlockData{
         private static void RemoveLight(ELinkedList<Block> removedBlocksList, Block block, Vector3i source) {
             var light = block.BlockLight;
             if (!source.Equals(light.SunlightSource)) return;
-            var oldLight = Equals(block.Position, source) ? Block.MaxBlockLight : light.Light;
+            var oldLight = Equals(block.Position, source) ? Block.MaxBlockLight : light.Sunlight;
             light.Sunlight = light.LinearSunlight;
             light.SunlightSource = block.Position;
             removedBlocksList.Add(block);
@@ -102,7 +101,7 @@ namespace CMineNew.Map.BlockData{
                     }
                 }
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
-                if (oldLight < neighbour.BlockLight.Sunlight || !Equals(neighbour.BlockLight.SunlightSource, source)) continue;
+                if (oldLight < neighbour.BlockLight.Sunlight) continue;
                 RemoveLight(removedBlocksList, neighbour, source);
             }
         }

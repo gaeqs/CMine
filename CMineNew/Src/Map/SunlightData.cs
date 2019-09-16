@@ -30,7 +30,7 @@ namespace CMineNew.Map{
         public int GetLightFor(int y) {
             for (var i = _lightMinHeight.Length - 1; i >= 0; i--) {
                 var lightY = _lightMinHeight[i];
-                if (lightY < y) return i;
+                if (lightY < y) return i + 1;
             }
 
             return 0;
@@ -42,7 +42,7 @@ namespace CMineNew.Map{
             var old0Height = _lightMinHeight[0];
 
             if (lightReduction > 0) {
-                var light = GetLightFor(y);
+                var light = GetLightFor(y) - 1;
                 var newLight = Math.Max(0, light - lightReduction) - 1;
                 if (newLight == -1 && _lightMinHeight[0] > y) return;
 
