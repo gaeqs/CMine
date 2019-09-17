@@ -5,7 +5,8 @@ using OpenTK.Graphics;
 namespace CMineNew.Map.BlockData.Type{
     public class BlockBricksSlab : TexturedSlabBlock{
         public BlockBricksSlab(Chunk chunk, Vector3i position, bool upside)
-            : base("default:bricks_slab", chunk, position, "default:bricks", Color4.Transparent, upside) {
+            : base("default:bricks_slab", chunk, position, "default:bricks", Color4.Transparent, upside,
+                false, false, 0, 1, MaxBlockLight) {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

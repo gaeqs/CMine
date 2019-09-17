@@ -14,9 +14,11 @@ namespace CMineNew.Map.BlockData.Sketch{
         private bool[] _visibleFaces;
 
         public SlabBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool upside,
-            bool passable = false)
+            bool passable = false, bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
+            int sunlightPassReduction = 0)
             : base(id, BlockModelManager.GetModelOrNull(SlabBlockModel.Key), chunk, position, textureFilter,
-                passable, upside ? 1 : SlabHeight, upside ? SlabHeight : 0) {
+                passable, upside ? 1 : SlabHeight, upside ? SlabHeight : 0,
+                lightSource, sourceLight, blockLightPassReduction, sunlightPassReduction) {
             _upside = upside;
             _visibleFaces = new bool[6];
         }
@@ -40,9 +42,10 @@ namespace CMineNew.Map.BlockData.Sketch{
                     if (visibleBySlab) {
                         render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
                     }
-
-                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
-                        block?.BlockLight.Sunlight ?? 0);
+                    else {
+                        render.AddData(i, this, block?.BlockLight.Light ?? 0,
+                            block?.BlockLight.Sunlight ?? 0);
+                    }
                 }
                 else {
                     render.RemoveData(i, this);
@@ -126,7 +129,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
             if (!_visibleFaces[(int) relative]) return;
-            if (relative == BlockFace.Down && !_upside || relative == BlockFace.Up && _upside) return;
+            if (relative == BlockFace.Up && !_upside || relative == BlockFace.Down && _upside) return;
             _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light, block.BlockLight.Sunlight);
         }
 

@@ -128,7 +128,7 @@ namespace CMineNew.Map{
                 _blocks[x, y, z] = block;
             });
             
-            SendOnPlaceEventToAllBlocks(false);
+            SendOnPlaceEventToAllBlocks(true);
             _modified = true;
         }
 
@@ -210,7 +210,7 @@ namespace CMineNew.Map{
         private void GenerateSaveBuffer(BinaryFormatter formatter) {
             var buffer = new MemoryStream();
             ForEachChunkPosition((x, y, z, block) => {
-                var empty = block == null || block is BlockAir;
+                var empty = block == null;
                 buffer.WriteByte(empty ? (byte) 0 : (byte) 1);
                 if (empty) return;
                 formatter.Serialize(buffer, block.Id);
@@ -242,7 +242,7 @@ namespace CMineNew.Map{
 
         public static void ForEachChunkPosition(Action<int, int, int> action) {
             for (var x = 0; x < ChunkLength; x++) {
-                for (var y = 0; y < ChunkLength; y++) {
+                for (var y = ChunkLength - 1; y >= 0; y--) {
                     for (var z = 0; z < ChunkLength; z++) {
                         action.Invoke(x, y, z);
                     }

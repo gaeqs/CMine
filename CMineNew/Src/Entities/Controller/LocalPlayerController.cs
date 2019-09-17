@@ -5,6 +5,7 @@ using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator.Population;
 using CMineNew.Render;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Input;
 
 namespace CMineNew.Entities.Controller{
@@ -105,7 +106,7 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMousePush(MouseButtonEventArgs args) {
             //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotBricks();
+                var matInstance = new BlockSnapshotBricksSlab(new Random().NextDouble() > 0.5);
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -128,16 +129,14 @@ namespace CMineNew.Entities.Controller{
 
                 var light = block?.BlockLight;
                 if (light != null) {
-                    var regionInPos = block.Position - (block.Chunk.Region.Position << ChunkRegion.WorldPositionShift);
-                    var lightData = block.Chunk.Region.World2dRegion.SunlightData[regionInPos.X, regionInPos.Z];
                     Console.WriteLine(light.Sunlight +" -> "+light.SunlightSource);
                 }
 
-                //if (!matInstance.CanBePlaced(position, _player.World)) return;
-                //if (!matInstance.Passable &&
-                //    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
-                //        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-                //_player.World.SetBlock(matInstance, position);
+                if (!matInstance.CanBePlaced(position, _player.World)) return;
+                if (!matInstance.Passable &&
+                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
+                _player.World.SetBlock(matInstance, position);
             }
         }
 

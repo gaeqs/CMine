@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Type;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -105,29 +106,35 @@ namespace CMineNew.Map.BlockData{
                 _collidableFaces[i] = side || neighbour == null || neighbour._passable;
             }
 
-            if (_blockLightSource != null) {
-                BlockLightMethods.ExpandFrom(this, _blockLightSource,
-                    _blockLightSource.SourceLight - _blockLight.BlockLightPassReduction);
-            }
+            if (triggerWorldUpdates) {
+                if (_blockLightSource != null) {
+                    BlockLightMethods.ExpandFrom(this, _blockLightSource,
+                        _blockLightSource.SourceLight - _blockLight.BlockLightPassReduction);
+                }
 
-            //Block light
-            var light = CalculateLightFromNeighbours(out var fromFace);
-            if (light > 0) {
-                var neighbour = _neighbours[(int) fromFace];
-                var source = neighbour._blockLight.Source;
-                BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
+                //Block light
+                var light = CalculateLightFromNeighbours(out var fromFace);
+                if (light > 0) {
+                    var neighbour = _neighbours[(int) fromFace];
+                    var source = neighbour._blockLight.Source;
+                    BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
+                }
+
+                //Sunlight
+                UpdateSunlight();
+                light = CalculateSunlightFromNeighbours(out fromFace);
+                if (light > _blockLight.LinearSunlight) {
+                    var neighbour = _neighbours[(int) fromFace];
+                    var source = neighbour._blockLight.SunlightSource;
+                    SunlightMethods.Expand(this, source, light, neighbour, fromFace);
+                }
+                else if (expandSunlight) {
+                    SunlightMethods.ExpandFrom(this, _position,
+                        _blockLight.Sunlight - _blockLight.BlockLightPassReduction);
+                }
+
+                TriggerLightChange(false);
             }
-            //Sunlight
-            UpdateSunlight(expandSunlight, true);
-            light = CalculateSunlightFromNeighbours(out fromFace);
-            if (light > _blockLight.LinearSunlight) {
-                var neighbour = _neighbours[(int) fromFace];
-                var source = neighbour._blockLight.SunlightSource;
-                SunlightMethods.Expand(this, source, light, neighbour, fromFace);
-            }
-            
-            TriggerLightChange(false);
-            
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
@@ -138,6 +145,7 @@ namespace CMineNew.Map.BlockData{
             if (_blockLightSource != null) {
                 BlockLightMethods.RemoveLightSource(_blockLightSource);
             }
+
             SunlightMethods.RemoveLightSource(_position, this);
 
             blockList = BlockLightMethods.RemoveLightFromBlock(this, false);
@@ -157,6 +165,10 @@ namespace CMineNew.Map.BlockData{
         }
 
         public virtual void Save(Stream stream, BinaryFormatter formatter) {
+            formatter.Serialize(stream, _blockLight.Light);
+            formatter.Serialize(stream, _blockLight.LinearSunlight);
+            formatter.Serialize(stream, _blockLight.Sunlight);
+            if (this is BlockAir) return;
             formatter.Serialize(stream, _textureFilter.R);
             formatter.Serialize(stream, _textureFilter.G);
             formatter.Serialize(stream, _textureFilter.B);
@@ -164,6 +176,10 @@ namespace CMineNew.Map.BlockData{
         }
 
         public virtual void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
+            _blockLight.Light = (int) formatter.Deserialize(stream);
+            _blockLight.LinearSunlight = (int) formatter.Deserialize(stream);
+            _blockLight.Sunlight = (int) formatter.Deserialize(stream);
+            if (this is BlockAir) return;
             var r = (float) formatter.Deserialize(stream);
             var g = (float) formatter.Deserialize(stream);
             var b = (float) formatter.Deserialize(stream);
@@ -174,15 +190,15 @@ namespace CMineNew.Map.BlockData{
         public void UpdateLinearSunlight(int light) {
             var old = _blockLight.Sunlight;
             _blockLight.LinearSunlight = light;
-            
+
             if (light >= old) {
                 _blockLight.Sunlight = light;
                 _blockLight.SunlightSource = _position;
-                SunlightMethods.ExpandFrom(this, _position, light);
+                SunlightMethods.ExpandFrom(this, _position, light - _blockLight.BlockLightPassReduction);
             }
             else {
                 SunlightMethods.RemoveLightSource(_position, this);
-                SunlightMethods.ExpandFrom(this, _position, light);
+                SunlightMethods.ExpandFrom(this, _position, light - _blockLight.BlockLightPassReduction);
             }
         }
 
@@ -223,7 +239,7 @@ namespace CMineNew.Map.BlockData{
 
             return light;
         }
-        
+
         public int CalculateSunlightFromNeighbours(out BlockFace face) {
             var light = 0;
             face = BlockFace.Down;
@@ -243,25 +259,19 @@ namespace CMineNew.Map.BlockData{
             return light;
         }
 
-        private void UpdateSunlight(bool expand, bool calculateLinearLight) {
+        private void UpdateSunlight() {
             //Calculate the linear sunlight.
-            if (calculateLinearLight) {
-                var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
-                var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-                var upLight = sunlightData.GetLightFor(_position.Y + 1) ;
-                var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
-                _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
-                sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
-            }
+            var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
+            var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
+            var upLight = sunlightData.GetLightFor(_position.Y + 1);
+            var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
+            _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
+            sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
 
             //Calculates the initial sunlight.
 
             _blockLight.Sunlight = _blockLight.LinearSunlight;
             _blockLight.SunlightSource = _position;
-
-            if(!expand) return;
-            
-            //Expands the light.
         }
 
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);

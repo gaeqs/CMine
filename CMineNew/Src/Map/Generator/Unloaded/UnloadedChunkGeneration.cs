@@ -34,6 +34,8 @@ namespace CMineNew.Map.Generator.Unloaded{
                 var pos = new Vector3i(x, y, z);
                 var data = _data[x, y, z];
                 if (data == null) return;
+                chunk.Natural = false;
+                chunk.Modified = true;
                 if (data.OverrideBlocks) {
                     chunk.SetBlock(UpdateSnapshot(data.Snapshot, chunkPos + pos, region), pos);
                     return;
@@ -52,6 +54,8 @@ namespace CMineNew.Map.Generator.Unloaded{
                 var blockPos = chunkPos + new Vector3i(x, y, z);
                 var data = _data[x, y, z];
                 if (data == null) return;
+                chunk.Natural = false;
+                chunk.Modified = true;
                 if (data.OverrideBlocks) {
                     if (!(data.Snapshot is BlockSnapshotAir)) {
                         empty = false;
