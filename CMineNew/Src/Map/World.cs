@@ -319,16 +319,12 @@ namespace CMineNew.Map{
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:
+                    var pos = new Vector3i(_player.Position);
                     for (var x = -7; x < 7; x++) {
                         for (var z = -7; z < 7; z++) {
-                            var random = new Random();
-                            var color = new Vector3((float) random.NextDouble(), (float) random.NextDouble(),
-                                (float) random.NextDouble());
-                            color.Normalize();
-                            _renderData.LightManager.AddPointLight(new PointLight(
-                                _player.Position + new Vector3(x * 5, _player.EyesHeight, z * 5),
-                                color, color,
-                                color, 1, 0.5f, 0.3f));
+                            var bPos = pos;
+                            bPos.Add(x, 0, z);
+                            SetBlock(new BlockSnapshotBricks(), bPos);
                         }
                     }
 
