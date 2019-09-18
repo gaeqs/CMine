@@ -9,7 +9,9 @@ namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeMountains : Biome{
         private readonly OctaveGenerator _heightGenerator;
         private readonly OakTreeGenerator _treeGenerator;
+        private readonly OctaveGenerator _caveGenerator;
         private readonly Random _random;
+       
 
         public BiomeMountains(World world, int seed)
             : base("default:mountains", BiomeTemperature.Normal, 70, 90,
@@ -17,6 +19,8 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             _heightGenerator = new SimplexOctaveGenerator(seed, 1);
             _heightGenerator.SetScale(1 / 50f);
             _treeGenerator = new OakTreeGenerator(seed);
+            _caveGenerator = new SimplexOctaveGenerator(seed, 7);
+            _caveGenerator.SetScale(1 / 50f);
             _random = new Random();
         }
 
@@ -28,6 +32,10 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
         public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Color4 grassColor) {
             var y = position.Y;
+            var cave = _caveGenerator.Noise(1, 10, true, position.X, position.Y, position.Z) > 0;
+            if (cave) {
+                return  BlockSnapshotAir.Instance;
+            }
             if (y > columnHeight) {
                 return y > 60 ? BlockSnapshotAir.Instance : (BlockSnapshot) new BlockSnapshotWater(8);
             }
