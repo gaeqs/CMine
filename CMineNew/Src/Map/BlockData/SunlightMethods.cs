@@ -101,7 +101,7 @@ namespace CMineNew.Map.BlockData{
                     }
                 }
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
-                if (oldLight < neighbour.BlockLight.Sunlight) continue;
+                if (oldLight <= neighbour.BlockLight.Sunlight) continue;
                 RemoveLight(removedBlocksList, neighbour, source);
             }
         }

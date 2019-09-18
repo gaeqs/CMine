@@ -81,7 +81,7 @@ namespace CMineNew.Map{
             chunk = _savedChunks[regionPosition.X, regionPosition.Y, regionPosition.Z];
             if (chunk == null) return false;
             _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
-            chunk.SendOnPlaceEventToAllBlocks(false);
+            chunk.SendOnPlaceEventToAllBlocks(true, true);
             return true;
         }
 

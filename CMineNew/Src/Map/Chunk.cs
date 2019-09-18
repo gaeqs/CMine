@@ -132,7 +132,7 @@ namespace CMineNew.Map{
             _modified = true;
         }
 
-        public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates) {
+        public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates, bool expandSunlight = false) {
             var blocks = new Block[6];
             ForEachChunkPosition((x, y, z, block) => {
                 GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
@@ -140,8 +140,8 @@ namespace CMineNew.Map{
             });
             ForEachChunkPosition((x, y, z, block) => {
                 if (block == null) return;
-                block.OnPlace0(null, triggerWorldUpdates, false);
-                blocks = block?.Neighbours;
+                block.OnPlace0(null, triggerWorldUpdates, expandSunlight);
+                blocks = block.Neighbours;
                 if (x == 0) {
                     blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
                 }
@@ -231,7 +231,7 @@ namespace CMineNew.Map{
                 var id = (string) formatter.Deserialize(stream);
                 if (!BlockManager.TryGet(id, out var snapshot))
                     throw
-                        new System.Exception("Couldn't load chunk " + _position + ". Block Id missing.");
+                        new System.Exception("Couldn't load chunk " + _position + ". Block Id "+id+" missing.");
                 var block = snapshot.ToBlock(this, blockPos);
                 _blocks[x, y, z] = block;
                 block.Load(stream, formatter, version, region2d);

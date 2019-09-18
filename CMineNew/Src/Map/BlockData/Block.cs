@@ -105,7 +105,7 @@ namespace CMineNew.Map.BlockData{
                             || _blockYOffset < _neighbours[i]._blockYOffset);
                 _collidableFaces[i] = side || neighbour == null || neighbour._passable;
             }
-
+            
             if (triggerWorldUpdates) {
                 if (_blockLightSource != null) {
                     BlockLightMethods.ExpandFrom(this, _blockLightSource,
@@ -132,9 +132,9 @@ namespace CMineNew.Map.BlockData{
                     SunlightMethods.ExpandFrom(this, _position,
                         _blockLight.Sunlight - _blockLight.BlockLightPassReduction);
                 }
-
-                TriggerLightChange(false);
+                
             }
+            TriggerLightChange(false);
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
@@ -168,6 +168,7 @@ namespace CMineNew.Map.BlockData{
             formatter.Serialize(stream, _blockLight.Light);
             formatter.Serialize(stream, _blockLight.LinearSunlight);
             formatter.Serialize(stream, _blockLight.Sunlight);
+            
             if (this is BlockAir) return;
             formatter.Serialize(stream, _textureFilter.R);
             formatter.Serialize(stream, _textureFilter.G);

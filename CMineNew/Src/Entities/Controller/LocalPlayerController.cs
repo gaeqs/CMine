@@ -129,7 +129,7 @@ namespace CMineNew.Entities.Controller{
 
                 var light = block?.BlockLight;
                 if (light != null) {
-                    Console.WriteLine(light.Sunlight +" -> "+light.SunlightSource);
+                    Console.WriteLine(light.Sunlight +" -> "+light.LinearSunlight);
                 }
 
                 if (!matInstance.CanBePlaced(position, _player.World)) return;

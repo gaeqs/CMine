@@ -323,7 +323,7 @@ namespace CMineNew.Map{
                     for (var x = -7; x < 7; x++) {
                         for (var z = -7; z < 7; z++) {
                             var bPos = pos;
-                            bPos.Add(x, 0, z);
+                            bPos.Add(x, -1, z);
                             SetBlock(new BlockSnapshotBricks(), bPos);
                         }
                     }
