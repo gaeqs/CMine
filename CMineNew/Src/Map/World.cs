@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.DataStructure.List;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
-using CMineNew.Light;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
@@ -41,7 +41,7 @@ namespace CMineNew.Map{
 
         private readonly Collection<StaticText> _staticTexts;
 
-        private readonly object _regionsLock = new object();
+        private readonly object _regionsLock = new object(), _regions2dLock = new object();
 
         public World(string name) : base(name) {
             _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
@@ -57,7 +57,13 @@ namespace CMineNew.Map{
             _staticTexts = new Collection<StaticText>();
 
             _worldTaskManager = new WorldTaskManager();
-            _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
+
+            if (Load(out var seed)) {
+                _worldGenerator = new DefaultWorldGenerator(this, seed);
+            }
+            else {
+                _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
+            }
 
             _entities = new HashSet<Entity>();
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
@@ -99,6 +105,8 @@ namespace CMineNew.Map{
         public Dictionary<Vector2i, World2dRegion> Regions2d => _regions2d;
 
         public object RegionsLock => _regionsLock;
+
+        public object Regions2dLock => _regions2dLock;
 
         public HashSet<Entity> Entities => _entities;
 
@@ -197,8 +205,10 @@ namespace CMineNew.Map{
         }
 
         public World2dRegion GetOrCreate2dRegion(Vector2i regionPosition) {
-            if (_regions2d.TryGetValue(regionPosition, out var value)) {
-                return value;
+            lock (_regions2dLock) {
+                if (_regions2d.TryGetValue(regionPosition, out var value)) {
+                    return value;
+                }
             }
 
             var region = new World2dRegion(this, regionPosition);
@@ -211,8 +221,44 @@ namespace CMineNew.Map{
                 Console.WriteLine("REGION " + regionPosition + " LOADED.");
             }
 
-            _regions2d.Add(regionPosition, region);
+            lock (_regions2dLock) {
+                _regions2d.Add(regionPosition, region);
+            }
+
             return region;
+        }
+
+        public void Save() {
+            var file = _folder + Path.DirectorySeparatorChar + "info.dat";
+            var formatter = new BinaryFormatter();
+            var stream = File.Open(file, FileMode.OpenOrCreate, FileAccess.Write);
+            formatter.Serialize(stream, _worldGenerator.Seed);
+            stream.Close();
+
+            lock (_regionsLock) {
+                foreach (var region in _chunkRegions.Values) {
+                    region.Save();
+                }
+            }
+
+            lock (_regions2dLock) {
+                foreach (var region in _regions2d.Values) {
+                    region.Save();
+                }
+            }
+
+            _unloadedChunkGenerationManager.Save();
+        }
+
+        public bool Load(out int seed) {
+            seed = 0;
+            var file = _folder + Path.DirectorySeparatorChar + "info.dat";
+            if (!File.Exists(file)) return false;
+            var formatter = new BinaryFormatter();
+            var stream = File.Open(file, FileMode.OpenOrCreate, FileAccess.Read);
+            seed = (int) formatter.Deserialize(stream);
+            stream.Close();
+            return true;
         }
 
         public override void Tick(long delay) {
@@ -330,18 +376,7 @@ namespace CMineNew.Map{
 
                     break;
                 case Key.L:
-                    lock (_regionsLock) {
-                        foreach (var region in _chunkRegions.Values) {
-                            region.Save();
-                        }
-
-                        foreach (var region in _regions2d.Values) {
-                            region.Save();
-                        }
-
-                        _unloadedChunkGenerationManager.Save();
-                    }
-
+                    Save();
                     break;
             }
         }

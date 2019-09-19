@@ -10,7 +10,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         private readonly OctaveGenerator _heightGenerator;
 
         private readonly OakTreeGenerator _treeGenerator;
-        private readonly Random _random;
+        private readonly OctaveGenerator _treeOctaveGenerator;
 
         public BiomePlains(World world, int seed)
             : base("default:plains", BiomeTemperature.Normal, 62, 66,
@@ -19,7 +19,8 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             _heightGenerator.SetScale(1 / 100f);
 
             _treeGenerator = new OakTreeGenerator(seed);
-            _random = new Random();
+            _treeOctaveGenerator = new SimplexOctaveGenerator(seed, 1);
+            _treeOctaveGenerator.SetScale(100);
         }
 
         public override int GetColumnHeight(int x, int z) {
@@ -36,11 +37,13 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
             if (y == columnHeight) {
                 if (y > 59) {
-                    if (_random.NextDouble() > 0.999) {
+                    var generateTreeGrass = _treeOctaveGenerator.Noise(100, 100, true,
+                                           position.X, y, position.Z);
+                    if (generateTreeGrass > 0.99) {
                         _treeGenerator.TryToGenerate(position + new Vector3i(0, 1, 0), _world);
                     }
 
-                    else if (_random.NextDouble() > 0.8) {
+                    else if (generateTreeGrass > 0.5) {
                         _world.UnloadedChunkGenerationManager.AddBlock(position + new Vector3i(0, 1, 0),
                             new BlockSnapshotTallGrass(grassColor), false);
                     }

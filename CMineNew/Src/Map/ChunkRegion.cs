@@ -126,8 +126,7 @@ namespace CMineNew.Map{
             FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
             var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + "-" + _position.Z + ".reg";
 
-            var stream = new DeflateStream(File.Open(file, FileMode.OpenOrCreate, FileAccess.Write),
-                CompressionMode.Compress);
+            var stream = new DeflateStream(File.Open(file, FileMode.OpenOrCreate, FileAccess.Write), CompressionMode.Compress);
             var formatter = new BinaryFormatter();
             formatter.Serialize(stream, version);
 

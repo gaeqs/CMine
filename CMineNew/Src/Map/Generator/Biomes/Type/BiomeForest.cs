@@ -9,14 +9,14 @@ namespace CMineNew.Map.Generator.Biomes.Type{
     public class BiomeForest : Biome{
         private readonly OctaveGenerator _heightGenerator;
         private readonly OakTreeGenerator _treeGenerator;
-        private Random _random;
+        private readonly OctaveGenerator _treeOctaveGenerator;
 
         public BiomeForest(World world, int seed)
             : base("default:forest", BiomeTemperature.Normal, 62, 70, Color4.Green, world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 6);
             _heightGenerator.SetScale(1 / 20f);
             _treeGenerator = new OakTreeGenerator(seed);
-            _random = new Random();
+            _treeOctaveGenerator = new SimplexOctaveGenerator(seed, 1);
         }
 
         public override int GetColumnHeight(int x, int z) {
@@ -33,7 +33,9 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
             if (y == columnHeight) {
                 if (y > 59) {
-                    if (_random.NextDouble() > 0.95) {
+                    var generateTree = _treeOctaveGenerator.Noise(100, 10, true,
+                                           position.X, y, position.Z) > 0.7;
+                    if (generateTree) {
                         _treeGenerator.TryToGenerate(position + new Vector3i(0, 1, 0), _world);
                     }
 
