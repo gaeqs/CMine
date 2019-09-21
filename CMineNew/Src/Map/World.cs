@@ -14,6 +14,7 @@ using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
 using CMineNew.Render;
+using CMineNew.Test;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
@@ -41,9 +42,11 @@ namespace CMineNew.Map{
 
         private readonly Collection<StaticText> _staticTexts;
 
+        private readonly DelayViewer _delayViewer;
+        
         private readonly object _regionsLock = new object(), _regions2dLock = new object();
 
-        public World(string name) : base(name) {
+        public World(string name, TrueTypeFont ttf) : base(name) {
             _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
             Directory.CreateDirectory(_folder);
             Background = Color4.Aqua;
@@ -55,6 +58,8 @@ namespace CMineNew.Map{
             _tickRegions = new ELinkedList<ChunkRegion>();
 
             _staticTexts = new Collection<StaticText>();
+            _delayViewer = new DelayViewer(ttf);
+            _staticTexts.Add(_delayViewer);
 
             _worldTaskManager = new WorldTaskManager();
 
@@ -115,6 +120,8 @@ namespace CMineNew.Map{
         public Collection<StaticText> StaticTexts => _staticTexts;
 
         public UnloadedChunkGenerationManager UnloadedChunkGenerationManager => _unloadedChunkGenerationManager;
+
+        public DelayViewer DelayViewer => _delayViewer;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
             lock (_regionsLock) {

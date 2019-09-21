@@ -193,6 +193,7 @@
     <Compile Include="Src\Render\Room.cs" />
     <Compile Include="Src\Render\SkyBox.cs" />
     <Compile Include="Src\Render\Window.cs" />
+    <Compile Include="Src\Test\DelayViewer.cs" />
     <Compile Include="Src\Test\FpsViewer.cs" />
     <Compile Include="Src\Test\PositionViewer.cs" />
     <Compile Include="Src\Texture\TextureMap.cs" />

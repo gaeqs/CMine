@@ -30,14 +30,6 @@ namespace CMineNew.Map.BlockData.Type{
             return false;
         }
 
-        public override void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
-            //Air blocks are empty, no need to load anything.
-        }
-
-        public override void Save(Stream stream, BinaryFormatter formatter) {
-            //Air blocks are empty, no need to save anything.
-        }
-
         public override bool IsFaceOpaque(BlockFace face) {
             return false;
         }

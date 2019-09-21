@@ -27,18 +27,19 @@ namespace CMineNew{
         public static TextureMap Textures;
 
         public static void Load() {
-            Window = new Window(1920/2, 1080/2,
+            Window = new Window(1920 / 2, 1080 / 2,
                 GameWindowFlags.Default, false, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();
                     BlockManager.Load();
                     BlockModelManager.Load();
                     Pointer.Load();
-                    var world = new World("test");
 
                     var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 10));
-                    world.StaticTexts.Add(new PositionViewer(ttf));
 
+                    var world = new World("test", ttf);
+
+                    world.StaticTexts.Add(new PositionViewer(ttf));
                     world.StaticTexts.Add(new FpsViewer(ttf));
 
                     Window.Room = world;

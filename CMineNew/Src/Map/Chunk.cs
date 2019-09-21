@@ -77,7 +77,7 @@ namespace CMineNew.Map{
 
             _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
 
-            var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
+            var neighbours = old == null ? GetNeighbourBlocks(new Block[6], position, chunkPosition) : old.Neighbours;
             if (block != null) {
                 block.Neighbours = neighbours;
             }
@@ -128,11 +128,12 @@ namespace CMineNew.Map{
                 _blocks[x, y, z] = block;
             });
             
-            SendOnPlaceEventToAllBlocks(true);
+            SendOnPlaceEventToAllBlocks(true, false);
+            ForEachChunkPosition((x, y, z, block) => block.ExpandSunlight());
             _modified = true;
         }
 
-        public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates, bool expandSunlight = false) {
+        public void SendOnPlaceEventToAllBlocks(bool triggerWorldUpdates, bool expandSunlight) {
             var blocks = new Block[6];
             ForEachChunkPosition((x, y, z, block) => {
                 GetNeighbourBlocks(blocks, block.Position, new Vector3i(x, y, z));
@@ -234,6 +235,7 @@ namespace CMineNew.Map{
                         new System.Exception("Couldn't load chunk " + _position + ". Block Id "+id+" missing.");
                 var block = snapshot.ToBlock(this, blockPos);
                 _blocks[x, y, z] = block;
+           
                 block.Load(stream, formatter, version, region2d);
             });
             GenerateSaveBuffer(formatter);

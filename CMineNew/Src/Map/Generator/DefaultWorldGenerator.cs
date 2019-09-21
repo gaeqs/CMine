@@ -1,9 +1,10 @@
+using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator.Biomes;
 
 namespace CMineNew.Map.Generator{
-    public class DefaultWorldGenerator : WorldGenerator{
+    public class  DefaultWorldGenerator : WorldGenerator{
         private readonly BlockSnapshot[,,] _buffer =
             new BlockSnapshot[Chunk.ChunkLength, Chunk.ChunkLength, Chunk.ChunkLength];
 
@@ -11,6 +12,7 @@ namespace CMineNew.Map.Generator{
         }
 
         public override bool GenerateChunkData(Chunk chunk) {
+            var now = DateTime.Now.Ticks;
             var empty = true;
             var chunkWorldPosition = chunk.Position << Chunk.WorldPositionShift;
             var chunk2dPosition = new Vector2i(chunk.Position.X, chunk.Position.Z);
@@ -42,7 +44,10 @@ namespace CMineNew.Map.Generator{
             }
 
             empty &= _world.UnloadedChunkGenerationManager.PostGenerateChunk(chunk, _buffer, region2d);
+            chunk.World.DelayViewer.AddGeneration(DateTime.Now.Ticks - now);
+            now = DateTime.Now.Ticks;
             chunk.FillWithBlocks(_buffer);
+            chunk.World.DelayViewer.AddFill(DateTime.Now.Ticks - now);
             return empty;
         }
     }

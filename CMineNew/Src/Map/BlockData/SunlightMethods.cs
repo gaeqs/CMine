@@ -8,6 +8,7 @@ using CMineNew.Geometry;
 namespace CMineNew.Map.BlockData{
     public static class SunlightMethods{
         public static void ExpandFrom(Block from, Vector3i source, int light) {
+            if(light <= 0) return;
             var queue = new Queue<Block>();
             var neighbours = from.Neighbours;
             for (var i = 0; i < neighbours.Length; i++) {

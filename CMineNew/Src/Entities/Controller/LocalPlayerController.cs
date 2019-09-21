@@ -1,6 +1,7 @@
 using System;
 using CMineNew.Geometry;
 using CMineNew.Map;
+using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator.Population;
 using CMineNew.Render;
@@ -106,7 +107,7 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMousePush(MouseButtonEventArgs args) {
             //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotBricksSlab(new Random().NextDouble() > 0.5);
+                var matInstance = new BlockSnapshotBricks();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
@@ -127,9 +128,14 @@ namespace CMineNew.Entities.Controller{
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 var block = _player.World.GetBlock(position);
 
-                var light = block?.BlockLight;
-                if (light != null) {
-                    Console.WriteLine(light.Sunlight +" -> "+light.LinearSunlight);
+                if (block is CubicBlock cubic) {
+                    var array = cubic.NullNeighbour;
+                    for (var i = 0; i < array.Length; i++) {
+                        Console.WriteLine((BlockFace)i + " -> "+array[i]);
+                        var n = cubic.Neighbours[i];
+                        Console.WriteLine("N: "+n.BlockLight.Sunlight);
+                    }
+                    Console.WriteLine("------------");
                 }
 
                 if (!matInstance.CanBePlaced(position, _player.World)) return;
