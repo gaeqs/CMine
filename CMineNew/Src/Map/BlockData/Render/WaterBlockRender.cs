@@ -66,6 +66,7 @@ namespace CMineNew.Map.BlockData.Render{
             _shader.Use();
             _shader.SetUMatrix("viewProjection", camera.ViewProjection);
             _shader.SetUVector("cameraPosition", camera.Position);
+            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
 
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;

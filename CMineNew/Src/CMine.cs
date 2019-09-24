@@ -27,7 +27,7 @@ namespace CMineNew{
         public static TextureMap Textures;
 
         public static void Load() {
-            Window = new Window(1920 / 2, 1080 / 2,
+            Window = new Window(1920, 1080,
                 GameWindowFlags.Default, false, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();
@@ -35,7 +35,7 @@ namespace CMineNew{
                     BlockModelManager.Load();
                     Pointer.Load();
 
-                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 10));
+                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 20));
 
                     var world = new World("test", ttf);
 

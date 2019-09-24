@@ -15,6 +15,7 @@ out vec4 fragColorFilter;
 out float fragLight;
 
 uniform mat4 viewProjection;
+uniform vec3 sunlightDirection;
 
 void main () {
     mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y, worldPosition.z, 1);
@@ -29,5 +30,5 @@ void main () {
     
     fragTexCoord = minT + texturePosition * size;
     fragColorFilter = blockColorFilter;
-    fragLight = max(blockLight, sunlight);
+    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
 }

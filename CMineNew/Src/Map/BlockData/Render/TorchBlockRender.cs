@@ -3,6 +3,7 @@ using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -113,6 +114,7 @@ namespace CMineNew.Map.BlockData.Render{
             CheckVbo();
             _shader.Use();
             _shader.SetUMatrix("viewProjection", _chunkRegion.World.Camera.ViewProjection);
+            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
             _vao.Bind();
             _mapper.OnBackground = false;
             _mapper.FlushQueue();

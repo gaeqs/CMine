@@ -16,6 +16,7 @@ out vec4 fragColorFilter;
 out float fragLight;
 
 uniform mat4 viewProjection;
+uniform vec3 sunlightDirection;
 
 float getWaterLevel () {
     if (position.x < 0.5 && position.z < 0.5) {
@@ -51,5 +52,5 @@ void main () {
     fragTexCoords = minT + texturePosition * size;
     
     fragColorFilter = blockColorFilter;
-    fragLight = max(blockLight, sunlight);
+    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
 }

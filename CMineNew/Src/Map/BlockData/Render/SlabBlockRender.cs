@@ -4,6 +4,7 @@ using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -60,6 +61,7 @@ namespace CMineNew.Map.BlockData.Render{
             CheckVbos();
             _shader.Use();
             _shader.SetUMatrix("viewProjection", _chunkRegion.World.Camera.ViewProjection);
+            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
                 var vao = _vaos[(int) face];
