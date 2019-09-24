@@ -80,8 +80,10 @@ namespace CMineNew.Map{
         public bool TryLoadSavedChunk(Vector3i regionPosition, out Chunk chunk) {
             chunk = _savedChunks[regionPosition.X, regionPosition.Y, regionPosition.Z];
             if (chunk == null) return false;
+            var now = DateTime.Now.Ticks;
             _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
             chunk.SendOnPlaceEventToAllBlocks(false, false);
+            chunk.World.DelayViewer.AddLoad(DateTime.Now.Ticks - now);
             return true;
         }
 

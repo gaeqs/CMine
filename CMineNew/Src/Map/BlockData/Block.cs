@@ -99,8 +99,16 @@ namespace CMineNew.Map.BlockData{
             CalculateVisibleFaces();
             if (triggerWorldUpdates) {
                 CalculateAllLight(expandSunlight);
+                TriggerLightChange();
             }
-            TriggerLightChange();
+            else {
+                for(var i = 0; i < _neighbours.Length; i++) {
+                    var neighbour = _neighbours[i];
+                    if (neighbour != null && neighbour._chunk != _chunk) {
+                        neighbour.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
+                    }
+                }
+            }
 
             OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
         }
@@ -134,7 +142,7 @@ namespace CMineNew.Map.BlockData{
             formatter.Serialize(stream, _blockLight.Light);
             formatter.Serialize(stream, _blockLight.LinearSunlight);
             formatter.Serialize(stream, _blockLight.Sunlight);
-            
+
             if (this is BlockAir) return;
             formatter.Serialize(stream, _textureFilter.R);
             formatter.Serialize(stream, _textureFilter.G);
@@ -187,7 +195,7 @@ namespace CMineNew.Map.BlockData{
             var light = _blockLight.Sunlight - _blockLight.BlockLightPassReduction;
             SunlightMethods.ExpandFrom(this, _position, light);
         }
-        
+
         public void UpdateLinearSunlight(int light) {
             var old = _blockLight.Sunlight;
             _blockLight.LinearSunlight = light;
@@ -259,7 +267,7 @@ namespace CMineNew.Map.BlockData{
 
             return light;
         }
-        
+
         private void UpdateSunlight() {
             //Calculate the linear sunlight.
             var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
@@ -274,7 +282,7 @@ namespace CMineNew.Map.BlockData{
             _blockLight.Sunlight = _blockLight.LinearSunlight;
             _blockLight.SunlightSource = _position;
         }
-        
+
         #endregion
 
         private void CalculateVisibleFaces() {

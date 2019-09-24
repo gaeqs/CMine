@@ -18,43 +18,22 @@ namespace CMineNew.Map{
         public static readonly BlockFace[] All =
             {BlockFace.Up, BlockFace.Down, BlockFace.West, BlockFace.East, BlockFace.North, BlockFace.South};
 
+        private static readonly BlockFace[] Opposites =
+            {BlockFace.Down, BlockFace.Up, BlockFace.East, BlockFace.West, BlockFace.South, BlockFace.North};
+
+        private static readonly Vector3i[] Relatives =
+            {new Vector3i(0, 1, 0),  new Vector3i(0, -1, 0),
+                new Vector3i(-1, 0, 0), new Vector3i(1, 0, 0),
+                new Vector3i(0, 0, -1), new Vector3i(0, 0, 1), 
+            };
+
         public static BlockFace GetOpposite(BlockFace face) {
-            switch (face) {
-                case BlockFace.Up:
-                    return BlockFace.Down;
-                case BlockFace.Down:
-                    return BlockFace.Up;
-                case BlockFace.West:
-                    return BlockFace.East;
-                case BlockFace.East:
-                    return BlockFace.West;
-                case BlockFace.South:
-                    return BlockFace.North;
-                case BlockFace.North:
-                    return BlockFace.South;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(face), face, null);
-            }
+            return Opposites[(int) face];
         }
 
 
         public static Vector3i GetRelative(BlockFace face) {
-            switch (face) {
-                case BlockFace.Up:
-                    return new Vector3i(0, 1, 0);
-                case BlockFace.Down:
-                    return new Vector3i(0, -1, 0);
-                case BlockFace.West:
-                    return new Vector3i(-1, 0, 0);
-                case BlockFace.East:
-                    return new Vector3i(1, 0, 0);
-                case BlockFace.South:
-                    return new Vector3i(0, 0, 1);
-                case BlockFace.North:
-                    return new Vector3i(0, 0, -1);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(face), face, null);
-            }
+            return Relatives[(int) face];
         }
 
         public static bool IsSide(BlockFace face) {

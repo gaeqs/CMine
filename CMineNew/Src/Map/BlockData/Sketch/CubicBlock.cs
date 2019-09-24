@@ -6,7 +6,7 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
-        private readonly bool[] _visibleFaces, _nullNeighbour;
+        private readonly bool[] _visibleFaces;
 
         public CubicBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false,
             bool lightSource = false, int blockLight = 0, int blockLightPassReduction = 1, int sunlightPassReduction = 0)
@@ -14,26 +14,19 @@ namespace CMineNew.Map.BlockData.Sketch{
                 passable, 1, 0, lightSource, 
                 blockLight, blockLightPassReduction, sunlightPassReduction) {
             _visibleFaces = new bool[6];
-            _nullNeighbour = new bool[6];
         }
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
-
-        public bool[] NullNeighbour => _nullNeighbour;
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = neighbours[i];
-                _visibleFaces[i] = block == null || !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
-                if (_visibleFaces[i]) {
-                    _nullNeighbour[i] = block == null;
-                    render.AddData(i, this, block?.BlockLight.Light ?? 0, 
-                        block?.BlockLight.Sunlight ?? 0);
-                }
-                else {
-                    render.RemoveData(i, this);
-                }
+                var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
+                var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
+                if (!vis) continue;
+                var light = block?.BlockLight;
+                render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
             }
         }
 

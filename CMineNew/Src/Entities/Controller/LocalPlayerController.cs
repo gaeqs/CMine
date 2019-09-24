@@ -127,16 +127,7 @@ namespace CMineNew.Entities.Controller{
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 var block = _player.World.GetBlock(position);
-
-                if (block is CubicBlock cubic) {
-                    var array = cubic.NullNeighbour;
-                    for (var i = 0; i < array.Length; i++) {
-                        Console.WriteLine((BlockFace)i + " -> "+array[i]);
-                        var n = cubic.Neighbours[i];
-                        Console.WriteLine("N: "+n.BlockLight.Sunlight);
-                    }
-                    Console.WriteLine("------------");
-                }
+                
 
                 if (!matInstance.CanBePlaced(position, _player.World)) return;
                 if (!matInstance.Passable &&
