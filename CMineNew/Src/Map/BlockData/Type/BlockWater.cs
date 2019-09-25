@@ -70,7 +70,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public bool Removing => _removing;
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
             _hasWaterOnTop = neighbours[(int) BlockFace.Up] is BlockWater;
             for (var i = 0; i < neighbours.Length; i++) {
                 var block = neighbours[i];
@@ -93,11 +93,13 @@ namespace CMineNew.Map.BlockData.Type{
                 _parent = _position;
                 _waterLevel = MaxWaterLevel;
             }
-
-            UpdateWaterVertices(true, true, true, true, true);
+            
             if (triggerWorldUpdates) {
                 _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
             }
+            
+            if(!addToRender) return;
+            UpdateWaterVertices(true, true, true, true, true);
         }
 
         public override void OnRemove(Block newBlock) {
@@ -116,6 +118,10 @@ namespace CMineNew.Map.BlockData.Type{
                     chunk.TaskManager.AddTask(new WorldTaskRemoveWater(World, child));
                 }
             }
+        }
+
+        public override void AddToRender() {
+            UpdateWaterVertices(true, true, true, true, true);
         }
 
         public override void Save(Stream stream, BinaryFormatter formatter) {

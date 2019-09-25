@@ -80,10 +80,10 @@ namespace CMineNew.Map{
                     if (chunk == null || chunk.Position.Y > chunkY) continue;
                     var blocks = chunk.Blocks;
                     for (var by = 15; by >= 0; by--) {
-                        // var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
-                        // if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
-                        // block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
-                        // block.TriggerLightChange();
+                        var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
+                        if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
+                        block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
+                        block.TriggerLightChange();
                     }
                 }
             }

@@ -16,13 +16,23 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = neighbours[i];
                 var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
                 var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
-                if (!vis) continue;
+                if (!vis || !addToRender) continue;
+                var light = block?.BlockLight;
+                render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
+            }
+        }
+
+        public override void AddToRender() {
+            var render = _chunk.Region.Render;
+            for (var i = 0; i < _visibleFaces.Length; i++) {
+                if (!_visibleFaces[i]) continue;
+                var block = _neighbours[i];
                 var light = block?.BlockLight;
                 render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
             }

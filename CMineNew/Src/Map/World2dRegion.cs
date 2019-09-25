@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -118,6 +119,8 @@ namespace CMineNew.Map{
         }
 
         public bool Load() {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var regionsFolder = _world.Folder + Path.DirectorySeparatorChar + World2dRegionFolder;
             FolderUtils.CreateRegionFolderIfNotExist(regionsFolder);
             var file = regionsFolder + Path.DirectorySeparatorChar + _position.X + "-" + _position.Y + ".reg";
@@ -146,6 +149,9 @@ namespace CMineNew.Map{
             }
 
             stream.Close();
+            
+            stopwatch.Stop();
+            _world.DelayViewer.AddRegion2dLoad(stopwatch.ElapsedTicks);
 
             return true;
         }

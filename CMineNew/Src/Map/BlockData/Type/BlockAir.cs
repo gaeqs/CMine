@@ -15,13 +15,16 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
         }
 
         public override void OnRemove(Block newBlock) {
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
+        }
+
+        public override void AddToRender() {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

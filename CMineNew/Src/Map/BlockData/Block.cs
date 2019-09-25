@@ -84,7 +84,7 @@ namespace CMineNew.Map.BlockData{
             }
         }
 
-        public void OnPlace0(Block oldBlock, bool triggerWorldUpdates, bool expandSunlight) {
+        public void OnPlace0(Block oldBlock, bool triggerWorldUpdates, bool expandSunlight, bool addToRender) {
             CalculateVisibleFaces();
             if (triggerWorldUpdates) {
                 CalculateAllLight(expandSunlight);
@@ -99,10 +99,10 @@ namespace CMineNew.Map.BlockData{
                 }
             }
 
-            OnPlace(oldBlock, _neighbours, triggerWorldUpdates);
+            OnPlace(oldBlock, _neighbours, triggerWorldUpdates, addToRender);
         }
 
-        public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates);
+        public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender);
 
         public void OnRemove0(Block newBlock, out ELinkedList<Block> blockList, out ELinkedList<Block> sunList) {
             if (_blockLightSource != null) {
@@ -126,6 +126,10 @@ namespace CMineNew.Map.BlockData{
             _collidableFaces[(int) relative] = to == null || to.Passable || side;
             OnNeighbourBlockChange(from, to, relative);
         }
+        
+        public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);
+
+        public abstract void AddToRender();
 
         public virtual void Save(Stream stream, BinaryFormatter formatter) {
             formatter.Serialize(stream, _blockLight.Light);
@@ -285,8 +289,7 @@ namespace CMineNew.Map.BlockData{
                 _collidableFaces[i] = side || neighbour == null || neighbour.Passable;
             }
         }
-
-        public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);
+        
         public abstract Block Clone(Chunk chunk, Vector3i position);
 
         public abstract bool Collides(Vector3 current, Vector3 origin, Vector3 direction);

@@ -13,8 +13,6 @@ namespace CMineNew.Test{
         private static LineVertexArrayObject _vao;
         private static bool _loaded;
 
-        private static Stopwatch _internal = new Stopwatch();
-
         public static void Add(long delay) {
             var millis = delay / CMine.TicksPerSecondF * 1000;
             if (_amount == Delays.Length) {

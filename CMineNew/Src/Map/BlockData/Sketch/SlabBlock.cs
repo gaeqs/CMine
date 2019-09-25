@@ -29,7 +29,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override float BlockYOffset => base.BlockYOffset + (_upside ? 0.5f : 0);
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = neighbours[i];
@@ -39,17 +39,30 @@ namespace CMineNew.Map.BlockData.Sketch{
 
                 _visibleFaces[i] = visibleBySlab || block == null ||
                                    !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
-                if (_visibleFaces[i]) {
-                    if (visibleBySlab) {
-                        render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
-                    }
-                    else {
-                        render.AddData(i, this, block?.BlockLight.Light ?? 0,
-                            block?.BlockLight.Sunlight ?? 0);
-                    }
+                if (!addToRender || !_visibleFaces[i]) continue;
+                if (visibleBySlab) {
+                    render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
                 }
                 else {
-                    render.RemoveData(i, this);
+                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
+                        block?.BlockLight.Sunlight ?? 0);
+                }
+            }
+        }
+        
+        public override void AddToRender() {
+            var render = _chunk.Region.Render;
+            for (var i = 0; i < _visibleFaces.Length; i++) {
+                if(!_visibleFaces[i]) continue;
+                var face = (BlockFace) i;
+                var visibleBySlab = face == BlockFace.Up && !_upside || face == BlockFace.Down && _upside;
+                var block = _neighbours[i];
+                if (visibleBySlab) {
+                    render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
+                }
+                else {
+                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
+                        block?.BlockLight.Sunlight ?? 0);
                 }
             }
         }

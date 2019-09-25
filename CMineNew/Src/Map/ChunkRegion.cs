@@ -82,7 +82,10 @@ namespace CMineNew.Map{
             if (chunk == null) return false;
             var now = DateTime.Now.Ticks;
             _chunks[regionPosition.X, regionPosition.Y, regionPosition.Z] = chunk;
-            chunk.SendOnPlaceEventToAllBlocks(false, false);
+            chunk.SendOnPlaceEventToAllBlocks(false, false, false);
+            
+            chunk.ForEachChunkPosition((x, y, z, block) => block.AddToRender());
+            
             chunk.World.DelayViewer.AddLoad(DateTime.Now.Ticks - now);
             return true;
         }

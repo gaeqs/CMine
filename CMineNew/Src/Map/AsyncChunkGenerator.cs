@@ -39,7 +39,7 @@ namespace CMineNew.Map{
         public void StartThread() {
             if (_thread != null) return;
             _thread = new Thread(Run) {
-                Priority = ThreadPriority.Lowest, Name = _world.Name + "'s Async Chunk Generator"
+                Priority = ThreadPriority.BelowNormal, Name = _world.Name + "'s Async Chunk Generator"
             };
             _alive = true;
             _thread.Start();

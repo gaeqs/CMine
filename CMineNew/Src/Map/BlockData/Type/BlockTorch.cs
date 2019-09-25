@@ -18,9 +18,9 @@ namespace CMineNew.Map.BlockData.Type{
 
         public Area2d TextureArea => _textureArea;
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
-            var render = _chunk.Region.Render;
-            render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
+        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
+            if(!addToRender) return;
+            AddToRender();
         }
 
         public override void OnRemove(Block newBlock) {
@@ -31,6 +31,11 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnNeighbourBlockChange(Block @from, Block to, BlockFace relative) {
+        }
+
+        public override void AddToRender() {
+            var render = _chunk.Region.Render;
+            render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {
