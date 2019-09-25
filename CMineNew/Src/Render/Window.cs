@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Text;
+using System.Threading;
 using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics;
@@ -48,6 +49,8 @@ namespace CMineNew.Render{
         public Vector2 UnitsPerPixel => _unitsPerPixel;
 
         protected override void OnLoad(EventArgs e) {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            Thread.CurrentThread.Name = "Render thread";
             Console.WriteLine("OpenGL Version: " + GL.GetString(StringName.Version));
             Console.WriteLine("Graphic Card: " + GL.GetString(StringName.Vendor) + " - " +
                               GL.GetString(StringName.Renderer));

@@ -12,6 +12,7 @@ namespace CMineNew.Test{
         private static readonly long MaxMemory = (long) Math.Pow(2, 32);
 
         private long _ticks;
+        private int _loops;
         private int _lastChunks;
 
         public FpsViewer(TrueTypeFont font) : base(font, "INIT", new Vector2(-1, 0.9f), Color4.White) {
@@ -19,7 +20,8 @@ namespace CMineNew.Test{
 
         public override void Tick(long dif, Room room) {
             _ticks += dif;
-            if (!(_ticks > CMine.TicksPerSecond * 0.1f)) return;
+            _loops++;
+            if (_ticks < CMine.TicksPerSecond) return;
 
             var memory = GC.GetTotalMemory(false) * 100 / MaxMemory;
             var chunks = 0;
@@ -33,11 +35,10 @@ namespace CMineNew.Test{
             _lastChunks = chunks;
 
 
-            var fps = Math.Ceiling(CMine.TicksPerSecond / (float) dif).ToString(CultureInfo.InvariantCulture);
-
             Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] " +
-                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} "+ "("+lights+") " + fps;
+                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} "+ "("+lights+") " + _loops;
             _ticks = 0;
+            _loops = 0;
         }
 
         private static string BuffersSize() {
