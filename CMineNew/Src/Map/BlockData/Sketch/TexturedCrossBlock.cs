@@ -1,26 +1,19 @@
 using CMineNew.Geometry;
+using CMineNew.Map.BlockData.Static;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public class TexturedCrossBlock : CrossBlock{
-        protected Area2d _textureArea;
 
-        public TexturedCrossBlock(string id, Chunk chunk, Vector3i position, Area2d texture, Color4 textureFilter,
-            bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
-            _textureArea = texture;
+        public TexturedCrossBlock(BlockStaticDataTexturedCross staticData, Chunk chunk, Vector3i position,
+            Color4 textureFilter)
+            : base(staticData, chunk, position, textureFilter) {
         }
 
-        public TexturedCrossBlock(string id, Chunk chunk, Vector3i position, string texture, Color4 textureFilter,
-            bool passable = false)
-            : base(id, chunk, position, textureFilter, passable) {
-            _textureArea = CMine.Textures.Areas[texture];
-        }
-
-        public override Area2d TextureArea => _textureArea;
+        public override Area2d TextureArea => ((BlockStaticDataTexturedCross) _staticData).TextureArea;
 
         public override Block Clone(Chunk chunk, Vector3i position) {
-            return new TexturedCubicBlock(_id, _chunk, _position, _textureArea, _textureFilter);
+            return new TexturedCrossBlock((BlockStaticDataTexturedCross) _staticData, _chunk, _position, _textureFilter);
         }
     }
 }

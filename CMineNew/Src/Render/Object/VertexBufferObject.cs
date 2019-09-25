@@ -19,7 +19,6 @@ namespace CMineNew.Render.Object{
         private unsafe void* _pointer;
         private volatile bool _mapping;
         private volatile int _size;
-        private volatile object _lock = new object();
 
 
         public VertexBufferObject() {
@@ -97,142 +96,124 @@ namespace CMineNew.Render.Object{
         #region mapping
 
         public void StartMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
-            lock (_lock) {
-                if (_mapping) return;
-                Bind(target);
-                unsafe {
-                    GL.GetError();
-                    _pointer = GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
-                    var error = GL.GetError();
-                    if (error != ErrorCode.NoError) {
-                        Console.WriteLine("---  VBO MAPPING ERROR --- ");
-                        Console.WriteLine("VBO: " + _id);
-                        Console.WriteLine(error);
-                        Console.WriteLine("---------------------------");
-                        throw new System.Exception("Error while mapping VBO.");
-                    }
+            if (_mapping) return;
+            Bind(target);
+            unsafe {
+                GL.GetError();
+                _pointer = GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
+                var error = GL.GetError();
+                if (error != ErrorCode.NoError) {
+                    Console.WriteLine("---  VBO MAPPING ERROR --- ");
+                    Console.WriteLine("VBO: " + _id);
+                    Console.WriteLine(error);
+                    Console.WriteLine("---------------------------");
+                    throw new System.Exception("Error while mapping VBO.");
                 }
-
-                _mapping = true;
             }
+
+            _mapping = true;
         }
 
         public void FinishMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
-            lock (_lock) {
-                unsafe {
-                    if (!_mapping) return;
-                    GL.GetError();
-                    Bind(target);
-                    GL.UnmapBuffer(target);
-                    _pointer = null;
-                    _mapping = false;
+            unsafe {
+                if (!_mapping) return;
+                GL.GetError();
+                Bind(target);
+                GL.UnmapBuffer(target);
+                _pointer = null;
+                _mapping = false;
 
-                    var error = GL.GetError();
-                    if (error != ErrorCode.NoError) {
-                        Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
-                        Console.WriteLine("VBO: " + _id);
-                        Console.WriteLine(error);
-                        Console.WriteLine("---------------------------");
-                        throw new System.Exception("Error while mapping VBO.");
-                    }
+                var error = GL.GetError();
+                if (error != ErrorCode.NoError) {
+                    Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
+                    Console.WriteLine("VBO: " + _id);
+                    Console.WriteLine(error);
+                    Console.WriteLine("---------------------------");
+                    throw new System.Exception("Error while mapping VBO.");
                 }
             }
         }
 
         public bool AddToMap(IEnumerable<float> data, int offset) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var p = (float*) _pointer + offset;
-                    foreach (var f in data) {
-                        *p++ = f;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var p = (float*) _pointer + offset;
+                foreach (var f in data) {
+                    *p++ = f;
                 }
-
-                return true;
             }
+
+            return true;
         }
-        
+
         public bool AddToMap(IEnumerable<int> data, int offset) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var p = (int*) _pointer + offset;
-                    foreach (var f in data) {
-                        *p++ = f;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var p = (int*) _pointer + offset;
+                foreach (var f in data) {
+                    *p++ = f;
                 }
-
-                return true;
             }
+
+            return true;
         }
-        
+
         public bool AddToMap(IEnumerable<uint> data, int offset) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var p = (uint*) _pointer + offset;
-                    foreach (var f in data) {
-                        *p++ = f;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var p = (uint*) _pointer + offset;
+                foreach (var f in data) {
+                    *p++ = f;
                 }
-
-                return true;
             }
+
+            return true;
         }
-        
+
         public bool AddToMap(IEnumerable<byte> data, int offset) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var p = (byte*) _pointer + offset;
-                    foreach (var f in data) {
-                        *p++ = f;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var p = (byte*) _pointer + offset;
+                foreach (var f in data) {
+                    *p++ = f;
                 }
-
-                return true;
             }
+
+            return true;
         }
-        
-        public bool AddToMap(IEnumerable<bool> data, int offset) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var p = (bool*) _pointer + offset;
-                    foreach (var f in data) {
-                        *p++ = f;
-                    }
-                }
 
-                return true;
+        public bool AddToMap(IEnumerable<bool> data, int offset) {
+            if (!_mapping) return false;
+            unsafe {
+                var p = (bool*) _pointer + offset;
+                foreach (var f in data) {
+                    *p++ = f;
+                }
             }
+
+            return true;
         }
 
         public bool MoveMapData(int offset, int toOffset, int length) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var pF = (byte*) _pointer + offset;
-                    var pI = (byte*) _pointer + toOffset;
-                    for (var i = 0; i < length; i++) {
-                        *pI++ = *pF++;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var pF = (byte*) _pointer + offset;
+                var pI = (byte*) _pointer + toOffset;
+                for (var i = 0; i < length; i++) {
+                    *pI++ = *pF++;
                 }
-
-                return true;
             }
+
+            return true;
         }
-        
+
         public bool MoveMapDataFloat(int offset, int toOffset, int length) {
-            lock (_lock) {
-                if (!_mapping) return false;
-                unsafe {
-                    var pF = (float*) _pointer + offset;
-                    var pI = (float*) _pointer + toOffset;
-                    for (var i = 0; i < length; i++) {
-                        *pI++ = *pF++;
-                    }
+            if (!_mapping) return false;
+            unsafe {
+                var pF = (float*) _pointer + offset;
+                var pI = (float*) _pointer + toOffset;
+                for (var i = 0; i < length; i++) {
+                    *pI++ = *pF++;
                 }
 
                 return true;
@@ -241,17 +222,15 @@ namespace CMineNew.Render.Object{
 
         public float[] GetDataFromMap(int offset, int length) {
             var array = new float[length];
-            lock (_lock) {
-                if (!_mapping) throw new System.Exception("VBO is not mapped.");
-                unsafe {
-                    var pF = (float*) _pointer + offset;
-                    for (var i = 0; i < length; i++) {
-                        array[i] = *pF++;
-                    }
+            if (!_mapping) throw new System.Exception("VBO is not mapped.");
+            unsafe {
+                var pF = (float*) _pointer + offset;
+                for (var i = 0; i < length; i++) {
+                    array[i] = *pF++;
                 }
-
-                return array;
             }
+
+            return array;
         }
 
         #endregion

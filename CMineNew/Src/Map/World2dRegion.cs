@@ -201,25 +201,23 @@ namespace CMineNew.Map{
         }
 
         private World2dRegion[,] GetNeighbourRegions() {
-            lock (_world.Regions2dLock) {
-                var map = _world.Regions2d;
-                var regions = new World2dRegion[3, 3];
-                for (var x = 0; x < 3; x++) {
-                    for (var z = 0; z < 3; z++) {
-                        if (x == 1 && z == 1) {
-                            regions[x, z] = this;
-                        }
-                        else {
-                            var position = _position - 1 + new Vector2i(x, z);
-                            if (map.TryGetValue(position, out var value)) {
-                                regions[x, z] = value;
-                            }
+            var map = _world.Regions2d;
+            var regions = new World2dRegion[3, 3];
+            for (var x = 0; x < 3; x++) {
+                for (var z = 0; z < 3; z++) {
+                    if (x == 1 && z == 1) {
+                        regions[x, z] = this;
+                    }
+                    else {
+                        var position = _position - 1 + new Vector2i(x, z);
+                        if (map.TryGetValue(position, out var value)) {
+                            regions[x, z] = value;
                         }
                     }
                 }
-
-                return regions;
             }
+
+            return regions;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -33,8 +34,8 @@ namespace CMineNew.Map{
         private readonly WorldTaskManager _worldTaskManager;
         private readonly UnloadedChunkGenerationManager _unloadedChunkGenerationManager;
 
-        private readonly Dictionary<Vector3i, ChunkRegion> _chunkRegions;
-        private readonly Dictionary<Vector2i, World2dRegion> _regions2d;
+        private readonly ConcurrentDictionary<Vector3i, ChunkRegion> _chunkRegions;
+        private readonly ConcurrentDictionary<Vector2i, World2dRegion> _regions2d;
         private readonly ELinkedList<ChunkRegion> _tickRegions;
 
         private readonly HashSet<Entity> _entities;
@@ -43,8 +44,6 @@ namespace CMineNew.Map{
         private readonly Collection<StaticText> _staticTexts;
 
         private readonly DelayViewer _delayViewer;
-        
-        private readonly object _regionsLock = new object(), _regions2dLock = new object();
 
         public World(string name, TrueTypeFont ttf) : base(name) {
             _folder = CMine.MainFolder + Path.DirectorySeparatorChar + name;
@@ -53,8 +52,8 @@ namespace CMineNew.Map{
 
             _renderData = new WorldRenderData();
 
-            _chunkRegions = new Dictionary<Vector3i, ChunkRegion>();
-            _regions2d = new Dictionary<Vector2i, World2dRegion>();
+            _chunkRegions = new ConcurrentDictionary<Vector3i, ChunkRegion>();
+            _regions2d = new ConcurrentDictionary<Vector2i, World2dRegion>();
             _tickRegions = new ELinkedList<ChunkRegion>();
 
             _staticTexts = new Collection<StaticText>();
@@ -99,19 +98,10 @@ namespace CMineNew.Map{
 
         public WorldTaskManager WorldTaskManager => _worldTaskManager;
 
-        public Dictionary<Vector3i, ChunkRegion> ChunkRegions {
-            get {
-                lock (_regionsLock) {
-                    return _chunkRegions;
-                }
-            }
-        }
+        public ConcurrentDictionary<Vector3i, ChunkRegion> ChunkRegions => _chunkRegions;
 
-        public Dictionary<Vector2i, World2dRegion> Regions2d => _regions2d;
+        public ConcurrentDictionary<Vector2i, World2dRegion> Regions2d => _regions2d;
 
-        public object RegionsLock => _regionsLock;
-
-        public object Regions2dLock => _regions2dLock;
 
         public HashSet<Entity> Entities => _entities;
 
@@ -124,31 +114,23 @@ namespace CMineNew.Map{
         public DelayViewer DelayViewer => _delayViewer;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
-            lock (_regionsLock) {
-                return _chunkRegions.TryGetValue(position, out var region) ? region : null;
-            }
+            return _chunkRegions.TryGetValue(position, out var region) ? region : null;
         }
 
         public ChunkRegion GetChunkRegionFromWorldPosition(Vector3i position) {
-            lock (_regionsLock) {
-                return _chunkRegions.TryGetValue(position >> 6, out var region) ? region : null;
-            }
+            return _chunkRegions.TryGetValue(position >> 6, out var region) ? region : null;
         }
 
         public Chunk GetChunk(Vector3i position) {
-            lock (_regionsLock) {
-                return _chunkRegions.TryGetValue(position >> 2, out var region)
-                    ? region.GetChunkFromChunkPosition(position)
-                    : null;
-            }
+            return _chunkRegions.TryGetValue(position >> 2, out var region)
+                ? region.GetChunkFromChunkPosition(position)
+                : null;
         }
 
         public Chunk GetChunkFromWorldPosition(Vector3i position) {
-            lock (_regionsLock) {
-                return _chunkRegions.TryGetValue(position >> 6, out var region)
-                    ? region.GetChunkFromChunkPosition(position >> 4)
-                    : null;
-            }
+            return _chunkRegions.TryGetValue(position >> 6, out var region)
+                ? region.GetChunkFromChunkPosition(position >> 4)
+                : null;
         }
 
         public Block GetBlock(Vector3i position) {
@@ -167,9 +149,7 @@ namespace CMineNew.Map{
             if (region == null) {
                 region = new ChunkRegion(this, regionPosition);
                 region.LoadIfDeleted();
-                lock (_regionsLock) {
-                    _chunkRegions[regionPosition] = region;
-                }
+                _chunkRegions[regionPosition] = region;
             }
 
             var chunk = region.GetChunkFromChunkPosition(chunkPosition);
@@ -185,9 +165,7 @@ namespace CMineNew.Map{
             if (region == null) {
                 region = new ChunkRegion(this, regionPosition);
                 region.LoadIfDeleted();
-                lock (_regionsLock) {
-                    _chunkRegions[regionPosition] = region;
-                }
+                _chunkRegions[regionPosition] = region;
             }
             else {
                 region.LoadIfDeleted();
@@ -203,19 +181,17 @@ namespace CMineNew.Map{
             }
 
             chunk = new Chunk(region, position);
+            chunk.Natural = true;
             _worldGenerator.GenerateChunkData(chunk);
             _unloadedChunkGenerationManager.FlushToAllChunks();
-            chunk.Natural = true;
             region.SetChunk(chunk, chunkPositionInRegion);
 
             return chunk;
         }
 
         public World2dRegion GetOrCreate2dRegion(Vector2i regionPosition) {
-            lock (_regions2dLock) {
-                if (_regions2d.TryGetValue(regionPosition, out var value)) {
-                    return value;
-                }
+            if (_regions2d.TryGetValue(regionPosition, out var value)) {
+                return value;
             }
 
             var region = new World2dRegion(this, regionPosition);
@@ -228,9 +204,8 @@ namespace CMineNew.Map{
                 Console.WriteLine("REGION " + regionPosition + " LOADED.");
             }
 
-            lock (_regions2dLock) {
-                _regions2d.Add(regionPosition, region);
-            }
+            _regions2d.TryAdd(regionPosition, region);
+
 
             return region;
         }
@@ -242,16 +217,13 @@ namespace CMineNew.Map{
             formatter.Serialize(stream, _worldGenerator.Seed);
             stream.Close();
 
-            lock (_regionsLock) {
-                foreach (var region in _chunkRegions.Values) {
-                    region.Save();
-                }
+            foreach (var region in _chunkRegions.Values) {
+                region.Save();
             }
 
-            lock (_regions2dLock) {
-                foreach (var region in _regions2d.Values) {
-                    region.Save();
-                }
+
+            foreach (var region in _regions2d.Values) {
+                region.Save();
             }
 
             _unloadedChunkGenerationManager.Save();
@@ -271,15 +243,13 @@ namespace CMineNew.Map{
         public override void Tick(long delay) {
             _worldTaskManager.Tick(delay);
 
-            lock (_regionsLock) {
-                _tickRegions.Clear();
-                foreach (var region in _chunkRegions.Values) {
-                    _tickRegions.Add(region);
-                }
+            _tickRegions.Clear();
+            foreach (var region in _chunkRegions.Values) {
+                _tickRegions.Add(region);
+            }
 
-                foreach (var region in _tickRegions) {
-                    region.Tick(delay);
-                }
+            foreach (var region in _tickRegions) {
+                region.Tick(delay);
             }
 
             foreach (var entity in _entities) {
@@ -307,14 +277,13 @@ namespace CMineNew.Map{
             GL.Enable(EnableCap.DepthTest);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
-            lock (_regionsLock) {
-                foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
-                    if (_renderData.Camera.IsVisible(region)) {
-                        region.Render.Draw();
-                    }
-                    else {
-                        region.Render.FlushInBackground();
-                    }
+
+            foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
+                if (_renderData.Camera.IsVisible(region)) {
+                    region.Render.Draw();
+                }
+                else {
+                    region.Render.FlushInBackground();
                 }
             }
 
@@ -328,8 +297,6 @@ namespace CMineNew.Map{
             //Transfers depth buffer to main FBO.
             _renderData.TransferDepthBufferToMainFbo();
 
-            _renderData.DrawLights();
-
             //Draws GBuffer quad.
             _renderData.DrawGBuffer(_player.EyesOnWater);
 
@@ -342,11 +309,10 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            lock (_regionsLock) {
-                foreach (var region in _chunkRegions.Values) {
-                    region.Render.DrawAfterPostRender();
-                }
+            foreach (var region in _chunkRegions.Values) {
+                region.Render.DrawAfterPostRender();
             }
+
 
             //Draws front data
 
@@ -404,13 +370,11 @@ namespace CMineNew.Map{
         public override void Close() {
             _asyncChunkGenerator.Kill();
             _asyncChunkTrashCan.Kill();
-            lock (_regionsLock) {
-                foreach (var region in _chunkRegions.Values) {
-                    region.Delete();
-                }
-
-                _chunkRegions.Clear();
+            foreach (var region in _chunkRegions.Values) {
+                region.Delete();
             }
+
+            _chunkRegions.Clear();
         }
     }
 }

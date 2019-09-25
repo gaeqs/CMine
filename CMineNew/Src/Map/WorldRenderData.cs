@@ -1,7 +1,5 @@
 using CMineNew.Entities;
-using CMineNew.Light;
 using CMineNew.Map.BlockData;
-using CMineNew.Map.BlockData.Model;
 using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Resources.Textures;
@@ -9,16 +7,13 @@ using OpenTK;
 
 namespace CMineNew.Map{
     public class WorldRenderData{
-
         private readonly PhysicCamera _camera;
         private readonly WorldGBuffer _gBuffer;
-        private readonly LightManager _lightManager;
         private readonly SkyBox _skyBox;
 
         public WorldRenderData() {
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
             _gBuffer = new WorldGBuffer(CMine.Window);
-            _lightManager = new LightManager();
             _skyBox = new SkyBox(Textures.sky_box_right, Textures.sky_box_left, Textures.sky_box_top,
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
 
@@ -30,9 +25,6 @@ namespace CMineNew.Map{
         public PhysicCamera Camera => _camera;
 
         public WorldGBuffer GBuffer => _gBuffer;
-
-        public LightManager LightManager => _lightManager;
-
         public SkyBox SkyBox => _skyBox;
 
         public void BindGBuffer() {
@@ -42,7 +34,7 @@ namespace CMineNew.Map{
         public void DrawSkyBox() {
             _skyBox.Draw(_camera);
         }
-        
+
         public void DrawSelectedBlock(Block block) {
             block?.BlockModel.DrawLines(_camera, block);
         }
@@ -53,11 +45,6 @@ namespace CMineNew.Map{
 
         public void DrawPointer() {
             Pointer.Draw(_camera);
-        }
-        
-        public void DrawLights() {
-            _lightManager.Draw(_camera, _gBuffer);
-            //_gBuffer.DrawLights(_lightManager, _camera.Position);
         }
 
         public void DrawGBuffer(bool waterShader) {

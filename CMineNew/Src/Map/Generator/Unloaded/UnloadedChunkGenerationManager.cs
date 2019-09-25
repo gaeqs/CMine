@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -10,12 +11,11 @@ namespace CMineNew.Map.Generator.Unloaded{
         public const string FileName = "generation_cache.dat";
 
         private readonly World _world;
-        private readonly Dictionary<Vector3i, UnloadedChunkGeneration> _generations;
-        private object _generationLock = new object();
+        private readonly ConcurrentDictionary<Vector3i, UnloadedChunkGeneration> _generations;
 
         public UnloadedChunkGenerationManager(World world) {
             _world = world;
-            _generations = new Dictionary<Vector3i, UnloadedChunkGeneration>();
+            _generations = new ConcurrentDictionary<Vector3i, UnloadedChunkGeneration>();
         }
 
         public World World => _world;
@@ -23,59 +23,46 @@ namespace CMineNew.Map.Generator.Unloaded{
         public void AddBlock(Vector3i position, BlockSnapshot snapshot, bool overrideBlocks) {
             var chunkPosition = position >> Chunk.WorldPositionShift;
             var chunkWorldPosition = chunkPosition << Chunk.WorldPositionShift;
-            lock (_generationLock) {
-                if (_generations.TryGetValue(chunkPosition, out var generation)) {
-                    generation.AddBlock(position - chunkWorldPosition, snapshot, overrideBlocks);
-                    return;
-                }
+
+            if (_generations.TryGetValue(chunkPosition, out var generation)) {
+                generation.AddBlock(position - chunkWorldPosition, snapshot, overrideBlocks);
+                return;
             }
+
 
             var newGeneration = new UnloadedChunkGeneration();
             newGeneration.AddBlock(position - chunkWorldPosition, snapshot, overrideBlocks);
-            lock (_generationLock) {
-                _generations.Add(chunkPosition, newGeneration);
-            }
+
+            _generations.TryAdd(chunkPosition, newGeneration);
         }
 
         public bool PostGenerateChunk(Chunk chunk, BlockSnapshot[,,] snapshots, World2dRegion region2d) {
-            UnloadedChunkGeneration generation;
-            lock (_generationLock) {
-                if (!_generations.TryGetValue(chunk.Position, out generation)) return true;
-                _generations.Remove(chunk.Position);
-            }
-
+            if (!_generations.TryRemove(chunk.Position, out var generation)) return true;
             return generation.OnChunkLoad(snapshots, chunk, region2d);
         }
 
         public void OnChunkLoad(Chunk chunk) {
             if (!chunk.Natural) {
-                lock (_generationLock) {
-                    _generations.Remove(chunk.Position);
-                }
-
+                _generations.TryRemove(chunk.Position, out _);
                 return;
             }
 
             UnloadedChunkGeneration generation;
-            lock (_generationLock) {
-                if (!_generations.TryGetValue(chunk.Position, out generation)) return;
-                _generations.Remove(chunk.Position);
-            }
+            if (!_generations.TryRemove(chunk.Position, out generation)) return;
 
             generation.AddToLoadedChunk(chunk);
         }
 
         public void FlushToAllChunks() {
             var list = new List<Vector3i>();
-            lock (_generationLock) {
-                foreach (var generation in _generations) {
-                    var chunk = _world.GetChunk(generation.Key);
-                    if (chunk == null) continue;
-                    generation.Value.AddToLoadedChunk(chunk);
-                    list.Add(generation.Key);
-                }
-                list.ForEach(t => _generations.Remove(t));
+            foreach (var generation in _generations) {
+                var chunk = _world.GetChunk(generation.Key);
+                if (chunk == null) continue;
+                generation.Value.AddToLoadedChunk(chunk);
+                list.Add(generation.Key);
             }
+
+            list.ForEach(t => _generations.TryRemove(t, out _));
         }
 
         public void Save() {
@@ -87,12 +74,10 @@ namespace CMineNew.Map.Generator.Unloaded{
             var formatter = new BinaryFormatter();
             formatter.Serialize(stream, version);
 
-            lock (_generationLock) {
-                foreach (var entry in _generations) {
-                    formatter.Serialize(stream, true);
-                    formatter.Serialize(stream, entry.Key);
-                    entry.Value.Save(stream, formatter);
-                }
+            foreach (var entry in _generations) {
+                formatter.Serialize(stream, true);
+                formatter.Serialize(stream, entry.Key);
+                entry.Value.Save(stream, formatter);
             }
 
             formatter.Serialize(stream, false);
@@ -110,10 +95,9 @@ namespace CMineNew.Map.Generator.Unloaded{
                 var position = (Vector3i) formatter.Deserialize(stream);
                 var value = new UnloadedChunkGeneration();
                 value.Load(stream, formatter);
-                lock (_generationLock) {
-                    _generations.Add(position, value);
-                }
+                _generations.TryAdd(position, value);
             }
+
             stream.Close();
         }
     }

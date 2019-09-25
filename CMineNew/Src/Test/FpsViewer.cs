@@ -25,10 +25,8 @@ namespace CMineNew.Test{
 
             var memory = GC.GetTotalMemory(false) * 100 / MaxMemory;
             var chunks = 0;
-            var lights = 0;
             if (CMine.Window.Room is World world) {
                 chunks = world.AsyncChunkGenerator.ChunksToGenerateSize;
-                lights = world.RenderData.LightManager.PointLights.Count;
             }
 
             var chunkVelocity = _lastChunks - chunks;
@@ -36,7 +34,7 @@ namespace CMineNew.Test{
 
 
             Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] " +
-                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} "+ "("+lights+") " + _loops;
+                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} " + _loops;
             _ticks = 0;
             _loops = 0;
         }

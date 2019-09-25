@@ -1,29 +1,21 @@
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
-using CMineNew.DataStructure.Queue;
-using CMineNew.Geometry;
 
 namespace CMineNew.Map{
     public class AsyncChunkTrashCan{
         private readonly World _world;
-        private readonly EConcurrentLinkedQueue<Chunk> _queue;
+        private readonly ConcurrentQueue<Chunk> _queue;
         private Thread _thread;
         private bool _alive;
 
         public AsyncChunkTrashCan(World world) {
             _world = world;
-            _queue = new EConcurrentLinkedQueue<Chunk>();
+            _queue = new ConcurrentQueue<Chunk>();
             _thread = null;
             _alive = false;
         }
 
-        public EConcurrentLinkedQueue<Chunk> Queue {
-            get {
-                lock (_queue) {
-                    return _queue;
-                }
-            }
-        }
+        public ConcurrentQueue<Chunk> Queue => _queue;
 
         public void StartThread() {
             if (_thread != null) return;
@@ -40,12 +32,7 @@ namespace CMineNew.Map{
 
         private void Run() {
             while (_alive) {
-                Chunk chunk;
-                lock (_queue) {
-                    if (_queue.IsEmpty()) continue;
-                    chunk = _queue.Pop();
-                }
-
+                if (!_queue.TryDequeue(out var chunk)) continue;
                 chunk?.RemoveAllBlockFacesFromRender();
             }
 

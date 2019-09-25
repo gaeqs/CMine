@@ -1,32 +1,22 @@
 using CMineNew.Geometry;
+using CMineNew.Map.BlockData.Static;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public class TexturedSlabBlock : SlabBlock{
-        protected Area2d _textureArea;
 
-        public TexturedSlabBlock(string id, Chunk chunk, Vector3i position, Area2d texture, Color4 textureFilter,
-            bool upside, bool passable = false , bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
-            int sunlightPassReduction = 0)
-            : base(id, chunk, position, textureFilter, upside, passable, lightSource, sourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = texture;
+        public TexturedSlabBlock(BlockStaticDataTexturedSlab staticData, Chunk chunk, Vector3i position, Color4 textureFilter, bool upside)
+            : base(staticData, chunk, position, textureFilter, upside) {
         }
 
-        public TexturedSlabBlock(string id, Chunk chunk, Vector3i position, string texture, Color4 textureFilter,
-            bool upside, bool passable = false, bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
-            int sunlightPassReduction = 0)
-            : base(id, chunk, position, textureFilter, upside, passable, lightSource, sourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = CMine.Textures.Areas[texture];
-        }
-
-        public Area2d TextureArea => _textureArea;
+        public Area2d TextureArea => ((BlockStaticDataTexturedSlab)_staticData).TextureArea;
 
         public override Block Clone(Chunk chunk, Vector3i position) {
-            return new TexturedCubicBlock(_id, _chunk, _position, _textureArea, _textureFilter);
+            return new TexturedSlabBlock((BlockStaticDataTexturedSlab)_staticData, _chunk, _position, _textureFilter, _upside);
         }
 
         public override Area2d GetTextureArea(BlockFace face) {
-            return _textureArea;
+            return TextureArea;
         }
     }
 }

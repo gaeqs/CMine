@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using CMineNew.DataStructure.Queue;
 using CMineNew.Render.Object;
 using OpenTK.Graphics.OpenGL;
 
@@ -22,7 +22,7 @@ namespace CMineNew.Render.Mapper{
         private volatile bool _onBackground, _requiresResize;
 
 
-        private readonly EConcurrentLinkedQueue<VboMapperTask<TKey>> _tasks;
+        private readonly ConcurrentQueue<VboMapperTask<TKey>> _tasks;
         private readonly Dictionary<TKey, int> _offsets;
         private readonly Dictionary<int, TKey> _keys;
         private readonly object _backgroundLock = new object();
@@ -45,7 +45,7 @@ namespace CMineNew.Render.Mapper{
             _onBackground = false;
             _requiresResize = false;
 
-            _tasks = new EConcurrentLinkedQueue<VboMapperTask<TKey>>();
+            _tasks = new ConcurrentQueue<VboMapperTask<TKey>>();
             _offsets = new Dictionary<TKey, int>();
             _keys = new Dictionary<int, TKey>();
         }
@@ -89,7 +89,7 @@ namespace CMineNew.Render.Mapper{
 
         public void AddTask(VboMapperTask<TKey> task) {
             if (_requiresResize || !_onBackground || _vbo == null || !_vbo.Mapping) {
-                _tasks.Push(task);
+                _tasks.Enqueue(task);
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace CMineNew.Render.Mapper{
 
         public void FlushQueue() {
             _updates = 0;
-            if (_tasks.IsEmpty()) {
+            if (_tasks.IsEmpty) {
                 if (!_onBackground) {
                     _vbo.FinishMapping();
                 }
@@ -111,7 +111,7 @@ namespace CMineNew.Render.Mapper{
                 _vbo.StartMapping();
             }
 
-            while (!_tasks.IsEmpty()) {
+            while (_tasks.TryDequeue(out var current)) {
                 if (_requiresResize) {
                     Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
                     ResizeBuffer();
@@ -124,7 +124,6 @@ namespace CMineNew.Render.Mapper{
                         break;
                     }
 
-                    var current = _tasks.Pop();
                     if (current == null) continue;
                     ExecuteTask(current, true);
                     _updates++;

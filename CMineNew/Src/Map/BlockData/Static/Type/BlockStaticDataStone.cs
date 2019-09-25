@@ -1,6 +1,6 @@
 namespace CMineNew.Map.BlockData.Static.Type{
     public class BlockStaticDataStone : BlockStaticDataTexturedCubic{
-        public static BlockStaticDataStone Instance = new BlockStaticDataStone();
+        public static readonly BlockStaticDataStone Instance = new BlockStaticDataStone();
 
         private BlockStaticDataStone()
             : base("default:stone", false, false, 0,

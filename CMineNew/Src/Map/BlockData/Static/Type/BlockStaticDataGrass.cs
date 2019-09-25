@@ -6,7 +6,8 @@ namespace CMineNew.Map.BlockData.Static.Type{
         private BlockStaticDataGrass() 
             : base("default:grass", false, false, 0, 
                 Block.MaxBlockLight, Block.MaxBlockLight, 
-                new [] {"default:sand"}) {
+                new [] {"default:grass_top", "default:dirt", "default:grass_side",
+                    "default:grass_side", "default:grass_side", "default:grass_side"}) {
         }
     }
 }

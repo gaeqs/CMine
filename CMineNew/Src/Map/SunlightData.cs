@@ -67,12 +67,10 @@ namespace CMineNew.Map{
             var regionY = y >> ChunkRegion.WorldPositionShift;
             var chunkY = y >> Chunk.WorldPositionShift;
             var regions = new List<ChunkRegion>();
-            lock (world.RegionsLock) {
-                regions.AddRange(from region in world.ChunkRegions.Values
-                    let rPos = region.Position
-                    where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
-                    select region);
-            }
+            regions.AddRange(from region in world.ChunkRegions.Values
+                let rPos = region.Position
+                where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
+                select region);
 
             regions.Sort((r1, r2) => r2.Position.Y - r1.Position.Y);
 
@@ -82,10 +80,10 @@ namespace CMineNew.Map{
                     if (chunk == null || chunk.Position.Y > chunkY) continue;
                     var blocks = chunk.Blocks;
                     for (var by = 15; by >= 0; by--) {
-                        var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
-                        if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
-                        block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
-                        block.TriggerLightChange();
+                        // var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
+                        // if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
+                        // block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
+                        // block.TriggerLightChange();
                     }
                 }
             }
@@ -125,12 +123,10 @@ namespace CMineNew.Map{
             var world = _region.World;
 
             var regions = new List<ChunkRegion>();
-            lock (world.RegionsLock) {
-                regions.AddRange(from region in world.ChunkRegions.Values
-                    let rPos = region.Position
-                    where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
-                    select region);
-            }
+            regions.AddRange(from region in world.ChunkRegions.Values
+                let rPos = region.Position
+                where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
+                select region);
 
             regions.Sort((r1, r2) => r2.Position.Y - r1.Position.Y);
 

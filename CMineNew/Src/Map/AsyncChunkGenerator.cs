@@ -39,7 +39,7 @@ namespace CMineNew.Map{
         public void StartThread() {
             if (_thread != null) return;
             _thread = new Thread(Run) {
-                Priority = ThreadPriority.BelowNormal, Name = _world.Name + "'s Async Chunk Generator"
+                Priority = ThreadPriority.Lowest, Name = _world.Name + "'s Async Chunk Generator"
             };
             _alive = true;
             _thread.Start();
@@ -83,27 +83,24 @@ namespace CMineNew.Map{
             const int chunkRadius = CMine.ChunkRadius;
             const int chunkRadiusSquared = chunkRadius * chunkRadius;
             var regions = _world.ChunkRegions;
-            var regionsLock = _world.RegionsLock;
             var trashQueue = _world.AsyncChunkTrashCan.Queue;
-            lock (regionsLock) {
-                foreach (var region in regions.Values) {
-                    var chunks = region.Chunks;
-                    lock (region) {
-                        for (var x = 0; x < 4; x++) {
-                            for (var y = 0; y < 4; y++) {
-                                for (var z = 0; z < 4; z++) {
-                                    var chunk = chunks[x, y, z];
-                                    if (chunk == null) continue;
-                                    if ((chunk.Position - _playerPosition).LengthSquared() <= chunkRadiusSquared)
-                                        continue;
-                                    chunks[x, y, z] = null;
-                                    trashQueue.Push(chunk);
-                                }
+            foreach (var region in regions.Values) {
+                var chunks = region.Chunks;
+                lock (region) {
+                    for (var x = 0; x < 4; x++) {
+                        for (var y = 0; y < 4; y++) {
+                            for (var z = 0; z < 4; z++) {
+                                var chunk = chunks[x, y, z];
+                                if (chunk == null) continue;
+                                if ((chunk.Position - _playerPosition).LengthSquared() <= chunkRadiusSquared)
+                                    continue;
+                                chunks[x, y, z] = null;
+                                trashQueue.Enqueue(chunk);
                             }
                         }
-
-                        _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
                     }
+
+                    _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
                 }
             }
 
@@ -140,8 +137,8 @@ namespace CMineNew.Map{
             if (o2d < 9) {
                 return 1;
             }
-            
-            return  o1.Mul(1, 2, 1).LengthSquared() -  o2.Mul(1, 2, 1).LengthSquared();
+
+            return o1.Mul(1, 2, 1).LengthSquared() - o2.Mul(1, 2, 1).LengthSquared();
         }
     }
 }

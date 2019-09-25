@@ -33,7 +33,7 @@ float getWaterLevel () {
 
 void main () {
     mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y, worldPosition.z, 1);
-    vec4 modelPosition = model * vec4(clamp(position, 0.0003, 0.9997), 1);
+    vec4 modelPosition = model * vec4(position, 1);
 
     if (position.y > 0.5) {
         float level = getWaterLevel() + 1;
@@ -41,6 +41,7 @@ void main () {
     }
 
     gl_Position = viewProjection * modelPosition;
+    gl_Position.z += 0.0001f;
 
     fragPos = modelPosition.xyz;
     fragNormal = mat3(transpose(inverse(model))) * normal;

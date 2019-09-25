@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -13,12 +13,9 @@ namespace CMineNew.Map.BlockData.Sketch{
         protected bool _upside;
         private bool[] _visibleFaces;
 
-        public SlabBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool upside,
-            bool passable = false, bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
-            int sunlightPassReduction = 0)
-            : base(id, BlockModelManager.GetModelOrNull(SlabBlockModel.Key), chunk, position, textureFilter,
-                passable, upside ? 1 : SlabHeight, upside ? SlabHeight : 0,
-                lightSource, sourceLight, blockLightPassReduction, sunlightPassReduction) {
+        public SlabBlock(BlockStaticDataSlab staticData, Chunk chunk, Vector3i position, Color4 textureFilter,
+            bool upside)
+            : base(staticData, chunk, position, textureFilter) {
             _upside = upside;
             _visibleFaces = new bool[6];
         }
@@ -27,6 +24,10 @@ namespace CMineNew.Map.BlockData.Sketch{
 
 
         public bool Upside => _upside;
+
+        public override float BlockHeight => base.BlockHeight + (_upside ? 0.5f : 0);
+
+        public override float BlockYOffset => base.BlockYOffset + (_upside ? 0.5f : 0);
 
         public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates) {
             var render = _chunk.Region.Render;
@@ -54,7 +55,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnRemove(Block newBlock) {
-            if (_blockModel.Id == newBlock.BlockModel?.Id) return;
+            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));
@@ -76,7 +77,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
             var position = _upside ? _position.ToFloat() + new Vector3(0, 0.5f, 0) : _position.ToFloat();
-            return _blockModel.BlockCollision.CollidesSegment(position, current, current + direction * 2);
+            return BlockModel.BlockCollision.CollidesSegment(position, current, current + direction * 2);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

@@ -56,9 +56,9 @@ namespace CMineNew.Map.BlockData{
             set => _position = value;
         }
 
-        public float BlockHeight => _staticData.BlockHeight;
+        public virtual float BlockHeight => _staticData.BlockHeight;
 
-        public float BlockYOffset => _staticData.BlockYOffset;
+        public virtual float BlockYOffset => _staticData.BlockYOffset;
 
         public bool Passable => _staticData.Passable;
 

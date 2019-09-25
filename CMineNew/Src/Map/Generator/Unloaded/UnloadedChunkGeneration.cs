@@ -29,10 +29,7 @@ namespace CMineNew.Map.Generator.Unloaded{
         public void AddToLoadedChunk(Chunk chunk) {
             var chunkPos = chunk.Position << Chunk.WorldPositionShift;
             var regionPos = new Vector2i(chunk.Position.X, chunk.Position.Z) >> World2dRegion.ChunkPositionShift;
-            World2dRegion region;
-            lock (chunk.World.Regions2dLock) {
-                region = chunk.World.Regions2d[regionPos];
-            }
+            var region = chunk.World.Regions2d[regionPos];
 
             Chunk.ForEachChunkPosition((x, y, z) => {
                 var pos = new Vector3i(x, y, z);
