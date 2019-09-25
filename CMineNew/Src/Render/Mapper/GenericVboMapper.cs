@@ -23,9 +23,8 @@ namespace CMineNew.Render.Mapper{
 
 
         private readonly ConcurrentQueue<VboMapperTask<TKey>> _tasks;
-        private readonly Dictionary<TKey, int> _offsets;
-        private readonly Dictionary<int, TKey> _keys;
-        private readonly object _backgroundLock = new object();
+        private readonly ConcurrentDictionary<TKey, int> _offsets;
+        private readonly ConcurrentDictionary<int, TKey> _keys;
 
         public GenericVboMapper(VertexBufferObject vbo, VertexArrayObject vao, int elementSize, int maximumAmount,
             OnResize onResize, BufferTarget bufferTarget = BufferTarget.ArrayBuffer) {
@@ -46,8 +45,8 @@ namespace CMineNew.Render.Mapper{
             _requiresResize = false;
 
             _tasks = new ConcurrentQueue<VboMapperTask<TKey>>();
-            _offsets = new Dictionary<TKey, int>();
-            _keys = new Dictionary<int, TKey>();
+            _offsets = new ConcurrentDictionary<TKey, int>();
+            _keys = new ConcurrentDictionary<int, TKey>();
         }
 
         public VertexBufferObject Vbo {
@@ -111,7 +110,7 @@ namespace CMineNew.Render.Mapper{
                 _vbo.StartMapping();
             }
 
-            while (_tasks.TryDequeue(out var current)) {
+            while (_vbo.Mapping && _tasks.TryDequeue(out var current)) {
                 if (_requiresResize) {
                     Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
                     ResizeBuffer();
@@ -136,9 +135,7 @@ namespace CMineNew.Render.Mapper{
         }
 
         public bool ContainsKey(TKey key) {
-            lock (_backgroundLock) {
-                return _offsets.ContainsKey(key);
-            }
+            return _offsets.ContainsKey(key);
         }
 
         private void ExecuteTask(VboMapperTask<TKey> task, bool fromRender) {
@@ -186,8 +183,8 @@ namespace CMineNew.Render.Mapper{
             if (point == -1) return;
 
             if (point == _amount - 1) {
-                _offsets.Remove(key);
-                _keys.Remove(_amount - 1);
+                _offsets.TryRemove(key, out _);
+                _keys.TryRemove(_amount - 1, out _);
                 _amount--;
                 return;
             }
@@ -197,32 +194,30 @@ namespace CMineNew.Render.Mapper{
             var lastKey = _keys[_amount - 1];
             _offsets[lastKey] = point;
             _keys[point] = lastKey;
-            _keys.Remove(_amount - 1);
-            _offsets.Remove(key);
+            _keys.TryRemove(_amount - 1, out _);
+            _offsets.TryRemove(key, out _);
             _amount--;
         }
 
         private void ResizeBuffer() {
-            lock (_backgroundLock) {
-                var oldBkg = _onBackground;
-                _onBackground = false;
-                _vbo.FinishMapping();
-                var newVbo = new VertexBufferObject();
-                _vbo.Bind(BufferTarget.CopyReadBuffer);
-                newVbo.Bind(BufferTarget.CopyWriteBuffer);
+            var oldBkg = _onBackground;
+            _onBackground = false;
+            _vbo.FinishMapping();
+            var newVbo = new VertexBufferObject();
+            _vbo.Bind(BufferTarget.CopyReadBuffer);
+            newVbo.Bind(BufferTarget.CopyWriteBuffer);
 
-                newVbo.SetData(BufferTarget.CopyWriteBuffer, _maximumAmount * _elementSize * sizeof(float) * 3 / 2,
-                    BufferUsageHint.StreamDraw);
-                GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer,
-                    IntPtr.Zero, IntPtr.Zero, _amount * _elementSize * sizeof(float));
+            newVbo.SetData(BufferTarget.CopyWriteBuffer, _maximumAmount * _elementSize * sizeof(float) * 3 / 2,
+                BufferUsageHint.StreamDraw);
+            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer,
+                IntPtr.Zero, IntPtr.Zero, _amount * _elementSize * sizeof(float));
 
-                _onResize?.Invoke(_vao, _vbo, newVbo);
-                _vbo.CleanUp();
-                _vbo = newVbo;
-                _maximumAmount = _maximumAmount * 3 / 2;
-                newVbo.StartMapping();
-                _onBackground = oldBkg;
-            }
+            _onResize?.Invoke(_vao, _vbo, newVbo);
+            _vbo.CleanUp();
+            _vbo = newVbo;
+            _maximumAmount = _maximumAmount * 3 / 2;
+            newVbo.StartMapping();
+            _onBackground = oldBkg;
         }
     }
 }
