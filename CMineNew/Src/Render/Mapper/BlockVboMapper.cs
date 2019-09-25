@@ -99,13 +99,7 @@ namespace CMineNew.Render.Mapper{
 
 
         public void AddTask(VboMapperTask<Block> task) {
-            if (_requiresResize || !_onBackground || _vbo == null || !_vbo.Mapping) {
-                _tasks.Enqueue(task);
-                return;
-            }
-
-            ExecuteTask(task, false);
-            _updates++;
+            _tasks.Enqueue(task);
         }
 
         public void FlushQueue() {

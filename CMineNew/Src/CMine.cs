@@ -35,7 +35,7 @@ namespace CMineNew{
                     BlockModelManager.Load();
                     Pointer.Load();
 
-                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 20));
+                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 17));
 
                     var world = new World("test", ttf);
 
