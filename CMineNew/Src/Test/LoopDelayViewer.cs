@@ -59,11 +59,11 @@ namespace CMineNew.Test{
 
         private static float[] GenerateFloatArray() {
             var array = new float[6 + _amount * 6];
-            var minX = 0f;
-            var maxX = 1f;
-            var minY = -0.8f;
-            var maxY = -0.3f;
-            var maxDelay = 16f;
+            const float minX = 0f;
+            const float maxX = 1f;
+            const float minY = -0.8f;
+            const float maxY = -0.3f;
+            const float maxDelay = 16f;
             var index = 0;
             for (var i = 0; i < _amount; i++) {
                 //MIN
