@@ -115,4 +115,13 @@
     <data name="sky_box_fragment" type="System.Resources.ResXFileRef">
         <value>SkyBox/fragment.frag;System.String</value>
     </data>
+
+    <data name="loop_delay_viewer_vertex" type="System.Resources.ResXFileRef">
+        <value>LoopDelayViewer/vertex.vert;System.String</value>
+    </data>
+
+    <data name="loop_delay_viewer_fragment" type="System.Resources.ResXFileRef">
+        <value>LoopDelayViewer/fragment.frag;System.String</value>
+    </data>
+    
 </root>

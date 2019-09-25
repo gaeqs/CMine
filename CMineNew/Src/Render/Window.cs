@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using CMineNew.Render.Object;
+using CMineNew.Test;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -13,10 +15,10 @@ namespace CMineNew.Render{
         private EventHandler _onLoaded;
 
         private Room _room;
-
         private Vector2 _unitsPerPixel;
-
         private long _lastTick, _delay;
+
+        private Stopwatch _stopwatch;
 
         public Window(int width, int height, GameWindowFlags windowMode, bool vSync, EventHandler onLoaded)
             : base(width, height, GraphicsMode.Default, "CMine", windowMode) {
@@ -27,6 +29,7 @@ namespace CMineNew.Render{
             //X += 1920;
 
             _room = null;
+            _stopwatch = new Stopwatch();
         }
 
         public EventHandler OnLoaded {
@@ -84,12 +87,16 @@ namespace CMineNew.Render{
 
         protected override void OnRenderFrame(FrameEventArgs e) {
             var now = DateTime.Now.Ticks;
+            _stopwatch.Restart();
             _delay = Math.Min(now - _lastTick, CMine.TicksPerSecond / 30);
             _lastTick = now;
 
             if (_room != null) {
                 _room.Tick(_delay);
                 _room.Draw();
+                _stopwatch.Stop();
+                LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
+                LoopDelayViewer.Draw();
             }
 
             SwapBuffers();

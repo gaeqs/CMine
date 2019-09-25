@@ -27,7 +27,7 @@ namespace CMineNew{
         public static TextureMap Textures;
 
         public static void Load() {
-            Window = new Window(1920, 1080,
+            Window = new Window(1920 / 2, 1080 / 2,
                 GameWindowFlags.Default, false, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();

@@ -16,6 +16,7 @@ namespace CMineNew.Render.Object{
         private readonly int _indicesAmount;
         private readonly Collection<VertexBufferObject> _buffers;
         private readonly Collection<int> _attributes;
+        private VertexBufferObject _verticesVbo;
 
         public LineVertexArrayObject(Vector3[] vertices, int[] indices) {
             GL.GenVertexArrays(1, out _id);
@@ -24,13 +25,18 @@ namespace CMineNew.Render.Object{
             _indicesAmount = indices.Length;
             Bind();
             GenerateDrawVbo(vertices);
-            GenerateEbo(indices);
+            if (indices.Length > 0) {
+                GenerateEbo(indices);
+            }
+
             Unbind();
         }
 
         public int Id => _id;
 
         public int IndicesAmount => _indicesAmount;
+
+        public VertexBufferObject VerticesVbo => _verticesVbo;
 
         public void Bind() {
             GL.BindVertexArray(_id);
@@ -77,6 +83,12 @@ namespace CMineNew.Render.Object{
             DisableAttributes();
         }
 
+        public void DrawArrays(int index, int amount) {
+            EnableAttributes();
+            GL.DrawArrays(PrimitiveType.Lines, index, amount);
+            DisableAttributes();
+        }
+
         #region private methods
 
         private void GenerateDrawVbo(Vector3[] vertices) {
@@ -87,6 +99,7 @@ namespace CMineNew.Render.Object{
             vbo.SetData(BufferTarget.ArrayBuffer, data, BufferUsageHint.StaticDraw);
             AttributePointer(0, 3, 3 * sizeof(float), 0, false);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
+            _verticesVbo = vbo;
         }
 
         private void GenerateEbo(int[] indices) {

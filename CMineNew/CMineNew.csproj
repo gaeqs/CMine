@@ -195,6 +195,7 @@
     <Compile Include="Src\Render\Window.cs" />
     <Compile Include="Src\Test\DelayViewer.cs" />
     <Compile Include="Src\Test\FpsViewer.cs" />
+    <Compile Include="Src\Test\LoopDelayViewer.cs" />
     <Compile Include="Src\Test\PositionViewer.cs" />
     <Compile Include="Src\Texture\TextureMap.cs" />
     <Compile Include="Src\Text\StaticText.cs" />
@@ -229,6 +230,8 @@
     <Content Include="Resources\Shaders\Light\point_light_fragment.frag" />
     <Content Include="Resources\Shaders\Light\directional_light_vertex.vert" />
     <Content Include="Resources\Shaders\Light\point_light_vertex.vert" />
+    <Content Include="Resources\Shaders\LoopDelayViewer\fragment.frag" />
+    <Content Include="Resources\Shaders\LoopDelayViewer\vertex.vert" />
     <Content Include="Resources\Shaders\Pointer\fragment.frag" />
     <Content Include="Resources\Shaders\Pointer\vertex.vert" />
     <Content Include="Resources\Shaders\PostRender\fragment.frag" />

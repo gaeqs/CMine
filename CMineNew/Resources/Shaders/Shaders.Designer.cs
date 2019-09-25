@@ -70,6 +70,7 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///layout (location = 0) out vec4 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
+        ///layout (location = 2) out vec3 gBrightness;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -78,10 +79,7 @@ namespace CMineNew.Resources.Shaders {
         ///    if (texture.w &lt; 0.1) discard;
         ///
         ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
-        ///        texture = fragColorFilter * texture.r;
-        ///    }
-        ///    
-        ///    float light = frag [rest of string was truncated]&quot;;.
+        ///        texture = fragColorFilter * te [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -139,6 +137,7 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
         ///layout (location = 6) in float blockLight;
+        ///layout (location = 7) in float sunlight;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
@@ -146,9 +145,7 @@ namespace CMineNew.Resources.Shaders {
         ///out float fragLight;
         ///
         ///uniform mat4 viewProjection;
-        ///
-        ///void main () {
-        ///    mat4 model = mat4(1, [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_vertex {
             get {
@@ -251,6 +248,35 @@ namespace CMineNew.Resources.Shaders {
         internal static string flash_light_vertex {
             get {
                 return ResourceManager.GetString("flash_light_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///void main() {
+        ///    FragColor = vec4(1, 0, 0, 1);
+        ///}.
+        /// </summary>
+        internal static string loop_delay_viewer_fragment {
+            get {
+                return ResourceManager.GetString("loop_delay_viewer_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 400 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///
+        ///void main () {
+        ///    gl_Position = modelPosition;
+        ///}
+        ///.
+        /// </summary>
+        internal static string loop_delay_viewer_vertex {
+            get {
+                return ResourceManager.GetString("loop_delay_viewer_vertex", resourceCulture);
             }
         }
         
@@ -485,6 +511,7 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///layout (location = 0) out vec4 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
+        ///layout (location = 2) out vec3 gBrightness;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -493,10 +520,7 @@ namespace CMineNew.Resources.Shaders {
         ///    if (texture.w &lt; 0.1) discard;
         ///
         ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
-        ///        texture = fragColorFilter * texture.r;
-        ///    }
-        ///
-        ///    float light = fragLigh [rest of string was truncated]&quot;;.
+        ///        texture = fragColorFilter * te [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string slab_fragment {
             get {
@@ -514,16 +538,13 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
         ///layout (location = 6) in float blockLight;
-        ///layout (location = 7) in float upside;
+        ///layout (location = 7) in float sunlight;
+        ///layout (location = 8) in float upside;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
         ///out vec4 fragColorFilter;
-        ///out float fragLight;
-        ///
-        ///uniform mat4 viewProjection;
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///out float frag [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string slab_vertex {
             get {
@@ -618,14 +639,13 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 4) in vec4 textureArea;
         ///layout (location = 5) in vec4 blockColorFilter;
         ///layout (location = 6) in float blockLight;
-        ///layout (location = 7) in vec4 waterLevels;
+        ///layout (location = 7) in float sunlight;
+        ///layout (location = 8) in vec4 waterLevels;
         ///
         ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoords;
         ///out vec4 fragColorFilter;
-        ///out float fragLight;
-        ///
-        ///uniform mat4 viewProjection [rest of string was truncated]&quot;;.
+        ///out float [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string water_vertex {
             get {
