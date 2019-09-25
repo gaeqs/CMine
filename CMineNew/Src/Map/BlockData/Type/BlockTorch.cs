@@ -1,5 +1,7 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
+using CMineNew.Map.BlockData.Static.Type;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -8,9 +10,7 @@ namespace CMineNew.Map.BlockData.Type{
         private Area2d _textureArea;
 
         public BlockTorch(Chunk chunk, Vector3i position)
-            : base("default:torch", BlockModelManager.GetModelOrNull(TorchBlockModel.Key),
-                chunk, position, Color4.Transparent, true, 0.6f, 0, true,
-                MaxBlockLight) {
+            : base(BlockStaticDataTorch.Instance, chunk, position, Color4.Transparent) {
             _textureArea = CMine.Textures.Areas["default:torch"];
         }
 
@@ -24,7 +24,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnRemove(Block newBlock) {
-            if (_blockModel.Id == newBlock.BlockModel?.Id) return;
+            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             render.RemoveData(0, this);
@@ -38,7 +38,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
-            return _blockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
+            return BlockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

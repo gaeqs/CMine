@@ -39,6 +39,8 @@ namespace CMineNew.Test{
             }
             AddToVbo();
             
+            GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Blend);
             Shader.Use();
             GL.LineWidth(2);
             _vao.Bind();

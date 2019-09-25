@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.Task.Type;
 using OpenTK;
 using OpenTK.Graphics;
@@ -34,8 +36,7 @@ namespace CMineNew.Map.BlockData.Type{
         private readonly float[] _vertexWaterLevel;
 
         public BlockWater(Chunk chunk, Vector3i position, int level)
-            : base("default:water", BlockModelManager.GetModelOrNull(WaterBlockModel.Key), chunk, position,
-                Color4.Transparent, true, 1, 0, false, 0, 2, 2) {
+            : base(BlockStaticDataWater.Instance, chunk, position, Color4.Transparent) {
             _visibleFaces = new bool[6];
             _waterLevel = level;
             _vertexWaterLevel = new float[4];
@@ -100,7 +101,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnRemove(Block newBlock) {
-            if (_blockModel.Id == newBlock.BlockModel?.Id) return;
+            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));

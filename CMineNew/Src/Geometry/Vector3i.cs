@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenTK;
 
 namespace CMineNew.Geometry{
@@ -26,6 +27,16 @@ namespace CMineNew.Geometry{
             _y = v;
             _z = v;
         }
+        
+        /// <summary>
+        /// Creates a vector filled with the given array.
+        /// </summary>
+        /// <param name="array">The given array.</param>
+        public Vector3i(IReadOnlyList<int> array) {
+            _x = array[0];
+            _y = array[1];
+            _z = array[2];
+        }
 
         /// <summary>
         /// Creates a vector using the given values.
@@ -50,6 +61,34 @@ namespace CMineNew.Geometry{
             _y = (int) Math.Round(y);
             _z = (int) Math.Round(z);
         }
+        
+        /// <summary>
+        /// Creates a vector filled with the given array.
+        /// </summary>
+        /// <param name="array">The given array.</param>
+        public Vector3i(IReadOnlyList<float> array) {
+            _x = (int) Math.Round(array[0]);
+            _y = (int) Math.Round(array[1]);
+            _z = (int) Math.Round(array[2]);
+        }
+        
+        /// <summary>
+        /// Creates a vector filled with the given array.
+        /// </summary>
+        /// <param name="array">The given array.</param>
+        /// <param name="floor">Whether values should be rounded or floored.</param>
+        public Vector3i(IReadOnlyList<float> array, bool floor) {
+            if (floor) {
+                _x = (int) Math.Floor(array[0]);
+                _y = (int) Math.Floor(array[1]);
+                _z = (int) Math.Floor(array[2]);
+            }
+            else {
+                _x = (int) Math.Round(array[0]);
+                _y = (int) Math.Round(array[1]);
+                _z = (int) Math.Round(array[2]);
+            }
+        }
 
         /// <summary>
         /// Creates a vector using the given vector. Floats are rounded using Math.Round(v).
@@ -66,7 +105,7 @@ namespace CMineNew.Geometry{
         /// Creates a vector using the given vector.
         /// </summary>
         /// <param name="vector">The float vector.</param>
-        /// <param name="floor">Whether values should be rounded or floored</param>
+        /// <param name="floor">Whether values should be rounded or floored.</param>
         public Vector3i(Vector3 vector, bool floor) {
             if (floor) {
                 _x = (int) Math.Floor(vector.X);

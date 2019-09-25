@@ -1,6 +1,7 @@
 using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -8,11 +9,8 @@ namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
         private readonly bool[] _visibleFaces;
 
-        public CubicBlock(string id, Chunk chunk, Vector3i position, Color4 textureFilter, bool passable = false,
-            bool lightSource = false, int blockLight = 0, int blockLightPassReduction = 1, int sunlightPassReduction = 0)
-            : base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), chunk, position, textureFilter,
-                passable, 1, 0, lightSource, 
-                blockLight, blockLightPassReduction, sunlightPassReduction) {
+        public CubicBlock(BlockStaticDataCubic staticData, Chunk chunk, Vector3i position, Color4 textureFilter)
+            : base(staticData, chunk, position, textureFilter) {
             _visibleFaces = new bool[6];
         }
 
@@ -31,7 +29,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnRemove(Block newBlock) {
-            if (_blockModel.Id == newBlock.BlockModel?.Id) return;
+            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             ForEachVisibleFaceInt(face => render.RemoveData(face, this));

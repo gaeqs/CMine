@@ -29,14 +29,14 @@ namespace CMineNew.Map.BlockData.Render{
         private ShaderProgram _shader;
         private VertexArrayObject _vao;
         private VertexBufferObject _dataBuffer;
-        private readonly VboMapper<Vector3i> _mapper;
+        private readonly VboMapper<Block> _mapper;
         private bool _generated;
 
         public CrossBlockRender(ChunkRegion chunkRegion) {
             _chunkRegion = chunkRegion;
             _vao = null;
             _dataBuffer = null;
-            _mapper = new VboMapper<Vector3i>(null, null, InstanceDataLength, MaxBlocks, OnResize);
+            _mapper = new BlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxBlocks, OnResize);
             _generated = false;
         }
 
@@ -45,7 +45,7 @@ namespace CMineNew.Map.BlockData.Render{
             var pos = block.Position;
             var filter = block.TextureFilter;
             var area = crossBlock.TextureArea;
-            _mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
+            _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
                     filter.R, filter.G, filter.B, filter.A, blockLight / Block.MaxBlockLightF,
@@ -54,7 +54,7 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         public override void RemoveData(int mapperIndex, Block block) {
-            _mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Remove, block.Position, null, 0));
+            _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
         public override void Draw() {

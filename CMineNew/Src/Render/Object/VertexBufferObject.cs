@@ -239,6 +239,21 @@ namespace CMineNew.Render.Object{
             }
         }
 
+        public float[] GetDataFromMap(int offset, int length) {
+            var array = new float[length];
+            lock (_lock) {
+                if (!_mapping) throw new System.Exception("VBO is not mapped.");
+                unsafe {
+                    var pF = (float*) _pointer + offset;
+                    for (var i = 0; i < length; i++) {
+                        array[i] = *pF++;
+                    }
+                }
+
+                return array;
+            }
+        }
+
         #endregion
     }
 }

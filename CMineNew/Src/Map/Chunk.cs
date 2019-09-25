@@ -120,14 +120,8 @@ namespace CMineNew.Map{
         }
 
         public void FillWithBlocks(BlockSnapshot[,,] snapshots) {
-            var pos = _position << WorldPositionShift;
-            ForEachChunkPosition((x, y, z) => {
-                var snapshot = snapshots[x, y, z];
-                var blockPos = pos + new Vector3i(x, y, z);
-                var block = snapshot == null ? new BlockAir(this, blockPos) : snapshot.ToBlock(this, blockPos);
-                _blocks[x, y, z] = block;
-            });
-            
+            AddBlockForEachChunkPosition((x, y, z, wPos) => snapshots[x, y, z].ToBlock(this, wPos));
+
             SendOnPlaceEventToAllBlocks(true, false);
             ForEachChunkPosition((x, y, z, block) => block.ExpandSunlight());
             _modified = true;
@@ -232,10 +226,10 @@ namespace CMineNew.Map{
                 var id = (string) formatter.Deserialize(stream);
                 if (!BlockManager.TryGet(id, out var snapshot))
                     throw
-                        new System.Exception("Couldn't load chunk " + _position + ". Block Id "+id+" missing.");
+                        new System.Exception("Couldn't load chunk " + _position + ". Block Id " + id + " missing.");
                 var block = snapshot.ToBlock(this, blockPos);
                 _blocks[x, y, z] = block;
-           
+
                 block.Load(stream, formatter, version, region2d);
             });
             GenerateSaveBuffer(formatter);
@@ -247,6 +241,17 @@ namespace CMineNew.Map{
                 for (var y = ChunkLength - 1; y >= 0; y--) {
                     for (var z = 0; z < ChunkLength; z++) {
                         action.Invoke(x, y, z);
+                    }
+                }
+            }
+        }
+
+        public void AddBlockForEachChunkPosition(Func<int, int, int, Vector3i, Block> action) {
+            var pos = _position << WorldPositionShift;
+            for (var x = 0; x < ChunkLength; x++) {
+                for (var y = ChunkLength - 1; y >= 0; y--) {
+                    for (var z = 0; z < ChunkLength; z++) {
+                        _blocks[x, y, z] = action.Invoke(x, y, z, new Vector3i(x + pos.X, y + pos.Y, z + pos.Z));
                     }
                 }
             }

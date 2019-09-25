@@ -1,0 +1,37 @@
+using CMineNew.Map.BlockData.Model;
+
+namespace CMineNew.Map.BlockData.Static{
+    public class BlockStaticData{
+        public BlockStaticData(string id, BlockModel blockModel, bool passable,
+            float blockHeight, float blockYOffset, bool lightSource, int lightSourceLight,
+            int blockLightPassReduction, int sunlightPassReduction) {
+            Id = id;
+            BlockModel = blockModel;
+            Passable = passable;
+            BlockHeight = blockHeight;
+            BlockYOffset = blockYOffset;
+            LightSource = lightSource;
+            LightSourceLight = lightSourceLight;
+            BlockLightPassReduction = blockLightPassReduction;
+            SunlightPassReduction = sunlightPassReduction;
+        }
+
+        public string Id { get; }
+
+        public BlockModel BlockModel { get; }
+
+        public bool Passable { get; }
+
+        public float BlockHeight { get; }
+
+        public float BlockYOffset { get; }
+
+        public bool LightSource { get; }
+
+        public int LightSourceLight { get; }
+
+        public int BlockLightPassReduction { get; }
+
+        public int SunlightPassReduction { get; }
+    }
+}

@@ -22,7 +22,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnRemove(Block newBlock) {
-            if (_blockModel.Id == newBlock.BlockModel?.Id) return;
+            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
             var render = _chunk.Region.Render;
             render.RemoveData(0, this);
@@ -32,7 +32,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
-            return _blockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
+            return BlockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

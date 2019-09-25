@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CMineNew.Geometry;
+using CMineNew.Map.BlockData.Static;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
@@ -26,7 +27,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         public Area2d[] TextureAreas => _textureAreas;
 
         public override Block Clone(Chunk chunk, Vector3i position) {
-            return new MultiTexturedCubicBlock(_id, _chunk, _position, _textureAreas, _textureFilter);
+            return new MultiTexturedCubicBlock((BlockStaticDataTexturedCubic) _staticData, _chunk, _position, _textureAreas, _textureFilter);
         }
 
         public override Area2d GetTextureArea(BlockFace face) {

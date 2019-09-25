@@ -19,7 +19,7 @@ namespace CMineNew.Map.BlockData.Render{
         private ShaderProgram _shader;
         private readonly VertexArrayObject[] _vaos;
         private readonly VertexBufferObject[] _dataBuffers;
-        private readonly VboMapper<Vector3i>[] _mappers;
+        private readonly VboMapper<Block>[] _mappers;
         private bool _generated;
 
         public SlabBlockRender(ChunkRegion chunkRegion) {
@@ -27,11 +27,11 @@ namespace CMineNew.Map.BlockData.Render{
 
             _vaos = new VertexArrayObject[6];
             _dataBuffers = new VertexBufferObject[6];
-            _mappers = new VboMapper<Vector3i>[6];
+            _mappers = new VboMapper<Block>[6];
             _generated = false;
 
             foreach (var face in BlockFaceMethods.All) {
-                _mappers[(int) face] = new VboMapper<Vector3i>(null, null, InstanceDataLength, MaxFaces, OnResize);
+                _mappers[(int) face] = new BlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxFaces, OnResize);
             }
         }
 
@@ -43,7 +43,7 @@ namespace CMineNew.Map.BlockData.Render{
             var pos = block.Position;
             var filter = block.TextureFilter;
             var area = slabBlock.GetTextureArea((BlockFace) mapperIndex);
-            mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Add, block.Position,
+            mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
                     filter.R, filter.G, filter.B, filter.A, 
@@ -54,7 +54,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void RemoveData(int mapperIndex, Block block) {
             var mapper = _mappers[mapperIndex];
-            mapper.AddTask(new VboMapperTask<Vector3i>(VboMapperTaskType.Remove, block.Position, null, 0));
+            mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
         public override void Draw() {

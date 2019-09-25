@@ -14,9 +14,9 @@ namespace CMineNew.Light{
     public class LightManager{
         private VertexArrayObject _directionalVao, _pointVao, _flashVao;
         private readonly ShaderProgram _directionalShader, _pointShader, _flashShader;
-        private VboMapper<DirectionalLight> _directionalMapper;
-        private VboMapper<PointLight> _pointMapper;
-        private VboMapper<FlashLight> _flashMapper;
+        private GenericVboMapper<DirectionalLight> _directionalMapper;
+        private GenericVboMapper<PointLight> _pointMapper;
+        private GenericVboMapper<FlashLight> _flashMapper;
 
         private readonly List<DirectionalLight> _directionalLights;
         private readonly List<PointLight> _pointLights;
@@ -177,7 +177,7 @@ namespace CMineNew.Light{
             _directionalVao = WorldGBuffer.GenerateQuadVao();
             var directionVbo = new VertexBufferObject();
             _directionalVao.LinkBuffer(directionVbo);
-            _directionalMapper = new VboMapper<DirectionalLight>(directionVbo, _directionalVao, 12,
+            _directionalMapper = new GenericVboMapper<DirectionalLight>(directionVbo, _directionalVao, 12,
                 1000, (o, buffer, newBuffer) => { });
             _directionalVao.Bind();
             directionVbo.Bind(BufferTarget.ArrayBuffer);
@@ -201,7 +201,7 @@ namespace CMineNew.Light{
             uniformBuffer.SetData(BufferTarget.ShaderStorageBuffer, structBytes * 2000, BufferUsageHint.DynamicDraw);
             var loc = GL.GetProgramResourceIndex(_pointShader.Id, ProgramInterface.ShaderStorageBlock, "LightsBlock");
             GL.ShaderStorageBlockBinding(_pointShader.Id, loc, 0);
-            _pointMapper = new VboMapper<PointLight>(uniformBuffer, _pointVao, structSize, 2000,
+            _pointMapper = new GenericVboMapper<PointLight>(uniformBuffer, _pointVao, structSize, 2000,
                 (o, buffer, newBuffer) => { }, BufferTarget.ShaderStorageBuffer);
         }
 
@@ -212,7 +212,7 @@ namespace CMineNew.Light{
             _flashVao = WorldGBuffer.GenerateQuadVao();
             var flashVbo = new VertexBufferObject();
             _flashVao.LinkBuffer(flashVbo);
-            _flashMapper = new VboMapper<FlashLight>(flashVbo, _flashVao, 20, 1000,
+            _flashMapper = new GenericVboMapper<FlashLight>(flashVbo, _flashVao, 20, 1000,
                 (o, buffer, newBuffer) => { });
             _flashVao.Bind();
             flashVbo.Bind(BufferTarget.ArrayBuffer);

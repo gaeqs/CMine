@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Type;
 using OpenTK;
 using OpenTK.Graphics;
@@ -13,47 +14,35 @@ namespace CMineNew.Map.BlockData{
         public const int MaxBlockLight = 15;
         public const float MaxBlockLightF = MaxBlockLight;
 
-        protected readonly string _id;
-        protected readonly BlockModel _blockModel;
+        protected readonly BlockStaticData _staticData;
 
         protected Chunk _chunk;
         protected Vector3i _position;
-        protected bool _passable;
         protected bool[] _collidableFaces;
         protected Color4 _textureFilter;
-        protected float _blockHeight, _blockYOffset;
-
         protected Block[] _neighbours;
-
         protected BlockLight _blockLight;
         protected BlockLightSource _blockLightSource;
 
-        public Block(string id, BlockModel blockModel, Chunk chunk, Vector3i position,
-            Color4 textureFilter, bool passable = false, float blockHeight = 1, float blockYOffset = 0,
-            bool lightSource = false, int sourceLight = 0, int blockLightPassReduction = 1,
-            int sunlightPassReduction = 0) {
-            _id = id;
-            _blockModel = blockModel;
+        public Block(BlockStaticData staticData, Chunk chunk, Vector3i position, Color4 textureFilter) {
+            _staticData = staticData;
             _chunk = chunk;
             _position = position;
-            _passable = passable;
             _collidableFaces = new bool[6];
             _textureFilter = textureFilter;
-            _blockHeight = blockHeight;
-            _blockYOffset = blockYOffset;
             _neighbours = new Block[6];
 
-            _blockLight = new BlockLight(blockLightPassReduction, sunlightPassReduction);
-            _blockLightSource = lightSource ? new BlockLightSource(this, sourceLight) : null;
-            if (lightSource) {
-                _blockLight.Light = _blockLightSource.SourceLight;
-                _blockLight.Source = _blockLightSource;
-            }
+            _blockLight = new BlockLight(staticData.BlockLightPassReduction, staticData.SunlightPassReduction);
+            var lightSource = staticData.LightSource;
+            _blockLightSource = lightSource ? new BlockLightSource(this, staticData.LightSourceLight) : null;
+            if (!lightSource) return;
+            _blockLight.Light = _blockLightSource.SourceLight;
+            _blockLight.Source = _blockLightSource;
         }
 
-        public string Id => _id;
+        public string Id => _staticData.Id;
 
-        public BlockModel BlockModel => _blockModel;
+        public BlockModel BlockModel => _staticData.BlockModel;
 
         public World World => _chunk.World;
 
@@ -67,11 +56,11 @@ namespace CMineNew.Map.BlockData{
             set => _position = value;
         }
 
-        public float BlockHeight => _blockHeight;
+        public float BlockHeight => _staticData.BlockHeight;
 
-        public float BlockYOffset => _blockYOffset;
+        public float BlockYOffset => _staticData.BlockYOffset;
 
-        public bool Passable => _passable;
+        public bool Passable => _staticData.Passable;
 
         public bool[] CollidableFaces => _collidableFaces;
 
@@ -102,7 +91,7 @@ namespace CMineNew.Map.BlockData{
                 TriggerLightChange();
             }
             else {
-                for(var i = 0; i < _neighbours.Length; i++) {
+                for (var i = 0; i < _neighbours.Length; i++) {
                     var neighbour = _neighbours[i];
                     if (neighbour != null && neighbour._chunk != _chunk) {
                         neighbour.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
@@ -132,9 +121,9 @@ namespace CMineNew.Map.BlockData{
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
             _neighbours[(int) relative] = to;
             var side = relative != BlockFace.Up && relative != BlockFace.Down &&
-                       (_blockHeight > to._blockHeight || _blockYOffset < to._blockYOffset);
+                       (BlockHeight > to.BlockHeight || BlockYOffset < to.BlockYOffset);
 
-            _collidableFaces[(int) relative] = to == null || to._passable || side;
+            _collidableFaces[(int) relative] = to == null || to.Passable || side;
             OnNeighbourBlockChange(from, to, relative);
         }
 
@@ -291,9 +280,9 @@ namespace CMineNew.Map.BlockData{
                 var face = (BlockFace) i;
                 var side = neighbour != null &&
                            face != BlockFace.Up && face != BlockFace.Down &&
-                           (_blockHeight > _neighbours[i]?._blockHeight
-                            || _blockYOffset < _neighbours[i]._blockYOffset);
-                _collidableFaces[i] = side || neighbour == null || neighbour._passable;
+                           (BlockHeight > _neighbours[i]?.BlockHeight
+                            || BlockYOffset < _neighbours[i].BlockYOffset);
+                _collidableFaces[i] = side || neighbour == null || neighbour.Passable;
             }
         }
 
