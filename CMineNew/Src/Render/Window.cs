@@ -87,11 +87,11 @@ namespace CMineNew.Render{
 
         protected override void OnRenderFrame(FrameEventArgs e) {
             var now = DateTime.Now.Ticks;
-            _stopwatch.Restart();
             _delay = Math.Min(now - _lastTick, CMine.TicksPerSecond / 30);
             _lastTick = now;
 
             if (_room != null) {
+                _stopwatch.Restart();
                 _room.Tick(_delay);
                 _room.Draw();
                 _stopwatch.Stop();

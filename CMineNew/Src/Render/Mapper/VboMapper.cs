@@ -71,11 +71,9 @@ namespace CMineNew.Render.Mapper{
             get => _onBackground;
             set {
                 if (_onBackground == value) return;
-                lock (_backgroundLock) {
-                    _onBackground = value;
-                    if (value) {
-                        _vbo.StartMapping();
-                    }
+                _onBackground = value;
+                if (value) {
+                    _vbo.StartMapping();
                 }
             }
         }
@@ -90,15 +88,13 @@ namespace CMineNew.Render.Mapper{
 
 
         public void AddTask(VboMapperTask<TKey> task) {
-            lock (_backgroundLock) {
-                if (_requiresResize || !_onBackground || _vbo == null || !_vbo.Mapping) {
-                    _tasks.Push(task);
-                    return;
-                }
-
-                ExecuteTask(task, false);
-                _updates++;
+            if (_requiresResize || !_onBackground || _vbo == null || !_vbo.Mapping) {
+                _tasks.Push(task);
+                return;
             }
+
+            ExecuteTask(task, false);
+            _updates++;
         }
 
         public void FlushQueue() {
@@ -115,25 +111,23 @@ namespace CMineNew.Render.Mapper{
                 _vbo.StartMapping();
             }
 
-            lock (_backgroundLock) {
-                while (!_tasks.IsEmpty()) {
-                    if (_requiresResize) {
-                        Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
-                        ResizeBuffer();
-                        _requiresResize = false;
+            while (!_tasks.IsEmpty()) {
+                if (_requiresResize) {
+                    Console.WriteLine("Expanding buffer... " + _amount + " >= " + _maximumAmount);
+                    ResizeBuffer();
+                    _requiresResize = false;
+                }
+
+                unsafe {
+                    if (_vbo.Pointer == null) {
+                        Console.WriteLine("Warning! Pointer is null!");
+                        break;
                     }
 
-                    unsafe {
-                        if (_vbo.Pointer == null) {
-                            Console.WriteLine("Warning! Pointer is null!");
-                            break;
-                        }
-
-                        var current = _tasks.Pop();
-                        if (current == null) continue;
-                        ExecuteTask(current, true);
-                        _updates++;
-                    }
+                    var current = _tasks.Pop();
+                    if (current == null) continue;
+                    ExecuteTask(current, true);
+                    _updates++;
                 }
             }
 
