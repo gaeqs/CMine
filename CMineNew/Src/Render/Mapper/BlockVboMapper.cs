@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using CMineNew.DataStructure.Queue;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
@@ -83,13 +82,7 @@ namespace CMineNew.Render.Mapper{
 
         public bool OnBackground {
             get => _onBackground;
-            set {
-                if (_onBackground == value) return;
-                _onBackground = value;
-                if (value) {
-                    _vbo.StartMapping(_bufferTarget);
-                }
-            }
+            set => _onBackground = value;
         }
 
         public int GetPointer(Block key) {
@@ -105,16 +98,10 @@ namespace CMineNew.Render.Mapper{
         public void FlushQueue() {
             _updates = 0;
             if (_tasks.IsEmpty) {
-                if (!_onBackground) {
-                    _vbo.FinishMapping(_bufferTarget);
-                }
-
                 return;
             }
 
-            if (!_onBackground) {
-                _vbo.StartMapping(_bufferTarget);
-            }
+            _vbo.StartMapping(_bufferTarget);
 
             while (_vbo.Mapping && _tasks.TryDequeue(out var current)) {
                 if (_requiresResize) {
@@ -135,9 +122,7 @@ namespace CMineNew.Render.Mapper{
                 }
             }
 
-            if (!_onBackground) {
-                _vbo.FinishMapping(_bufferTarget);
-            }
+            _vbo.FinishMapping(_bufferTarget);
         }
 
         public bool ContainsKey(Block key) {
@@ -207,15 +192,17 @@ namespace CMineNew.Render.Mapper{
             }
             else {
                 Console.WriteLine("ERROR! LAST KEY IS NOT ON MAP!!");
-                Console.WriteLine(lastKey +" -> "+IsInsideArray(lastKey));
+                Console.WriteLine(lastKey + " -> " + IsInsideArray(lastKey));
             }
+
             _offsets[pos.X, pos.Y, pos.Z] = -1;
             _amount--;
         }
 
         private bool IsInsideArray(Vector3i vec) {
             return vec.X >= 0 && vec.Y >= 0 && vec.Z >= 0 &&
-                   vec.X < ChunkRegion.RegionLength && vec.Y < ChunkRegion.RegionLength && vec.Z < ChunkRegion.RegionLength;
+                   vec.X < ChunkRegion.RegionLength && vec.Y < ChunkRegion.RegionLength &&
+                   vec.Z < ChunkRegion.RegionLength;
         }
 
         private void ResizeBuffer() {

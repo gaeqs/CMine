@@ -52,8 +52,9 @@ namespace CMineNew.Render{
         public Vector2 UnitsPerPixel => _unitsPerPixel;
 
         protected override void OnLoad(EventArgs e) {
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            Thread.CurrentThread.Name = "Render thread";
+            var thread = Thread.CurrentThread;
+            thread.Priority = ThreadPriority.Highest;
+            thread.Name = "Render thread";
             Console.WriteLine("OpenGL Version: " + GL.GetString(StringName.Version));
             Console.WriteLine("Graphic Card: " + GL.GetString(StringName.Vendor) + " - " +
                               GL.GetString(StringName.Renderer));
@@ -89,7 +90,6 @@ namespace CMineNew.Render{
             var now = DateTime.Now.Ticks;
             _delay = Math.Min(now - _lastTick, CMine.TicksPerSecond / 30);
             _lastTick = now;
-
             if (_room != null) {
                 _stopwatch.Restart();
                 _room.Tick(_delay);

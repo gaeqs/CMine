@@ -40,29 +40,29 @@ namespace CMineNew.Render.Object{
         public bool Mapping => _mapping;
 
         public void Bind(BufferTarget target) {
-            GL.GetError();
+            //GL.GetError();
             GL.BindBuffer(target, _id);
-            var error = GL.GetError();
-            if (error != ErrorCode.NoError) {
-                Console.WriteLine("---  VBO BIND ERROR --- ");
-                Console.WriteLine("VBO: " + _id);
-                Console.WriteLine(error);
-                Console.WriteLine("------------------------");
-                throw new System.Exception("Error while binding VBO.");
-            }
+            //var error = GL.GetError();
+            //if (error != ErrorCode.NoError) {
+            //    Console.WriteLine("---  VBO BIND ERROR --- ");
+            //    Console.WriteLine("VBO: " + _id);
+            //    Console.WriteLine(error);
+            //    Console.WriteLine("------------------------");
+            //    throw new System.Exception("Error while binding VBO.");
+            //}
         }
 
-        public void BindBase(BufferTarget target, int index) {
-            GL.GetError();
+        public void BindBase(BufferRangeTarget target, int index) {
+            //GL.GetError();
             GL.BindBufferBase(target, index, _id);
-            var error = GL.GetError();
-            if (error != ErrorCode.NoError) {
-                Console.WriteLine("---  VBO BIND ERROR --- ");
-                Console.WriteLine("VBO: " + _id);
-                Console.WriteLine(error);
-                Console.WriteLine("------------------------");
-                throw new System.Exception("Error while binding VBO.");
-            }
+            //var error = GL.GetError();
+            //if (error != ErrorCode.NoError) {
+            //    Console.WriteLine("---  VBO BIND ERROR --- ");
+            //    Console.WriteLine("VBO: " + _id);
+            //    Console.WriteLine(error);
+            //    Console.WriteLine("------------------------");
+            //    throw new System.Exception("Error while binding VBO.");
+            //}
         }
 
         public void SetData(BufferTarget target, float[] data, BufferUsageHint usageHint) {
@@ -86,6 +86,16 @@ namespace CMineNew.Render.Object{
             GL.BufferData(target, length, IntPtr.Zero, usageHint);
         }
 
+        public void SetSubData(BufferTarget target, float[] data, int offset) {
+            GL.BufferSubData(target, (IntPtr) (offset * sizeof(float)), data.Length * sizeof(float), data);
+        }
+
+        public float[] GetSubData(BufferTarget target, int offset, int length) {
+            float[] array = new float[length];
+            GL.GetBufferSubData(target, (IntPtr) (offset * sizeof(float)), length * sizeof(float), array);
+            return array;
+        }
+
         public void CleanUp() {
             FinishMapping();
             GL.DeleteBuffer(_id);
@@ -99,16 +109,16 @@ namespace CMineNew.Render.Object{
             if (_mapping) return;
             Bind(target);
             unsafe {
-                GL.GetError();
+                //GL.GetError();
                 _pointer = GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
-                var error = GL.GetError();
-                if (error != ErrorCode.NoError) {
-                    Console.WriteLine("---  VBO MAPPING ERROR --- ");
-                    Console.WriteLine("VBO: " + _id);
-                    Console.WriteLine(error);
-                    Console.WriteLine("---------------------------");
-                    throw new System.Exception("Error while mapping VBO.");
-                }
+                //var error = GL.GetError();
+                //if (error != ErrorCode.NoError) {
+                //    Console.WriteLine("---  VBO MAPPING ERROR --- ");
+                //    Console.WriteLine("VBO: " + _id);
+                //    Console.WriteLine(error);
+                //    Console.WriteLine("---------------------------");
+                //    throw new System.Exception("Error while mapping VBO.");
+                //}
             }
 
             _mapping = true;
@@ -117,20 +127,20 @@ namespace CMineNew.Render.Object{
         public void FinishMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
             unsafe {
                 if (!_mapping) return;
-                GL.GetError();
+                //GL.GetError();
                 Bind(target);
                 GL.UnmapBuffer(target);
                 _pointer = null;
                 _mapping = false;
 
-                var error = GL.GetError();
-                if (error != ErrorCode.NoError) {
-                    Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
-                    Console.WriteLine("VBO: " + _id);
-                    Console.WriteLine(error);
-                    Console.WriteLine("---------------------------");
-                    throw new System.Exception("Error while mapping VBO.");
-                }
+                //var error = GL.GetError();
+                //if (error != ErrorCode.NoError) {
+                //    Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
+                //    Console.WriteLine("VBO: " + _id);
+                //    Console.WriteLine(error);
+                //    Console.WriteLine("---------------------------");
+                //    throw new System.Exception("Error while mapping VBO.");
+                //}
             }
         }
 

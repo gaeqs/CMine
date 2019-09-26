@@ -1,0 +1,13 @@
+D:\RiderProjects\CMine\CMineNew\bin\Release\CMineNew.exe
+D:\RiderProjects\CMine\CMineNew\bin\Release\CMineNew.pdb
+D:\RiderProjects\CMine\CMineNew\bin\Release\OpenTK.dll
+D:\RiderProjects\CMine\CMineNew\bin\Release\OpenTK.pdb
+D:\RiderProjects\CMine\CMineNew\bin\Release\OpenTK.xml
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csprojAssemblyReference.cache
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.Resources.Shaders.Shaders.resources
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.Resources.Textures.Textures.resources
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.GenerateResource.cache
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.CoreCompileInputs.cache
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.CopyComplete
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.exe
+D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.pdb
