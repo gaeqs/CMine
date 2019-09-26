@@ -77,15 +77,28 @@ namespace CMineNew.Map{
 
             _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
 
-            var neighbours = old == null ? GetNeighbourBlocks(new Block[6], position, chunkPosition) : old.Neighbours;
-            if (block != null) {
-                block.Neighbours = neighbours;
+            var references = old.NeighbourReferences;
+            if (references != null) {
+                if (block != null) {
+                    block.NeighbourReferences = references;
+                }
+
+                for (var i = 0; i < references.Length; i++) {
+                    if (!references[i].TryGetTarget(out var n)) continue;
+                    n.OnNeighbourBlockChange0(old, block, BlockFaceMethods.GetOpposite((BlockFace) i));
+                }
+            }
+            else {
+                var neighbours = GetNeighbourBlocks(new Block[6], position, chunkPosition);
+                if (block != null) {
+                    block.Neighbours = neighbours;
+                }
+                for (var i = 0; i < references.Length; i++) {
+                    neighbours[i]?.OnNeighbourBlockChange0(old, block,
+                        BlockFaceMethods.GetOpposite((BlockFace) i));
+                }
             }
 
-            for (var i = 0; i < neighbours.Length; i++) {
-                neighbours[i]?.OnNeighbourBlockChange0(old, block,
-                    BlockFaceMethods.GetOpposite((BlockFace) i));
-            }
 
             if (old != null) {
                 old.OnRemove0(block, out var blockList, out var sunList);
@@ -139,26 +152,32 @@ namespace CMineNew.Map{
             ForEachChunkPosition((x, y, z, block) => {
                 if (block == null) return;
                 block.OnPlace0(null, triggerWorldUpdates, expandSunlight, addToRender);
-                blocks = block.Neighbours;
+                var references = block.NeighbourReferences;
                 if (x == 0) {
-                    blocks[(int) BlockFace.West]?.OnNeighbourBlockChange0(null, block, BlockFace.East);
+                    if(!references[(int) BlockFace.West].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.East);
                 }
                 else if (x == 15) {
-                    blocks[(int) BlockFace.East]?.OnNeighbourBlockChange0(null, block, BlockFace.West);
+                    if(!references[(int) BlockFace.East].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.West);
                 }
 
                 if (y == 0) {
-                    blocks[(int) BlockFace.Down]?.OnNeighbourBlockChange0(null, block, BlockFace.Up);
+                    if(!references[(int) BlockFace.Down].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.Up);
                 }
                 else if (y == 15) {
-                    blocks[(int) BlockFace.Up]?.OnNeighbourBlockChange0(null, block, BlockFace.Down);
+                    if(!references[(int) BlockFace.Up].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.Down);
                 }
 
                 if (z == 0) {
-                    blocks[(int) BlockFace.North]?.OnNeighbourBlockChange0(null, block, BlockFace.South);
+                    if(!references[(int) BlockFace.North].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.South);
                 }
                 else if (z == 15) {
-                    blocks[(int) BlockFace.South]?.OnNeighbourBlockChange0(null, block, BlockFace.North);
+                    if(!references[(int) BlockFace.South].TryGetTarget(out var target)) return;
+                    target.OnNeighbourBlockChange0(null, block, BlockFace.North);
                 }
             });
         }

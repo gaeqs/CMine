@@ -18,7 +18,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public Area2d TextureArea => _textureArea;
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
+        public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             if(!addToRender) return;
             AddToRender();
         }

@@ -13,8 +13,8 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
         public abstract Area2d TextureArea { get; }
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
-            if(!addToRender) return;
+        public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
+            if (!addToRender) return;
             AddToRender();
         }
 

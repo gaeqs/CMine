@@ -1,8 +1,4 @@
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Static.Type;
 using OpenTK;
 using OpenTK.Graphics;
@@ -15,7 +11,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
+        public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
         }
 
         public override void OnRemove(Block newBlock) {
@@ -41,11 +37,11 @@ namespace CMineNew.Map.BlockData.Type{
 
         public override void RemoveFromRender() {
         }
-        
+
         public override bool CanLightPassThrough(BlockFace face) {
             return true;
         }
-        
+
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {
             return true;
         }

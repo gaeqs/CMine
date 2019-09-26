@@ -70,12 +70,13 @@ namespace CMineNew.Map.BlockData.Type{
 
         public bool Removing => _removing;
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
-            _hasWaterOnTop = neighbours[(int) BlockFace.Up] is BlockWater;
-            for (var i = 0; i < neighbours.Length; i++) {
-                var block = neighbours[i];
+        public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
+            for (var i = 0; i < _neighbours.Length; i++) {
+                _neighbours[i].TryGetTarget(out var block);
                 if (i == (int) BlockFace.Up) {
-                    _visibleFaces[i] = !(neighbours[i] is BlockWater);
+                    var water = block is BlockWater;
+                    _visibleFaces[i] = !water;
+                    _hasWaterOnTop = water;
                 }
                 else {
                     _visibleFaces[i] = block == null ||
@@ -84,7 +85,10 @@ namespace CMineNew.Map.BlockData.Type{
                 }
             }
 
-            if (neighbours.Sum(target => target is BlockWater water && water.Parent == water.Position ? 1 : 0) > 1) {
+            if (_neighbours.Sum(target => {
+                target.TryGetTarget(out var b);
+                return b is BlockWater water && water.Parent == water.Position ? 1 : 0;
+            }) > 1) {
                 var parentBlock = World.GetBlock(_parent);
                 if (parentBlock is BlockWater parentWater) {
                     parentWater.Children.Remove(_position);

@@ -20,7 +20,7 @@ namespace CMineNew.Map.BlockData{
         protected Vector3i _position;
         protected bool[] _collidableFaces;
         protected Color4 _textureFilter;
-        protected Block[] _neighbours;
+        protected WeakReference<Block>[] _neighbours;
         protected BlockLight _blockLight;
         protected BlockLightSource _blockLightSource;
 
@@ -30,7 +30,7 @@ namespace CMineNew.Map.BlockData{
             _position = position;
             _collidableFaces = new bool[6];
             _textureFilter = textureFilter;
-            _neighbours = new Block[6];
+            _neighbours = new WeakReference<Block>[6];
 
             _blockLight = new BlockLight();
             var lightSource = staticData.LightSource;
@@ -77,11 +77,19 @@ namespace CMineNew.Map.BlockData{
 
         public BlockStaticData StaticData => _staticData;
 
-        public Block[] Neighbours {
+        public WeakReference<Block>[] NeighbourReferences {
             get => _neighbours;
             set {
                 for (var i = 0; i < _neighbours.Length; i++) {
                     _neighbours[i] = value[i];
+                }
+            }
+        }
+
+        public Block[] Neighbours {
+            set {
+                for (var i = 0; i < _neighbours.Length; i++) {
+                    _neighbours[i] = new WeakReference<Block>(value[i]);
                 }
             }
         }
@@ -94,17 +102,17 @@ namespace CMineNew.Map.BlockData{
             }
             else {
                 for (var i = 0; i < _neighbours.Length; i++) {
-                    var neighbour = _neighbours[i];
-                    if (neighbour != null && neighbour._chunk != _chunk) {
+                    if (!_neighbours[i].TryGetTarget(out var neighbour)) continue;
+                    if (neighbour._chunk != _chunk) {
                         neighbour.OnNeighbourLightChange(BlockFaceMethods.GetOpposite((BlockFace) i), this);
                     }
                 }
             }
 
-            OnPlace(oldBlock, _neighbours, triggerWorldUpdates, addToRender);
+            OnPlace(oldBlock, triggerWorldUpdates, addToRender);
         }
 
-        public abstract void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender);
+        public abstract void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender);
 
         public void OnRemove0(Block newBlock, out ELinkedList<Block> blockList, out ELinkedList<Block> sunList) {
             if (_blockLightSource != null) {
@@ -121,7 +129,7 @@ namespace CMineNew.Map.BlockData{
         public abstract void OnRemove(Block newBlock);
 
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
-            _neighbours[(int) relative] = to;
+            _neighbours[(int) relative] = new WeakReference<Block>(to);
             var side = relative != BlockFace.Up && relative != BlockFace.Down &&
                        (BlockHeight > to.BlockHeight || BlockYOffset < to.BlockYOffset);
 
@@ -168,18 +176,20 @@ namespace CMineNew.Map.BlockData{
             //Block light
             var light = CalculateLightFromNeighbours(out var fromFace);
             if (light > 0) {
-                var neighbour = _neighbours[(int) fromFace];
-                var source = neighbour._blockLight.Source;
-                BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
+                if (_neighbours[(int) fromFace].TryGetTarget(out var neighbour)) {
+                    var source = neighbour._blockLight.Source;
+                    BlockLightMethods.Expand(this, source, light, neighbour, fromFace);
+                }
             }
 
             //Sunlight
             UpdateSunlight();
             light = CalculateSunlightFromNeighbours(out fromFace);
             if (light > _blockLight.LinearSunlight) {
-                var neighbour = _neighbours[(int) fromFace];
-                var source = neighbour._blockLight.SunlightSource;
-                SunlightMethods.Expand(this, source, light, neighbour, fromFace);
+                if (_neighbours[(int) fromFace].TryGetTarget(out var neighbour)) {
+                    var source = neighbour._blockLight.SunlightSource;
+                    SunlightMethods.Expand(this, source, light, neighbour, fromFace);
+                }
             }
             else if (expandSunlight) {
                 ExpandSunlight();
@@ -212,10 +222,9 @@ namespace CMineNew.Map.BlockData{
             }
 
             for (var i = 0; i < _neighbours.Length; i++) {
-                var neighbour = _neighbours[i];
-                if (neighbour == null) {
+                if (!_neighbours[i].TryGetTarget(out var neighbour)) {
                     neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace) i));
-                    _neighbours[i] = neighbour;
+                    _neighbours[i] = new WeakReference<Block>(neighbour);
                     if (neighbour == null) {
                         continue;
                     }
@@ -231,9 +240,8 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 var nFace = (BlockFace) i;
                 var nOpposite = BlockFaceMethods.GetOpposite(nFace);
-                var neighbour = _neighbours[i];
-                if (neighbour == null
-                    || !CanLightBePassedFrom(nFace, neighbour)
+                if (!_neighbours[i].TryGetTarget(out var neighbour)) continue;
+                if (!CanLightBePassedFrom(nFace, neighbour)
                     || !neighbour.CanLightPassThrough(nOpposite)) continue;
                 var nLight = (sbyte) (neighbour.BlockLight.Light - neighbour._staticData.BlockLightPassReduction);
                 if (nLight <= light) continue;
@@ -250,10 +258,8 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 var nFace = (BlockFace) i;
                 var nOpposite = BlockFaceMethods.GetOpposite(nFace);
-                var neighbour = _neighbours[i];
-                if (neighbour == null
-                    || !CanLightBePassedFrom(nFace, neighbour)
-                    || !neighbour.CanLightPassThrough(nOpposite)) continue;
+                if (!_neighbours[i].TryGetTarget(out var neighbour)) continue;
+                if (!CanLightBePassedFrom(nFace, neighbour) || !neighbour.CanLightPassThrough(nOpposite)) continue;
                 var nLight = (sbyte) (neighbour.BlockLight.Sunlight - neighbour._staticData.BlockLightPassReduction);
                 if (nLight <= light) continue;
                 light = nLight;
@@ -282,12 +288,12 @@ namespace CMineNew.Map.BlockData{
 
         private void CalculateVisibleFaces() {
             for (var i = 0; i < _neighbours.Length; i++) {
-                var neighbour = _neighbours[i];
+                _neighbours[i].TryGetTarget(out var neighbour);
                 var face = (BlockFace) i;
                 var side = neighbour != null &&
                            face != BlockFace.Up && face != BlockFace.Down &&
-                           (BlockHeight > _neighbours[i]?.BlockHeight
-                            || BlockYOffset < _neighbours[i].BlockYOffset);
+                           (BlockHeight > neighbour.BlockHeight
+                            || BlockYOffset < neighbour.BlockYOffset);
                 _collidableFaces[i] = side || neighbour == null || neighbour.Passable;
             }
         }

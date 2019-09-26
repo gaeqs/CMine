@@ -238,12 +238,7 @@ namespace CMineNew.Map{
         public override void Tick(long delay) {
             _worldTaskManager.Tick(delay);
 
-            _tickRegions.Clear();
             foreach (var region in _chunkRegions.Values) {
-                _tickRegions.Add(region);
-            }
-
-            foreach (var region in _tickRegions) {
                 region.Tick(delay);
             }
 

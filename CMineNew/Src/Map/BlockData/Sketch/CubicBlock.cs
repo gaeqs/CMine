@@ -1,6 +1,5 @@
 using System;
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Static;
 using OpenTK;
 using OpenTK.Graphics;
@@ -16,10 +15,10 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
-        public override void OnPlace(Block oldBlock, Block[] neighbours, bool triggerWorldUpdates, bool addToRender) {
+        public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
-                var block = neighbours[i];
+                _neighbours[i].TryGetTarget(out var block);
                 var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
                 var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
                 if (!vis || !addToRender) continue;
@@ -32,7 +31,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 if (!_visibleFaces[i]) continue;
-                var block = _neighbours[i];
+                _neighbours[i].TryGetTarget(out var block);
                 var light = block?.BlockLight;
                 render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
             }
@@ -101,7 +100,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
             if (_visibleFaces[(int) relative]) {
-                _chunk.Region.Render.AddData((int) relative, 
+                _chunk.Region.Render.AddData((int) relative,
                     this, block.BlockLight.Light, block.BlockLight.Sunlight);
             }
         }

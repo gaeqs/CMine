@@ -144,7 +144,14 @@ namespace CMineNew.Render.Mapper{
 
         private void AddToMap(Block key, float[] data) {
             if (_offsets.TryGetValue(key.Position, out var point)) {
-                _vbo.AddToMap(data, _elementSize * point);
+                try {
+                    _vbo.AddToMap(data, _elementSize * point);
+                }
+                catch (AccessViolationException ex) {
+                    Console.WriteLine("Point: "+point);
+                    throw ex;
+                }
+
                 return;
             }
 
