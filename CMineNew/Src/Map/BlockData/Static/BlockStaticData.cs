@@ -3,8 +3,8 @@ using CMineNew.Map.BlockData.Model;
 namespace CMineNew.Map.BlockData.Static{
     public class BlockStaticData{
         public BlockStaticData(string id, BlockModel blockModel, bool passable,
-            float blockHeight, float blockYOffset, bool lightSource, int lightSourceLight,
-            int blockLightPassReduction, int sunlightPassReduction) {
+            float blockHeight, float blockYOffset, bool lightSource, sbyte lightSourceLight,
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction) {
             Id = id;
             BlockModel = blockModel;
             Passable = passable;
@@ -28,10 +28,10 @@ namespace CMineNew.Map.BlockData.Static{
 
         public bool LightSource { get; }
 
-        public int LightSourceLight { get; }
+        public sbyte LightSourceLight { get; }
 
-        public int BlockLightPassReduction { get; }
+        public sbyte BlockLightPassReduction { get; }
 
-        public int SunlightPassReduction { get; }
+        public sbyte SunlightPassReduction { get; }
     }
 }

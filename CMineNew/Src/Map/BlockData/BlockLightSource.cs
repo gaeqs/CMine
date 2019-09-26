@@ -5,10 +5,10 @@ namespace CMineNew.Map.BlockData{
     public class BlockLightSource{
 
         private readonly Block _block;
-        private readonly int _sourceLight;
+        private readonly sbyte _sourceLight;
         private readonly Collection<BlockLight> _blocks;
 
-        public BlockLightSource(Block block, int sourceLight) {
+        public BlockLightSource(Block block, sbyte sourceLight) {
             _block = block;
             _sourceLight = sourceLight;
             _blocks = new Collection<BlockLight>();
@@ -16,7 +16,7 @@ namespace CMineNew.Map.BlockData{
 
         public Block Block => _block;
 
-        public int SourceLight => _sourceLight;
+        public sbyte SourceLight => _sourceLight;
         
         public Collection<BlockLight> Blocks => _blocks;
 

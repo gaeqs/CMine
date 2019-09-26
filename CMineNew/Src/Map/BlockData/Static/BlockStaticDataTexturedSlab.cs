@@ -4,14 +4,14 @@ namespace CMineNew.Map.BlockData.Static{
     public class BlockStaticDataTexturedSlab : BlockStaticDataSlab{
         private readonly Area2d _textureArea;
 
-        public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, int lightSourceLight,
-            int blockLightPassReduction, int sunlightPassReduction, string texture)
+        public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, string texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureArea = CMine.Textures.Areas[texture];
         }
         
-        public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, int lightSourceLight,
-            int blockLightPassReduction, int sunlightPassReduction, Area2d texture)
+        public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, Area2d texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureArea = texture;
         }

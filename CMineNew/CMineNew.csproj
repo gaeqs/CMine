@@ -87,7 +87,6 @@
     <Compile Include="Src\Light\LightManager.cs" />
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
-    <Compile Include="Src\Map\AsyncChunkTrashCan.cs" />
     <Compile Include="Src\Map\BlockData\BlockLight.cs" />
     <Compile Include="Src\Map\BlockData\BlockLightMethods.cs" />
     <Compile Include="Src\Map\BlockData\BlockLightSource.cs" />

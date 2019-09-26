@@ -11,7 +11,7 @@ using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
     public abstract class Block{
-        public const int MaxBlockLight = 15;
+        public const sbyte MaxBlockLight = 15;
         public const float MaxBlockLightF = MaxBlockLight;
 
         protected readonly BlockStaticData _staticData;
@@ -32,7 +32,7 @@ namespace CMineNew.Map.BlockData{
             _textureFilter = textureFilter;
             _neighbours = new Block[6];
 
-            _blockLight = new BlockLight(staticData.BlockLightPassReduction, staticData.SunlightPassReduction);
+            _blockLight = new BlockLight();
             var lightSource = staticData.LightSource;
             _blockLightSource = lightSource ? new BlockLightSource(this, staticData.LightSourceLight) : null;
             if (!lightSource) return;
@@ -74,6 +74,8 @@ namespace CMineNew.Map.BlockData{
         public BlockLight BlockLight => _blockLight;
 
         public BlockLightSource BlockLightSource => _blockLightSource;
+
+        public BlockStaticData StaticData => _staticData;
 
         public Block[] Neighbours {
             get => _neighbours;
@@ -126,7 +128,7 @@ namespace CMineNew.Map.BlockData{
             _collidableFaces[(int) relative] = to == null || to.Passable || side;
             OnNeighbourBlockChange(from, to, relative);
         }
-        
+
         public abstract void OnNeighbourBlockChange(Block from, Block to, BlockFace relative);
 
         public abstract void AddToRender();
@@ -144,9 +146,9 @@ namespace CMineNew.Map.BlockData{
         }
 
         public virtual void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
-            _blockLight.Light = (int) formatter.Deserialize(stream);
-            _blockLight.LinearSunlight = (int) formatter.Deserialize(stream);
-            _blockLight.Sunlight = (int) formatter.Deserialize(stream);
+            _blockLight.Light = (sbyte) formatter.Deserialize(stream);
+            _blockLight.LinearSunlight = (sbyte) formatter.Deserialize(stream);
+            _blockLight.Sunlight = (sbyte) formatter.Deserialize(stream);
             if (this is BlockAir) return;
             var r = (float) formatter.Deserialize(stream);
             var g = (float) formatter.Deserialize(stream);
@@ -160,7 +162,7 @@ namespace CMineNew.Map.BlockData{
         public void CalculateAllLight(bool expandSunlight) {
             if (_blockLightSource != null) {
                 BlockLightMethods.ExpandFrom(this, _blockLightSource,
-                    _blockLightSource.SourceLight - _blockLight.BlockLightPassReduction);
+                    (sbyte) (_blockLightSource.SourceLight - _staticData.BlockLightPassReduction));
             }
 
             //Block light
@@ -185,22 +187,22 @@ namespace CMineNew.Map.BlockData{
         }
 
         public void ExpandSunlight() {
-            var light = _blockLight.Sunlight - _blockLight.BlockLightPassReduction;
+            var light = (sbyte) (_blockLight.Sunlight - _staticData.BlockLightPassReduction);
             SunlightMethods.ExpandFrom(this, _position, light);
         }
 
-        public void UpdateLinearSunlight(int light) {
+        public void UpdateLinearSunlight(sbyte light) {
             var old = _blockLight.Sunlight;
             _blockLight.LinearSunlight = light;
 
             if (light >= old) {
                 _blockLight.Sunlight = light;
                 _blockLight.SunlightSource = _position;
-                SunlightMethods.ExpandFrom(this, _position, light - _blockLight.BlockLightPassReduction);
+                SunlightMethods.ExpandFrom(this, _position, (sbyte) (light - _staticData.BlockLightPassReduction));
             }
             else {
                 SunlightMethods.RemoveLightSource(_position, this);
-                SunlightMethods.ExpandFrom(this, _position, light - _blockLight.BlockLightPassReduction);
+                SunlightMethods.ExpandFrom(this, _position, (sbyte) (light - _staticData.BlockLightPassReduction));
             }
         }
 
@@ -223,8 +225,8 @@ namespace CMineNew.Map.BlockData{
             }
         }
 
-        public int CalculateLightFromNeighbours(out BlockFace face) {
-            var light = 0;
+        public sbyte CalculateLightFromNeighbours(out BlockFace face) {
+            sbyte light = 0;
             face = BlockFace.Down;
             for (var i = 0; i < _neighbours.Length; i++) {
                 var nFace = (BlockFace) i;
@@ -233,7 +235,7 @@ namespace CMineNew.Map.BlockData{
                 if (neighbour == null
                     || !CanLightBePassedFrom(nFace, neighbour)
                     || !neighbour.CanLightPassThrough(nOpposite)) continue;
-                var nLight = neighbour.BlockLight.Light - neighbour.BlockLight.BlockLightPassReduction;
+                var nLight = (sbyte) (neighbour.BlockLight.Light - neighbour._staticData.BlockLightPassReduction);
                 if (nLight <= light) continue;
                 light = nLight;
                 face = nFace;
@@ -242,8 +244,8 @@ namespace CMineNew.Map.BlockData{
             return light;
         }
 
-        public int CalculateSunlightFromNeighbours(out BlockFace face) {
-            var light = 0;
+        public sbyte CalculateSunlightFromNeighbours(out BlockFace face) {
+            sbyte light = 0;
             face = BlockFace.Down;
             for (var i = 0; i < _neighbours.Length; i++) {
                 var nFace = (BlockFace) i;
@@ -252,7 +254,7 @@ namespace CMineNew.Map.BlockData{
                 if (neighbour == null
                     || !CanLightBePassedFrom(nFace, neighbour)
                     || !neighbour.CanLightPassThrough(nOpposite)) continue;
-                var nLight = neighbour.BlockLight.Sunlight - neighbour.BlockLight.BlockLightPassReduction;
+                var nLight = (sbyte) (neighbour.BlockLight.Sunlight - neighbour._staticData.BlockLightPassReduction);
                 if (nLight <= light) continue;
                 light = nLight;
                 face = nFace;
@@ -266,9 +268,9 @@ namespace CMineNew.Map.BlockData{
             var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
             var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
             var upLight = sunlightData.GetLightFor(_position.Y + 1);
-            var linearSunlight = Math.Max(0, upLight - _blockLight.SunlightPassReduction);
-            _blockLight.LinearSunlight = Math.Max(_blockLight.LinearSunlight, linearSunlight);
-            sunlightData.SetBlock(_position.Y, _blockLight.SunlightPassReduction);
+            var linearSunlight = Math.Max(0, upLight - _staticData.SunlightPassReduction);
+            _blockLight.LinearSunlight = (sbyte) Math.Max(_blockLight.LinearSunlight, linearSunlight);
+            sunlightData.SetBlock(_position.Y, _staticData.SunlightPassReduction);
 
             //Calculates the initial sunlight.
 
@@ -289,7 +291,7 @@ namespace CMineNew.Map.BlockData{
                 _collidableFaces[i] = side || neighbour == null || neighbour.Passable;
             }
         }
-        
+
         public abstract Block Clone(Chunk chunk, Vector3i position);
 
         public abstract bool Collides(Vector3 current, Vector3 origin, Vector3 direction);

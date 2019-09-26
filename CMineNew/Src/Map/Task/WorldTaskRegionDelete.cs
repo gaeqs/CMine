@@ -1,3 +1,6 @@
+using System;
+using CMineNew.Geometry;
+
 namespace CMineNew.Map.Task{
     public class WorldTaskRegionDelete : WorldTask{
         private ChunkRegion _region;
@@ -7,7 +10,16 @@ namespace CMineNew.Map.Task{
         }
 
         public override void Run() {
-            _region.DeleteIfEmpty();
+            if (_region.DeleteIfEmpty()) {
+                if (_region.World.ChunkRegions.TryRemove(_region.Position, out _)) {
+                    Console.WriteLine("Region " + _region.Position + " deleted");
+                }
+
+                if (_region.World.Regions2d.TryRemove(new Vector2i(_region.Position.X, _region.Position.Z),
+                    out var region2d)) {
+                    Console.WriteLine("Region2d " + region2d.Position + " deleted");
+                }
+            }
         }
     }
 }

@@ -4,12 +4,9 @@ namespace CMineNew.Map.BlockData{
     public class BlockLight{
         private BlockLightSource _source;
         private Vector3i _sunlightSource;
-        private int _blockLight, _linearSunlight, _sunlight;
-        private readonly int _blockLightPassReduction, _sunlightPassReduction;
+        private sbyte _blockLight, _linearSunlight, _sunlight;
 
-        public BlockLight(int blockLightPassReduction, int sunlightPassReduction) {
-            _blockLightPassReduction = blockLightPassReduction;
-            _sunlightPassReduction = sunlightPassReduction;
+        public BlockLight() {
             _blockLight = 0;
             _linearSunlight = 0;
         }
@@ -25,23 +22,19 @@ namespace CMineNew.Map.BlockData{
             set => _sunlightSource = value;
         }
 
-        public int Light {
+        public sbyte Light {
             get => _blockLight;
             set => _blockLight = value;
         }
 
-        public int LinearSunlight {
+        public sbyte LinearSunlight {
             get => _linearSunlight;
             set => _linearSunlight = value;
         }
 
-        public int Sunlight {
+        public sbyte Sunlight {
             get => _sunlight;
             set => _sunlight = value;
         }
-
-        public int BlockLightPassReduction => _blockLightPassReduction;
-
-        public int SunlightPassReduction => _sunlightPassReduction;
     }
 }

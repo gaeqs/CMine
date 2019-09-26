@@ -30,7 +30,6 @@ namespace CMineNew.Map{
 
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
-        private readonly AsyncChunkTrashCan _asyncChunkTrashCan;
         private readonly WorldTaskManager _worldTaskManager;
         private readonly UnloadedChunkGenerationManager _unloadedChunkGenerationManager;
 
@@ -76,8 +75,6 @@ namespace CMineNew.Map{
 
             _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
             _unloadedChunkGenerationManager.Load();
-            _asyncChunkTrashCan = new AsyncChunkTrashCan(this);
-            _asyncChunkTrashCan.StartThread();
             _asyncChunkGenerator = new AsyncChunkGenerator(this);
             _asyncChunkGenerator.StartThread();
 
@@ -93,8 +90,6 @@ namespace CMineNew.Map{
         public WorldGenerator WorldGenerator => _worldGenerator;
 
         public AsyncChunkGenerator AsyncChunkGenerator => _asyncChunkGenerator;
-
-        public AsyncChunkTrashCan AsyncChunkTrashCan => _asyncChunkTrashCan;
 
         public WorldTaskManager WorldTaskManager => _worldTaskManager;
 
@@ -369,7 +364,6 @@ namespace CMineNew.Map{
 
         public override void Close() {
             _asyncChunkGenerator.Kill();
-            _asyncChunkTrashCan.Kill();
             foreach (var region in _chunkRegions.Values) {
                 region.Delete();
             }

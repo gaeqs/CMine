@@ -23,17 +23,18 @@ namespace CMineNew.Test{
             _loops++;
             if (_ticks < CMine.TicksPerSecond) return;
 
-            var memory = GC.GetTotalMemory(false) * 100 / MaxMemory;
             var chunks = 0;
+            var regions = 0;
             if (CMine.Window.Room is World world) {
                 chunks = world.AsyncChunkGenerator.ChunksToGenerateSize;
+                regions = world.ChunkRegions.Count;
             }
 
             var chunkVelocity = _lastChunks - chunks;
             _lastChunks = chunks;
 
 
-            Text = "(" + memory + "%) (" + chunks + ") [ " + chunkVelocity + "] " +
+            Text = "(" + regions + ") (" + chunks + ") [ " + chunkVelocity + "] " +
                    "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} " + _loops;
             _ticks = 0;
             _loops = 0;

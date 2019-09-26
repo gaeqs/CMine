@@ -83,7 +83,6 @@ namespace CMineNew.Map{
             const int chunkRadius = CMine.ChunkRadius;
             const int chunkRadiusSquared = chunkRadius * chunkRadius;
             var regions = _world.ChunkRegions;
-            var trashQueue = _world.AsyncChunkTrashCan.Queue;
             foreach (var region in regions.Values) {
                 var chunks = region.Chunks;
                 lock (region) {
@@ -95,7 +94,7 @@ namespace CMineNew.Map{
                                 if ((chunk.Position - _playerPosition).LengthSquared() <= chunkRadiusSquared)
                                     continue;
                                 chunks[x, y, z] = null;
-                                trashQueue.Enqueue(chunk);
+                                chunk.RemoveAllBlockFacesFromRender();
                             }
                         }
                     }

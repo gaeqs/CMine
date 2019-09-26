@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
@@ -9,7 +10,6 @@ using OpenTK.Graphics.OpenGL;
 namespace CMineNew.Render.Mapper{
     public class BlockVboMapper : VboMapper<Block>{
         private readonly ChunkRegion _chunkRegion;
-        private readonly Vector3i _regionWorldPosition;
         private VertexBufferObject _vbo;
         private VertexArrayObject _vao;
 
@@ -27,13 +27,12 @@ namespace CMineNew.Render.Mapper{
 
 
         private readonly ConcurrentQueue<VboMapperTask<Block>> _tasks;
-        private readonly int[,,] _offsets;
+        private readonly Dictionary<Vector3i, int> _offsets;
 
         public BlockVboMapper(ChunkRegion chunkRegion, VertexBufferObject vbo, VertexArrayObject vao, int elementSize,
             int maximumAmount,
             OnResize onResize, BufferTarget bufferTarget = BufferTarget.ArrayBuffer) {
             _chunkRegion = chunkRegion;
-            _regionWorldPosition = chunkRegion.Position << World2dRegion.WorldPositionShift;
             _vbo = vbo;
             _vao = vao;
 
@@ -51,14 +50,7 @@ namespace CMineNew.Render.Mapper{
             _requiresResize = false;
 
             _tasks = new ConcurrentQueue<VboMapperTask<Block>>();
-            _offsets = new int[ChunkRegion.RegionLength, ChunkRegion.RegionLength, ChunkRegion.RegionLength];
-            for (var x = 0; x < ChunkRegion.RegionLength; x++) {
-                for (var y = 0; y < ChunkRegion.RegionLength; y++) {
-                    for (var z = 0; z < ChunkRegion.RegionLength; z++) {
-                        _offsets[x, y, z] = -1;
-                    }
-                }
-            }
+            _offsets = new Dictionary<Vector3i, int>();
         }
 
         public ChunkRegion ChunkRegion => _chunkRegion;
@@ -86,8 +78,7 @@ namespace CMineNew.Render.Mapper{
         }
 
         public int GetPointer(Block key) {
-            var pos = key.Position - _regionWorldPosition;
-            return _offsets[pos.X, pos.Y, pos.Z];
+            return _offsets.TryGetValue(key.Position, out var pointer) ? pointer : -1;
         }
 
 
@@ -126,8 +117,7 @@ namespace CMineNew.Render.Mapper{
         }
 
         public bool ContainsKey(Block key) {
-            var pos = key.Position - _regionWorldPosition;
-            return _offsets[pos.X, pos.Y, pos.Z] != -1;
+            return _offsets.ContainsKey(key.Position);
         }
 
         private void ExecuteTask(VboMapperTask<Block> task, bool fromRender) {
@@ -153,56 +143,38 @@ namespace CMineNew.Render.Mapper{
         }
 
         private void AddToMap(Block key, float[] data) {
-            var pos = key.Position - _regionWorldPosition;
-            var point = _offsets[pos.X, pos.Y, pos.Z];
-            if (point != -1) {
+            if (_offsets.TryGetValue(key.Position, out var point)) {
                 _vbo.AddToMap(data, _elementSize * point);
                 return;
             }
 
             _vbo.AddToMap(data, _elementSize * _amount);
 
-            _offsets[pos.X, pos.Y, pos.Z] = _amount;
+            _offsets[key.Position] = _amount;
             _amount++;
         }
 
         private void EditMap(Block key, float[] data, int offset) {
-            var pos = key.Position - _regionWorldPosition;
-            var point = _offsets[pos.X, pos.Y, pos.Z];
-            if (point == -1) return;
+            if (!_offsets.TryGetValue(key.Position, out var point)) return;
             _vbo.AddToMap(data, _elementSize * point + offset);
         }
 
         private void RemoveFromMap(Block key) {
-            var pos = key.Position - _regionWorldPosition;
-            var point = _offsets[pos.X, pos.Y, pos.Z];
-            if (point == -1) return;
+            if (!_offsets.TryGetValue(key.Position, out var point)) return;
 
             if (point == _amount - 1) {
-                _offsets[pos.X, pos.Y, pos.Z] = -1;
+                _offsets[key.Position] = -1;
                 _amount--;
                 return;
             }
 
             _vbo.MoveMapDataFloat(_elementSize * (_amount - 1), _elementSize * point, _elementSize);
             var lastKey = new Vector3i(_vbo.GetDataFromMap(_elementSize * (_amount - 1), 3), true);
-            lastKey -= _regionWorldPosition;
-            if (IsInsideArray(lastKey)) {
-                _offsets[lastKey.X, lastKey.Y, lastKey.Z] = point;
-            }
-            else {
-                Console.WriteLine("ERROR! LAST KEY IS NOT ON MAP!!");
-                Console.WriteLine(lastKey + " -> " + IsInsideArray(lastKey));
-            }
+            _offsets[lastKey] = point;
 
-            _offsets[pos.X, pos.Y, pos.Z] = -1;
+
+            _offsets.Remove(key.Position);
             _amount--;
-        }
-
-        private bool IsInsideArray(Vector3i vec) {
-            return vec.X >= 0 && vec.Y >= 0 && vec.Z >= 0 &&
-                   vec.X < ChunkRegion.RegionLength && vec.Y < ChunkRegion.RegionLength &&
-                   vec.Z < ChunkRegion.RegionLength;
         }
 
         private void ResizeBuffer() {

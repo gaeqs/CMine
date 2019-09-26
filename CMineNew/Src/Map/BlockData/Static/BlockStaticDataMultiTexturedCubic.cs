@@ -4,8 +4,8 @@ namespace CMineNew.Map.BlockData.Static{
     public class BlockStaticDataMultiTexturedCubic : BlockStaticDataCubic{
         private readonly Area2d[] _textureAreas;
 
-        public BlockStaticDataMultiTexturedCubic(string id, bool passable, bool lightSource, int lightSourceLight,
-            int blockLightPassReduction, int sunlightPassReduction, string[] texture)
+        public BlockStaticDataMultiTexturedCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, string[] texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureAreas = new Area2d[texture.Length];
             var areas = CMine.Textures.Areas;
@@ -14,8 +14,8 @@ namespace CMineNew.Map.BlockData.Static{
             }
         }
 
-        public BlockStaticDataMultiTexturedCubic(string id, bool passable, bool lightSource, int lightSourceLight,
-            int blockLightPassReduction, int sunlightPassReduction, Area2d[] texture)
+        public BlockStaticDataMultiTexturedCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, Area2d[] texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureAreas = texture;
         }

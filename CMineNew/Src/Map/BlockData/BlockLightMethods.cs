@@ -5,7 +5,7 @@ using CMineNew.DataStructure.Queue;
 
 namespace CMineNew.Map.BlockData{
     public static class BlockLightMethods{
-        public static void ExpandFrom(Block from, BlockLightSource source, int light) {
+        public static void ExpandFrom(Block from, BlockLightSource source, sbyte light) {
             var queue = new Queue<Block>();
             var neighbours = from.Neighbours;
             for (var i = 0; i < neighbours.Length; i++) {
@@ -19,7 +19,7 @@ namespace CMineNew.Map.BlockData{
             UpdateRender(queue);
         }
 
-        public static void Expand(Block to, BlockLightSource source, int light, Block from, BlockFace fromFace) {
+        public static void Expand(Block to, BlockLightSource source, sbyte light, Block from, BlockFace fromFace) {
             var queue = new Queue<Block>();
             Expand(queue, to, source, light, from, fromFace);
             UpdateRender(queue);
@@ -50,7 +50,7 @@ namespace CMineNew.Map.BlockData{
         }
 
         private static void Expand(Queue<Block> updatedBlocks, Block to, BlockLightSource source,
-            int light, Block from, BlockFace fromFace) {
+            sbyte light, Block from, BlockFace fromFace) {
             if (to == null || !to.CanLightBePassedFrom(fromFace, from)) return;
             var blockLight = to.BlockLight;
             if (blockLight.Light >= light) return;
@@ -58,7 +58,7 @@ namespace CMineNew.Map.BlockData{
             blockLight.Source = source;
             updatedBlocks?.Enqueue(to);
 
-            var toLight = light - blockLight.BlockLightPassReduction;
+            var toLight = (sbyte) (light - to.StaticData.BlockLightPassReduction);
             var neighbours = to.Neighbours;
 
             for (var i = 0; i < neighbours.Length; i++) {
@@ -73,6 +73,7 @@ namespace CMineNew.Map.BlockData{
                         continue;
                     }
                 }
+
                 Expand(updatedBlocks, neighbour, source, toLight, to, opposite);
             }
         }
@@ -97,6 +98,7 @@ namespace CMineNew.Map.BlockData{
                         continue;
                     }
                 }
+
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
                 if (oldLight < neighbour.BlockLight.Light || !Equals(neighbour.BlockLight.Source, source)) continue;
                 RemoveLight(removedBlocksList, neighbour, source);
@@ -116,7 +118,7 @@ namespace CMineNew.Map.BlockData{
         }
 
         public static void ExpandNearbyLights(ELinkedList<Block> list, Queue<Block> queue) {
-            if(list == null) return;
+            if (list == null) return;
             var enumerator = (ELinkedList<Block>.ELinkedListEnumerator<Block>) list.GetEnumerator();
             enumerator.Reset();
             while (enumerator.MoveNext()) {

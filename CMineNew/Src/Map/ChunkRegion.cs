@@ -90,10 +90,11 @@ namespace CMineNew.Map{
             return true;
         }
 
-        public void DeleteIfEmpty() {
-            if (_deleted) return;
-            if (_chunks.Cast<Chunk>().Any(chunk => chunk != null)) return;
+        public bool DeleteIfEmpty() {
+            if (_deleted) return false;
+            if (_chunks.Cast<Chunk>().Any(chunk => chunk != null)) return false;
             Delete();
+            return true;
         }
 
         public void LoadIfDeleted() {

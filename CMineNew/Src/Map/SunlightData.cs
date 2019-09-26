@@ -27,10 +27,10 @@ namespace CMineNew.Map{
             }
         }
 
-        public int GetLightFor(int y) {
+        public sbyte GetLightFor(int y) {
             for (var i = _lightMinHeight.Length - 1; i >= 0; i--) {
                 var lightY = _lightMinHeight[i];
-                if (lightY < y) return i + 1;
+                if (lightY < y) return (sbyte) (i + 1);
             }
 
             return 0;
@@ -140,8 +140,7 @@ namespace CMineNew.Map{
                         if (lastLight <= newReduction) return list;
                         var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
                         if (block.Position.Y >= y) continue;
-                        var bLight = block.BlockLight;
-                        var reduction = bLight.SunlightPassReduction;
+                        var reduction = block.StaticData.SunlightPassReduction;
 
                         if (reduction > 0) {
                             var nLight = Math.Max(-1, lastLight - reduction);
@@ -152,7 +151,7 @@ namespace CMineNew.Map{
                             lastLight = nLight;
                         }
 
-                        block.UpdateLinearSunlight(lastLight + 1);
+                        block.UpdateLinearSunlight((sbyte) (lastLight + 1));
                         list.Add(block);
                     }
                 }
