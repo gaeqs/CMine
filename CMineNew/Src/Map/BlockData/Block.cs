@@ -265,7 +265,6 @@ namespace CMineNew.Map.BlockData{
                 light = nLight;
                 face = nFace;
             }
-
             return light;
         }
 

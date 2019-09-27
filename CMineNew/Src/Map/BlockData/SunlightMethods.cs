@@ -84,6 +84,7 @@ namespace CMineNew.Map.BlockData{
         private static void RemoveLight(ELinkedList<Block> removedBlocksList, Block block, Vector3i source) {
             var light = block.BlockLight;
             if (!source.Equals(light.SunlightSource)) return;
+
             var oldLight = Equals(block.Position, source) ? Block.MaxBlockLight : light.Sunlight;
             light.Sunlight = light.LinearSunlight;
             light.SunlightSource = block.Position;
@@ -114,7 +115,7 @@ namespace CMineNew.Map.BlockData{
                 updateQueue.Enqueue(elem);
 
                 if (elem == null ||
-                    elem.NeighbourReferences.All(n => n.TryGetTarget(out var v) && v.BlockLight.Source == null)) {
+                    elem.NeighbourReferences.All(n => !n.TryGetTarget(out var v) || v.BlockLight.Sunlight <= 0)) {
                     enumerator.Remove();
                 }
             }

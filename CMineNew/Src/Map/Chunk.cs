@@ -93,6 +93,7 @@ namespace CMineNew.Map{
                 if (block != null) {
                     block.Neighbours = neighbours;
                 }
+
                 for (var i = 0; i < references.Length; i++) {
                     neighbours[i]?.OnNeighbourBlockChange0(old, block,
                         BlockFaceMethods.GetOpposite((BlockFace) i));
@@ -154,29 +155,29 @@ namespace CMineNew.Map{
                 block.OnPlace0(null, triggerWorldUpdates, expandSunlight, addToRender);
                 var references = block.NeighbourReferences;
                 if (x == 0) {
-                    if(!references[(int) BlockFace.West].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.West].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.East);
                 }
                 else if (x == 15) {
-                    if(!references[(int) BlockFace.East].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.East].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.West);
                 }
 
                 if (y == 0) {
-                    if(!references[(int) BlockFace.Down].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.Down].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.Up);
                 }
                 else if (y == 15) {
-                    if(!references[(int) BlockFace.Up].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.Up].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.Down);
                 }
 
                 if (z == 0) {
-                    if(!references[(int) BlockFace.North].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.North].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.South);
                 }
                 else if (z == 15) {
-                    if(!references[(int) BlockFace.South].TryGetTarget(out var target)) return;
+                    if (!references[(int) BlockFace.South].TryGetTarget(out var target)) return;
                     target.OnNeighbourBlockChange0(null, block, BlockFace.North);
                 }
             });

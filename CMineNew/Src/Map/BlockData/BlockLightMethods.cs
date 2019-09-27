@@ -111,7 +111,7 @@ namespace CMineNew.Map.BlockData{
                 updateQueue.Enqueue(elem);
 
                 if (elem == null ||
-                    elem.NeighbourReferences.All(n => n.TryGetTarget(out var v) && v.BlockLight.Source == null)) {
+                    elem.NeighbourReferences.All(n => !n.TryGetTarget(out var v) || v.BlockLight.Source == null)) {
                     enumerator.Remove();
                 }
             }
