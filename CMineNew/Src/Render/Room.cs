@@ -20,7 +20,8 @@ namespace CMineNew.Render{
             set => _background = value;
         }
 
-        public virtual void Tick(long delay) {
+        public virtual void 
+            Tick(long delay) {
         }
 
         public virtual void Draw() {

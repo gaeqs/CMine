@@ -93,8 +93,13 @@ namespace CMineNew.Render{
             if (_room != null) {
                 _stopwatch.Restart();
                 _room.Tick(_delay);
+                _stopwatch.Stop();
+                //Green
+                LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
+                _stopwatch.Restart();
                 _room.Draw();
                 _stopwatch.Stop();
+                //Red
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
                 LoopDelayViewer.Draw();
             }
