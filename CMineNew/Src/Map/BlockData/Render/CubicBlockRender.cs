@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class CubicBlockRender : BlockRender{
-        private const int MaxFaces = 8000;
+        private const int MaxFaces = 6000;
         private const int InstanceDataLength = 3 + 4 + 4 + 1 + 1;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
@@ -57,6 +57,8 @@ namespace CMineNew.Map.BlockData.Render{
         public override void Draw() {
             CheckVbos();
             _shader.Use();
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
                 var vao = _vaos[(int) face];
