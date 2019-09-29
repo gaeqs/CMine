@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Object{
@@ -87,12 +88,50 @@ namespace CMineNew.Render.Object{
         }
 
         public void SetSubData(BufferTarget target, float[] data, int offset) {
-            GL.BufferSubData(target, (IntPtr) (offset * sizeof(float)), data.Length * sizeof(float), data);
+            GL.BufferSubData(target, (IntPtr) offset, data.Length * sizeof(float), data);
+        }
+
+        public void SetSubData(BufferTarget target, float data, int offset) {
+            GL.BufferSubData(target, (IntPtr) offset, sizeof(float), ref data);
+        }
+
+        public void SetSubData(BufferTarget target, int data, int offset) {
+            GL.BufferSubData(target, (IntPtr) offset, sizeof(int), ref data);
+        }
+
+        public void SetSubData(BufferTarget target, Vector2 data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Vector2), ref data);
+            }
+        }
+
+        public void SetSubData(BufferTarget target, Vector3 data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Vector3), ref data);
+            }
+        }
+
+        public void SetSubData(BufferTarget target, Vector4 data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Vector4), ref data);
+            }
+        }
+
+        public void SetSubData(BufferTarget target, Matrix3 data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Matrix3), ref data);
+            }
+        }
+        
+        public void SetSubData(BufferTarget target, Matrix4 data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Matrix4), ref data);
+            }
         }
 
         public float[] GetSubData(BufferTarget target, int offset, int length) {
             float[] array = new float[length];
-            GL.GetBufferSubData(target, (IntPtr) (offset * sizeof(float)), length * sizeof(float), array);
+            GL.GetBufferSubData(target, (IntPtr) offset, length, array);
             return array;
         }
 
@@ -109,16 +148,21 @@ namespace CMineNew.Render.Object{
             if (_mapping) return;
             Bind(target);
             unsafe {
-                //GL.GetError();
-                _pointer = GL.MapBuffer(target, BufferAccess.ReadWrite).ToPointer();
-                //var error = GL.GetError();
-                //if (error != ErrorCode.NoError) {
-                //    Console.WriteLine("---  VBO MAPPING ERROR --- ");
-                //    Console.WriteLine("VBO: " + _id);
-                //    Console.WriteLine(error);
-                //    Console.WriteLine("---------------------------");
-                //    throw new System.Exception("Error while mapping VBO.");
-                //}
+                GL.GetError();
+                const BufferAccessMask access = BufferAccessMask.MapWriteBit | BufferAccessMask.MapUnsynchronizedBit;
+                _pointer = GL.MapBufferRange(target, IntPtr.Zero, _size, access).ToPointer();
+                var error = GL.GetError();
+                if (error != ErrorCode.NoError) {
+                    Console.WriteLine("---  VBO MAPPING ERROR --- ");
+                    Console.WriteLine("VBO: " + _id);
+                    Console.WriteLine("Offset: " + IntPtr.Zero);
+                    Console.WriteLine("Size: " + _size);
+                    GL.GetBufferParameter(target, BufferParameterName.BufferSize, out int bs);
+                    Console.WriteLine("GLBufferSize: " + bs);
+                    Console.WriteLine(error);
+                    Console.WriteLine("---------------------------");
+                    throw new System.Exception("Error while mapping VBO.");
+                }
             }
 
             _mapping = true;

@@ -65,17 +65,6 @@ namespace CMineNew.Map.BlockData.Render{
             var camera = _chunkRegion.World.Camera;
             CheckVbos();
             _shader.Use();
-            _shader.SetUMatrix("viewProjection", camera.ViewProjection);
-            _shader.SetUVector("cameraPosition", camera.Position);
-            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
-
-            const int min = (CMine.ChunkRadius - 2) << 4;
-            const int max = (CMine.ChunkRadius - 1) << 4;
-            _shader.SetUFloat("viewDistanceSquared", min * min);
-            _shader.SetUFloat("viewDistanceOffsetSquared", max * max);
-
-            _shader.SetUFloat("waterShader", _chunkRegion.World.Player.EyesOnWater ? 1 : 0);
-            
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
 

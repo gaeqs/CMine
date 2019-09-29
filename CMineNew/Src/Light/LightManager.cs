@@ -197,10 +197,10 @@ namespace CMineNew.Light{
             const int structBytes = structSize * 4;
             _pointVao = WorldGBuffer.GenerateQuadVao();
             var uniformBuffer = new VertexBufferObject();
-            uniformBuffer.BindBase(BufferRangeTarget.ShaderStorageBuffer, 0);
+            uniformBuffer.BindBase(BufferRangeTarget.ShaderStorageBuffer, 1);
             uniformBuffer.SetData(BufferTarget.ShaderStorageBuffer, structBytes * 2000, BufferUsageHint.DynamicDraw);
             var loc = GL.GetProgramResourceIndex(_pointShader.Id, ProgramInterface.ShaderStorageBlock, "LightsBlock");
-            GL.ShaderStorageBlockBinding(_pointShader.Id, loc, 0);
+            GL.ShaderStorageBlockBinding(_pointShader.Id, loc, 1);
             _pointMapper = new GenericVboMapper<PointLight>(uniformBuffer, _pointVao, structSize, 2000,
                 (o, buffer, newBuffer) => { }, BufferTarget.ShaderStorageBuffer);
         }

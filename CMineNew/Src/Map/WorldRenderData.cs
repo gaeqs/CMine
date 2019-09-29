@@ -10,12 +10,14 @@ namespace CMineNew.Map{
         private readonly PhysicCamera _camera;
         private readonly WorldGBuffer _gBuffer;
         private readonly SkyBox _skyBox;
+        private readonly WorldShaderData _shaderData;
 
         public WorldRenderData() {
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
             _gBuffer = new WorldGBuffer(CMine.Window);
             _skyBox = new SkyBox(Textures.sky_box_right, Textures.sky_box_left, Textures.sky_box_top,
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
+            _shaderData = new WorldShaderData();
 
             var vec = new Vector3(0.5f, 0.5f, 0.5f);
             //_lightManager.AddDirectionalLight(new DirectionalLight(new Vector3(-1, -1, 0),
@@ -26,6 +28,8 @@ namespace CMineNew.Map{
 
         public WorldGBuffer GBuffer => _gBuffer;
         public SkyBox SkyBox => _skyBox;
+
+        public WorldShaderData ShaderData => _shaderData;
 
         public void BindGBuffer() {
             _gBuffer.Bind();
@@ -55,6 +59,13 @@ namespace CMineNew.Map{
             _camera.ToPosition = player.Position + new Vector3(0, player.EyesHeight, 0);
             _camera.ToRotation = player.HeadRotation;
             _camera.Tick(delay);
+        }
+
+        public void SetShaderData(Vector3 sunlightDirection, bool waterShader) {
+            const int min = (CMine.ChunkRadius - 2) << 4;
+            const int max = (CMine.ChunkRadius - 1) << 4;
+            _shaderData.SetData(_camera.ViewProjection, _camera.Position,
+                sunlightDirection, min * min, max * max, waterShader);
         }
     }
 }

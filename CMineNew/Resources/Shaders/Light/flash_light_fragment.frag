@@ -1,4 +1,4 @@
-#version 400 core
+#version 440 core
 
 
 in vec2 fragTexCoords;

@@ -196,6 +196,7 @@
     <Compile Include="Src\Map\World2dRegion.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\Map\WorldRenderData.cs" />
+    <Compile Include="Src\Map\WorldShaderData.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
     <Compile Include="Src\RayTrace\Pointer.cs" />
     <Compile Include="Src\Render\Camera.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="Src\Render\Object\Shader.cs" />
     <Compile Include="Src\Render\Object\ShaderManager.cs" />
     <Compile Include="Src\Render\Object\ShaderProgram.cs" />
+    <Compile Include="Src\Render\Object\UniformBufferObject.cs" />
     <Compile Include="Src\Render\Object\VertexBufferObject.cs" />
     <Compile Include="Src\Render\Object\Vertex.cs" />
     <Compile Include="Src\Render\Object\VertexArrayObject.cs" />

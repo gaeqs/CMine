@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using CMineNew.Render.Object;
 using OpenTK.Graphics.OpenGL;
 
@@ -20,6 +19,7 @@ namespace CMineNew.Render.Mapper{
 
         private int _updates;
         private volatile bool _onBackground, _requiresResize;
+        private int _updateCount;
 
 
         private readonly ConcurrentQueue<VboMapperTask<TKey>> _tasks;
@@ -97,6 +97,9 @@ namespace CMineNew.Render.Mapper{
         }
 
         public void FlushQueue() {
+            _updateCount++;
+            if (_updateCount < 100) return;
+            _updateCount = 0;
             _updates = 0;
             if (_tasks.IsEmpty) {
                 if (!_onBackground) {

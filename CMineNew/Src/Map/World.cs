@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using CMineNew.DataStructure.List;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
@@ -35,7 +34,6 @@ namespace CMineNew.Map{
 
         private readonly ConcurrentDictionary<Vector3i, ChunkRegion> _chunkRegions;
         private readonly ConcurrentDictionary<Vector2i, World2dRegion> _regions2d;
-        private readonly ELinkedList<ChunkRegion> _tickRegions;
 
         private readonly HashSet<Entity> _entities;
         private readonly Player _player;
@@ -53,7 +51,6 @@ namespace CMineNew.Map{
 
             _chunkRegions = new ConcurrentDictionary<Vector3i, ChunkRegion>();
             _regions2d = new ConcurrentDictionary<Vector2i, World2dRegion>();
-            _tickRegions = new ELinkedList<ChunkRegion>();
 
             _staticTexts = new Collection<StaticText>();
             _delayViewer = new DelayViewer(ttf);
@@ -254,6 +251,10 @@ namespace CMineNew.Map{
         }
 
         public override void Draw() {
+            //Set shader data.
+
+            _renderData.SetShaderData(new Vector3(-1, -1, -1).Normalized(), _player.EyesOnWater);
+
             //Bind GBuffer and draw background.
             _renderData.BindGBuffer();
             GL.ClearColor(0, 0, 0, 0);
@@ -271,9 +272,6 @@ namespace CMineNew.Map{
             foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
                 if (_renderData.Camera.IsVisible(region)) {
                     region.Render.Draw();
-                }
-                else {
-                    region.Render.FlushInBackground();
                 }
             }
 

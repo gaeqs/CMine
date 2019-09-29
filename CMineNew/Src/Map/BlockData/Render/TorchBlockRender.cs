@@ -113,8 +113,6 @@ namespace CMineNew.Map.BlockData.Render{
         public override void Draw() {
             CheckVbo();
             _shader.Use();
-            _shader.SetUMatrix("viewProjection", _chunkRegion.World.Camera.ViewProjection);
-            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
             _vao.Bind();
             _mapper.OnBackground = false;
             _mapper.FlushQueue();

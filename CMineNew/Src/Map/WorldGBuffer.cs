@@ -76,15 +76,9 @@ namespace CMineNew.Map{
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _quadVao.Bind();
             UsePostRenderShader(waterShader);
-            _postRenderShader.SetUVector("cameraPosition", camera.Position);
             _postRenderShader.SetUMatrix("invertedViewProjection", camera.InvertedViewProjection);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
             _postRenderShader.SetUFloat("ambientStrength", ambientStrength);
-
-            const int min = (CMine.ChunkRadius - 2) << 4;
-            const int max = (CMine.ChunkRadius - 1) << 4;
-            _postRenderShader.SetUFloat("viewDistanceSquared", min * min);
-            _postRenderShader.SetUFloat("viewDistanceOffsetSquared", max * max);
 
 
             GL.ActiveTexture(TextureUnit.Texture0);

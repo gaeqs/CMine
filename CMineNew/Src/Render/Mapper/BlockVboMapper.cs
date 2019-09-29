@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
@@ -28,6 +29,7 @@ namespace CMineNew.Render.Mapper{
 
         private readonly ConcurrentQueue<VboMapperTask<Block>> _tasks;
         private readonly int[,,] _offsets;
+        private readonly Dictionary<int, Vector3i> _keys;
 
         public BlockVboMapper(ChunkRegion chunkRegion, VertexBufferObject vbo, VertexArrayObject vao, int elementSize,
             int maximumAmount,
@@ -52,6 +54,7 @@ namespace CMineNew.Render.Mapper{
 
             _tasks = new ConcurrentQueue<VboMapperTask<Block>>();
             _offsets = new int[ChunkRegion.RegionLength, ChunkRegion.RegionLength, ChunkRegion.RegionLength];
+            _keys = new Dictionary<int, Vector3i>();
             for (var x = 0; x < ChunkRegion.RegionLength; x++) {
                 for (var y = 0; y < ChunkRegion.RegionLength; y++) {
                     for (var z = 0; z < ChunkRegion.RegionLength; z++) {
@@ -163,6 +166,7 @@ namespace CMineNew.Render.Mapper{
             _vbo.AddToMap(data, _elementSize * _amount);
 
             _offsets[pos.X, pos.Y, pos.Z] = _amount;
+            _keys[_amount] = pos;
             _amount++;
         }
 
@@ -180,13 +184,13 @@ namespace CMineNew.Render.Mapper{
 
             if (point == _amount - 1) {
                 _offsets[pos.X, pos.Y, pos.Z] = -1;
+                _keys.Remove(_amount - 1);
                 _amount--;
                 return;
             }
 
             _vbo.MoveMapDataFloat(_elementSize * (_amount - 1), _elementSize * point, _elementSize);
-            var lastKey = new Vector3i(_vbo.GetDataFromMap(_elementSize * (_amount - 1), 3), true);
-            lastKey -= _regionWorldPosition;
+            var lastKey = _keys[_amount - 1];
             if (IsInsideArray(lastKey)) {
                 _offsets[lastKey.X, lastKey.Y, lastKey.Z] = point;
             }
@@ -196,6 +200,8 @@ namespace CMineNew.Render.Mapper{
             }
 
             _offsets[pos.X, pos.Y, pos.Z] = -1;
+            _keys[point] = lastKey;
+            _keys.Remove(_amount - 1);
             _amount--;
         }
 

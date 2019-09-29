@@ -20,7 +20,6 @@ F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csprojAssemblyReference.ca
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.Resources.Shaders.Shaders.resources
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.Resources.Textures.Textures.resources
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csproj.GenerateResource.cache
-F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csproj.CoreCompileInputs.cache
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.csproj.CopyComplete
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.exe
 F:\RiderProjects\CMineNew\CMineNew\obj\Debug\CMineNew.pdb

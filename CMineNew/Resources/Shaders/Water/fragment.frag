@@ -1,4 +1,4 @@
-#version 400 core
+#version 440 core
 
 in vec3 fragPos, fragNormal;
 in vec2 fragTexCoords;
@@ -7,10 +7,18 @@ in float fragLight;
 
 out vec4 FragColor;
 
-uniform vec3 cameraPosition;
-uniform sampler2D sampler;
-uniform float viewDistanceSquared, viewDistanceOffsetSquared, waterShader;
+layout (std140, binding = 0) uniform Uniforms {
 
+    mat4 viewProjection;
+    vec3 cameraPosition;
+    vec3 sunlightDirection;
+    float viewDistanceSquared;
+    float viewDistanceOffsetSquared;
+    bool waterShader;
+
+};
+
+uniform sampler2D sampler;
 uniform samplerCube skyBox;
 
 void main() {
@@ -25,7 +33,7 @@ void main() {
     
     vec3 distance = fragPos - cameraPosition;
     float lengthSquared = dot(distance, distance);
-    if(waterShader > 0.5) {
+    if(waterShader) {
         float length = 1 - lengthSquared / 1000;
         FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
     }

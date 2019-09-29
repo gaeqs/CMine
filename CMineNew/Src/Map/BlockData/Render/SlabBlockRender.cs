@@ -60,8 +60,6 @@ namespace CMineNew.Map.BlockData.Render{
         public override void Draw() {
             CheckVbos();
             _shader.Use();
-            _shader.SetUMatrix("viewProjection", _chunkRegion.World.Camera.ViewProjection);
-            _shader.SetUVector("sunlightDirection", new Vector3(-1, -1, -1).Normalized());
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
                 var vao = _vaos[(int) face];

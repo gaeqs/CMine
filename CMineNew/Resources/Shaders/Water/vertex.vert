@@ -1,4 +1,4 @@
-#version 400 core
+#version 440 core
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -15,8 +15,16 @@ out vec2 fragTexCoords;
 out vec4 fragColorFilter;
 out float fragLight;
 
-uniform mat4 viewProjection;
-uniform vec3 sunlightDirection;
+layout (std140, binding = 0) uniform Uniforms {
+
+    mat4 viewProjection;
+    vec3 cameraPosition;
+    vec3 sunlightDirection;
+    float viewDistanceSquared;
+    float viewDistanceOffsetSquared;
+    bool waterShader;
+
+};
 
 float getWaterLevel () {
     if (position.x < 0.5 && position.z < 0.5) {

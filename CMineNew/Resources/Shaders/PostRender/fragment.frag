@@ -1,4 +1,4 @@
-#version 400 core
+#version 440 core
 
 in vec2 fragPos, fragTexCoords;
 out vec4 FragColor;
@@ -9,11 +9,20 @@ uniform sampler2D gNormal;
 uniform sampler2D gBrightness;
 uniform samplerCube skyBox;
 
-uniform vec3 cameraPosition;
+
+layout (std140, binding = 0) uniform Uniforms {
+
+    mat4 viewProjection;
+    vec3 cameraPosition;
+    vec3 sunlightDirection;
+    float viewDistanceSquared;
+    float viewDistanceOffsetSquared;
+    bool waterShader;
+
+};
+
 uniform float ambientStrength;
 uniform vec3 ambientColor;
-
-uniform float viewDistanceSquared, viewDistanceOffsetSquared;
 uniform mat4 invertedViewProjection;
 
 vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
@@ -23,6 +32,7 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
 void main() {
     vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
     vec3 normal = texture2D(gNormal, fragTexCoords).rgb;
+
 
     if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
         FragColor = vec4(modelAmbientColor, 1);
@@ -47,4 +57,5 @@ void main() {
         float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
         FragColor = mix(FragColor, color, a);
     }
+    
 }

@@ -61,7 +61,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
@@ -88,7 +88,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) out vec4 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
@@ -106,7 +106,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///
@@ -128,7 +128,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
@@ -154,7 +154,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec2 fragPosition, fragTexCoords;
         ///in vec3 fragLightDirection, fragAmbientColor, fragDiffuseColor, fragSpecularColor;
@@ -181,7 +181,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
@@ -204,7 +204,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///
         ///in vec2 fragTexCoords;
@@ -231,7 +231,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
@@ -252,7 +252,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///void main() {
         ///    FragColor = vec4(1, 0, 0, 1);
@@ -265,7 +265,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///
@@ -281,7 +281,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 430 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///struct PointLight {
         ///    vec3 position;// 12
@@ -314,7 +314,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
@@ -335,7 +335,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec3 fragPos;
         ///in vec2 fragTexCoord;
@@ -357,7 +357,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
@@ -382,7 +382,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec2 fragPos, fragTexCoords;
         ///out vec4 FragColor;
@@ -410,7 +410,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
@@ -431,7 +431,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec2 fragPos, fragTexCoords;
         ///out vec4 FragColor;
@@ -459,7 +459,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec3 fragTexCoord;
         ///
@@ -480,7 +480,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///
@@ -502,7 +502,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
@@ -529,7 +529,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
@@ -553,7 +553,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///out vec4 FragColor;
         ///
@@ -576,7 +576,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
@@ -603,7 +603,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoords;
@@ -630,7 +630,7 @@ namespace CMineNew.Resources.Shaders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 400 core
+        ///   Looks up a localized string similar to #version 440 core
         ///
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
