@@ -59,6 +59,8 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void Draw() {
             CheckVbo();
+            GL.Disable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.FrontAndBack);
             _shader.Use();
             _vao.Bind();
             _mapper.OnBackground = false;

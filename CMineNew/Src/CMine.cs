@@ -21,7 +21,7 @@ namespace CMineNew{
             Path.DirectorySeparatorChar + "CMine";
 
         //Temporary constant.
-        public const int ChunkRadius = 8;
+        public const int ChunkRadius = 4;
 
         public static Window Window;
         public static TextureMap Textures;

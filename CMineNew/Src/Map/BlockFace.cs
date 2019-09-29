@@ -43,45 +43,45 @@ namespace CMineNew.Map{
 
     public static class BlockFaceVertices{
         private static Vector3[] _north = {
+            new Vector3(1, 0, 0),
             new Vector3(0, 0, 0),
-            new Vector3(0, 1, 0),
             new Vector3(1, 1, 0),
-            new Vector3(1, 0, 0), new Vector3(0, 0, -1)
+            new Vector3(0, 1, 0), new Vector3(0, 0, -1)
         };
 
         private static Vector3[] _south = {
             new Vector3(0, 0, 1),
+            new Vector3(1, 0, 1),
             new Vector3(0, 1, 1),
-            new Vector3(1, 1, 1),
-            new Vector3(1, 0, 1), new Vector3(0, 0, 1)
+            new Vector3(1, 1, 1), new Vector3(0, 0, 1)
         };
 
         private static Vector3[] _west = {
             new Vector3(0, 0, 0),
+            new Vector3(0, 0, 1),
             new Vector3(0, 1, 0),
-            new Vector3(0, 1, 1),
-            new Vector3(0, 0, 1), new Vector3(1, 0, 0)
+            new Vector3(0, 1, 1), new Vector3(1, 0, 0)
         };
 
         private static Vector3[] _east = {
+            new Vector3(1, 0, 1),
             new Vector3(1, 0, 0),
-            new Vector3(1, 1, 0),
             new Vector3(1, 1, 1),
-            new Vector3(1, 0, 1), new Vector3(-1, 0, 0)
+            new Vector3(1, 1, 0), new Vector3(-1, 0, 0)
         };
 
         private static Vector3[] _up = {
-            new Vector3(0, 1, 0),
             new Vector3(0, 1, 1),
             new Vector3(1, 1, 1),
+            new Vector3(0, 1, 0),
             new Vector3(1, 1, 0), new Vector3(0, 1, 0)
         };
 
         private static Vector3[] _down = {
             new Vector3(0, 0, 0),
+            new Vector3(1, 0, 0),
             new Vector3(0, 0, 1),
             new Vector3(1, 0, 1),
-            new Vector3(1, 0, 0),
             new Vector3(0, -1, 0)
         };
 
@@ -109,10 +109,10 @@ namespace CMineNew.Map{
             var vertices = new Vertex[4];
             var mul = new Vector3(1, yHeight, 1);
             vertices[0] = new Vertex(positions[0] * mul, positions[4], new Vector2(0, 1 * textureYHeight));
-            vertices[1] = new Vertex(positions[1] * mul, positions[4], new Vector2(0, 0));
-            vertices[2] = new Vertex(positions[2] * mul, positions[4], new Vector2(1, 0));
-            vertices[3] = new Vertex(positions[3] * mul, positions[4], new Vector2(1, 1 * textureYHeight));
-            return new VertexArrayObject(vertices, new[] {0, 1, 3, 1, 2, 3});
+            vertices[1] = new Vertex(positions[1] * mul, positions[4], new Vector2(1, 1 * textureYHeight));
+            vertices[2] = new Vertex(positions[2] * mul, positions[4], new Vector2(0, 0));
+            vertices[3] = new Vertex(positions[3] * mul, positions[4], new Vector2(1, 0));
+            return new VertexArrayObject(vertices, new[] {0, 1, 3, 0, 3, 2});
         }
     }
 }

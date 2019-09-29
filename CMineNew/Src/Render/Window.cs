@@ -62,6 +62,7 @@ namespace CMineNew.Render{
             //Enable static capabilities.
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.ProgramPointSize);
+            GL.Enable(EnableCap.CullFace);
             CursorVisible = false;
             _lastTick = DateTime.Now.Ticks;
 

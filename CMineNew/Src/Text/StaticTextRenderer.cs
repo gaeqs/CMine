@@ -9,17 +9,13 @@ namespace CMineNew.Text{
         private static readonly int InstanceDataLength = sizeof(float) * (2 + 2 + 4 + 4);
 
         private static readonly Vertex[] RectangleVerticesArray = {
-            new Vertex(new Vector3(1, 1, 0.0f),
-                new Vector3(0, 0, 1), new Vector2(1.0f, 0.0f)),
-            new Vertex(new Vector3(1, 0, 0.0f),
-                new Vector3(0, 0, 1), new Vector2(1.0f, 1.0f)),
-            new Vertex(new Vector3(0, 0, 0.0f),
-                new Vector3(0, 0, 1), new Vector2(0.0f, 1.0f)),
-            new Vertex(new Vector3(0, 1, 0.0f),
-                new Vector3(0, 0, 1), new Vector2(0.0f, 0.0f)) // top right
+            new Vertex(new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector2(0, 1)),
+            new Vertex(new Vector3(1, 0, 0), new Vector3(0, 0, 1), new Vector2(1, 1)),
+            new Vertex(new Vector3(0, 1, 0), new Vector3(0, 0, 1), new Vector2(0, 0)),
+            new Vertex(new Vector3(1, 1, 0), new Vector3(0, 0, 1), new Vector2(1, 0))
         };
 
-        private static readonly int[] RectangleIndicesArray = {0, 1, 3, 1, 2, 3};
+        private static readonly int[] RectangleIndicesArray = {0, 1, 3, 0, 3, 2};
 
         private float[] _buffer = new float[MaxObjects * InstanceDataLength / sizeof(float)];
 
