@@ -31,7 +31,7 @@ namespace CMineNew.Map.BlockData.Render{
             _generated = false;
 
             foreach (var face in BlockFaceMethods.All) {
-                _mappers[(int) face] = new BlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxFaces, OnResize);
+                _mappers[(int) face] = new ArrayBlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxFaces);
             }
         }
 

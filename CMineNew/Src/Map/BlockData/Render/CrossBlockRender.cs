@@ -36,7 +36,7 @@ namespace CMineNew.Map.BlockData.Render{
             _chunkRegion = chunkRegion;
             _vao = null;
             _dataBuffer = null;
-            _mapper = new BlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxBlocks, OnResize);
+            _mapper = new ArrayBlockVboMapper(chunkRegion, null, null, InstanceDataLength, MaxBlocks);
             _generated = false;
         }
 
