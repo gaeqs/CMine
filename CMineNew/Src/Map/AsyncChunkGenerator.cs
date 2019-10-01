@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using CMineNew.DataStructure.Queue;
 using CMineNew.Geometry;
-using CMineNew.Map.Task;
 
 namespace CMineNew.Map{
     public class AsyncChunkGenerator{
@@ -13,8 +12,6 @@ namespace CMineNew.Map{
         private bool _alive;
         private Vector3i _playerPosition;
         private volatile bool _generateChunkArea;
-
-        private object _queueLock = new object();
 
         public AsyncChunkGenerator(World world) {
             _world = world;
@@ -29,26 +26,20 @@ namespace CMineNew.Map{
         }
 
         public int ChunksToGenerateSize {
-            get {
-                lock (_queueLock) {
-                    return _chunksToGenerate.Size();
-                }
-            }
+            get { return _chunksToGenerate.Size(); }
         }
 
         public void StartThread() {
             if (_thread != null) return;
             _thread = new Thread(Run) {
-                Priority = ThreadPriority.BelowNormal, Name = _world.Name + "'s Async Chunk Generator"
+                Priority = ThreadPriority.Lowest, Name = _world.Name + "'s Async Chunk Generator"
             };
             _alive = true;
             _thread.Start();
         }
 
         public void AddToQueue(Vector3i position) {
-            lock (_queueLock) {
-                _chunksToGenerate.Push(position);
-            }
+            _chunksToGenerate.Push(position);
         }
 
         public void Kill() {
@@ -64,14 +55,12 @@ namespace CMineNew.Map{
                 }
 
                 Vector3i position;
-                lock (_queueLock) {
-                    if (_chunksToGenerate.Size() == 0) continue;
-                    if (_chunksToGenerate.Size() < 0) {
-                        Console.WriteLine("OH NO");
-                    }
-
-                    position = _chunksToGenerate.Pop();
+                if (_chunksToGenerate.Size() == 0) continue;
+                if (_chunksToGenerate.Size() < 0) {
+                    Console.WriteLine("OH NO");
                 }
+
+                position = _chunksToGenerate.Pop();
 
                 _world.CreateChunk(position);
             }
@@ -99,22 +88,23 @@ namespace CMineNew.Map{
                         }
                     }
 
-                    _world.WorldTaskManager.AddTask(new WorldTaskRegionDelete(region));
+                    if (!region.DeleteIfEmpty()) continue;
+                    if (region.World.ChunkRegions.TryRemove(region.Position, out _)) {
+                        Console.WriteLine("Region " + region.Position + " deleted");
+                    }
                 }
             }
 
-            lock (_queueLock) {
-                _chunksToGenerate.RemoveIf(pos => (pos - _playerPosition).LengthSquared() > chunkRadiusSquared);
-                for (var x = -chunkRadius; x <= chunkRadius; x++) {
-                    for (var y = -2; y <= 2; y++) {
-                        for (var z = -chunkRadius; z <= chunkRadius; z++) {
-                            var chunkPos = new Vector3i(x, y, z);
-                            var wChunkPos = chunkPos + _playerPosition;
-                            if (chunkPos.LengthSquared() > chunkRadiusSquared
-                                || _world.GetChunk(wChunkPos) != null || _chunksToGenerate.Contains(wChunkPos))
-                                continue;
-                            _chunksToGenerate.Push(wChunkPos);
-                        }
+            _chunksToGenerate.RemoveIf(pos => (pos - _playerPosition).LengthSquared() > chunkRadiusSquared);
+            for (var x = -chunkRadius; x <= chunkRadius; x++) {
+                for (var y = -2; y <= 2; y++) {
+                    for (var z = -chunkRadius; z <= chunkRadius; z++) {
+                        var chunkPos = new Vector3i(x, y, z);
+                        var wChunkPos = chunkPos + _playerPosition;
+                        if (chunkPos.LengthSquared() > chunkRadiusSquared
+                            || _world.GetChunk(wChunkPos) != null || _chunksToGenerate.Contains(wChunkPos))
+                            continue;
+                        _chunksToGenerate.Push(wChunkPos);
                     }
                 }
             }

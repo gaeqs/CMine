@@ -29,8 +29,12 @@ namespace CMineNew.Render.Object{
             _vbo.BindBase(BufferRangeTarget.UniformBuffer, index);
         }
 
-        public void StartMapping() {
-            _vbo.StartMapping(BufferTarget.UniformBuffer);
+        public void StartMapping(bool invalidate) {
+            _vbo.StartMapping(BufferTarget.UniformBuffer, invalidate);
+        }
+
+        public void Orphan() {
+            _vbo.Orphan(BufferTarget.UniformBuffer, BufferUsageHint.DynamicDraw);
         }
 
         public void FinishMapping() {

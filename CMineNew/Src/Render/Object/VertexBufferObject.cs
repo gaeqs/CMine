@@ -41,29 +41,11 @@ namespace CMineNew.Render.Object{
         public bool Mapping => _mapping;
 
         public void Bind(BufferTarget target) {
-            //GL.GetError();
             GL.BindBuffer(target, _id);
-            //var error = GL.GetError();
-            //if (error != ErrorCode.NoError) {
-            //    Console.WriteLine("---  VBO BIND ERROR --- ");
-            //    Console.WriteLine("VBO: " + _id);
-            //    Console.WriteLine(error);
-            //    Console.WriteLine("------------------------");
-            //    throw new System.Exception("Error while binding VBO.");
-            //}
         }
 
         public void BindBase(BufferRangeTarget target, int index) {
-            //GL.GetError();
             GL.BindBufferBase(target, index, _id);
-            //var error = GL.GetError();
-            //if (error != ErrorCode.NoError) {
-            //    Console.WriteLine("---  VBO BIND ERROR --- ");
-            //    Console.WriteLine("VBO: " + _id);
-            //    Console.WriteLine(error);
-            //    Console.WriteLine("------------------------");
-            //    throw new System.Exception("Error while binding VBO.");
-            //}
         }
 
         public void SetData(BufferTarget target, float[] data, BufferUsageHint usageHint) {
@@ -94,7 +76,7 @@ namespace CMineNew.Render.Object{
         public void SetSubData(BufferTarget target, float[] data, int offset) {
             GL.BufferSubData(target, (IntPtr) offset, data.Length * sizeof(float), data);
         }
-        
+
         public void SetSubData(BufferTarget target, float[] data, int length, int offset) {
             GL.BufferSubData(target, (IntPtr) offset, length, data);
         }
@@ -130,7 +112,7 @@ namespace CMineNew.Render.Object{
                 GL.BufferSubData(target, (IntPtr) offset, sizeof(Matrix3), ref data);
             }
         }
-        
+
         public void SetSubData(BufferTarget target, Matrix4 data, int offset) {
             unsafe {
                 GL.BufferSubData(target, (IntPtr) offset, sizeof(Matrix4), ref data);
@@ -152,25 +134,17 @@ namespace CMineNew.Render.Object{
 
         #region mapping
 
-        public void StartMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
+        public void StartMapping(BufferTarget target = BufferTarget.ArrayBuffer, bool invalidate = false) {
+            const BufferAccessMask access = BufferAccessMask.MapWriteBit | BufferAccessMask.MapUnsynchronizedBit;
             if (_mapping) return;
             Bind(target);
             unsafe {
-                GL.GetError();
-                const BufferAccessMask access = BufferAccessMask.MapWriteBit | BufferAccessMask.MapUnsynchronizedBit;
-                _pointer = GL.MapBufferRange(target, IntPtr.Zero, _size, access).ToPointer();
-                var error = GL.GetError();
-                if (error != ErrorCode.NoError) {
-                    Console.WriteLine("---  VBO MAPPING ERROR --- ");
-                    Console.WriteLine("VBO: " + _id);
-                    Console.WriteLine("Offset: " + IntPtr.Zero);
-                    Console.WriteLine("Size: " + _size);
-                    GL.GetBufferParameter(target, BufferParameterName.BufferSize, out int bs);
-                    Console.WriteLine("GLBufferSize: " + bs);
-                    Console.WriteLine(error);
-                    Console.WriteLine("---------------------------");
-                    throw new System.Exception("Error while mapping VBO.");
+                var newAccess = access;
+                if (invalidate) {
+                    newAccess |= BufferAccessMask.MapInvalidateBufferBit;
                 }
+
+                _pointer = GL.MapBufferRange(target, IntPtr.Zero, _size, newAccess).ToPointer();
             }
 
             _mapping = true;
@@ -179,20 +153,10 @@ namespace CMineNew.Render.Object{
         public void FinishMapping(BufferTarget target = BufferTarget.ArrayBuffer) {
             unsafe {
                 if (!_mapping) return;
-                //GL.GetError();
                 Bind(target);
                 GL.UnmapBuffer(target);
                 _pointer = null;
                 _mapping = false;
-
-                //var error = GL.GetError();
-                //if (error != ErrorCode.NoError) {
-                //    Console.WriteLine("---  VBO UNMAPPING ERROR --- ");
-                //    Console.WriteLine("VBO: " + _id);
-                //    Console.WriteLine(error);
-                //    Console.WriteLine("---------------------------");
-                //    throw new System.Exception("Error while mapping VBO.");
-                //}
             }
         }
 

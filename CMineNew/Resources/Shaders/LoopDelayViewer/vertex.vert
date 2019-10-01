@@ -6,10 +6,13 @@ out vec4 fragColor;
 
 void main () {
     gl_Position = vec4(position, 1);
-    if(gl_VertexID % 4 > 1) {
+    if(gl_VertexID % 6 > 3) {
         fragColor = vec4(1, 0, 0, 1);
     }
-    else {
+    else if(gl_VertexID % 6 > 1) {
         fragColor = vec4(0, 1, 0, 1);
+    }
+    else {
+        fragColor = vec4(0, 0, 1, 1);
     }
 }

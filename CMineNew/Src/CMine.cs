@@ -28,7 +28,7 @@ namespace CMineNew{
 
         public static void Load() {
             Window = new Window(1920 / 2, 1080 / 2,
-                GameWindowFlags.Default, false, (window, args) => {
+                GameWindowFlags.Default, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();
                     BlockManager.Load();

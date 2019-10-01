@@ -17,6 +17,7 @@ namespace CMineNew.Entities.Controller{
         private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
+        private Vector2 _lastMousePosition;
 
         /// <summary>
         /// Creates the controller.
@@ -26,6 +27,8 @@ namespace CMineNew.Entities.Controller{
         public LocalPlayerController(Player player, Camera camera) : base(player) {
             _player = player;
             _camera = camera;
+            var mouse = Mouse.GetState();
+            _lastMousePosition = new Vector2(mouse.X, mouse.Y);
         }
 
         public override void Tick(long dif) {
@@ -147,11 +150,16 @@ namespace CMineNew.Entities.Controller{
         public void HandleMouseMovement() {
             GameWindow window = CMine.Window;
             if (window.Focused) {
-                var deltaX = Mouse.GetCursorState().X - (window.X + window.Width / 2);
-                var deltaY = Mouse.GetCursorState().Y - (window.Y + window.Height / 2);
+                
+                var mouse = Mouse.GetState();
+                var newPosition = new Vector2(mouse.X, mouse.Y);
+                
+                var deltaX = newPosition.X - _lastMousePosition.X;
+                var deltaY = newPosition.Y - _lastMousePosition.Y;
+
+                _lastMousePosition = newPosition;
 
                 var rotation = _player.HeadRotation;
-                if (deltaX == 0 && deltaY == 0) return;
                 rotation.X -= deltaY / 200f;
                 rotation.Y += deltaX / 200f;
 

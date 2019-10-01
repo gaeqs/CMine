@@ -191,7 +191,6 @@
     <Compile Include="Src\Map\Task\Type\WorldTaskRemoveWater.cs" />
     <Compile Include="Src\Map\Task\WorldTask.cs" />
     <Compile Include="Src\Map\Task\WorldTaskManager.cs" />
-    <Compile Include="Src\Map\Task\WorldTaskRegionDelete.cs" />
     <Compile Include="Src\Map\World.cs" />
     <Compile Include="Src\Map\World2dRegion.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />

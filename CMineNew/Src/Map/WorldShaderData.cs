@@ -19,14 +19,13 @@ namespace CMineNew.Map{
         }
 
         public void SetData(Matrix4 vp, Vector3 cp, Vector3 sd, float vds, float vdos, bool ws) {
-            _ubo.StartMapping();
+            _ubo.Orphan();
             _ubo.Set(vp, 0);
             _ubo.Set(cp, 1);
             _ubo.Set(sd, 2);
             _ubo.Set(vds, 3);
             _ubo.Set(vdos, 4);
             _ubo.Set(ws, 5);
-            _ubo.FinishMapping();
         }
     }
 }

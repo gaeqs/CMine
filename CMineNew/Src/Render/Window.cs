@@ -16,9 +16,9 @@ namespace CMineNew.Render{
 
         private Room _room;
         private Vector2 _unitsPerPixel;
-        private long _lastTick, _delay;
+        private long _delay;
 
-        private Stopwatch _stopwatch;
+        private Stopwatch _stopwatch, _loopStopwatch;
 
         public Window(int width, int height, GameWindowFlags windowMode, bool vSync, EventHandler onLoaded)
             : base(width, height, GraphicsMode.Default, "CMine", windowMode) {
@@ -30,6 +30,7 @@ namespace CMineNew.Render{
 
             _room = null;
             _stopwatch = new Stopwatch();
+            _loopStopwatch = new Stopwatch();
         }
 
         public EventHandler OnLoaded {
@@ -44,8 +45,6 @@ namespace CMineNew.Render{
                 _room = value;
             }
         }
-
-        public long LastTick => _lastTick;
 
         public long Delay => _delay;
 
@@ -64,18 +63,17 @@ namespace CMineNew.Render{
             GL.Enable(EnableCap.ProgramPointSize);
             GL.Enable(EnableCap.CullFace);
             CursorVisible = false;
-            _lastTick = DateTime.Now.Ticks;
-
 
             //GL.Enable(EnableCap.DebugOutput);
             //GL.DebugMessageCallback(Debug, IntPtr.Zero);
 
             _onLoaded?.Invoke(this, EventArgs.Empty);
+            _loopStopwatch.Start();
         }
 
         private void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity,
             int length, IntPtr message, IntPtr userParam) {
-            if(type != DebugType.DebugTypeError) return;
+            if (type != DebugType.DebugTypeError) return;
             unsafe {
                 Console.WriteLine("--- DEBUG ---");
                 Console.WriteLine(new string((sbyte*) message.ToPointer(), 0, length, Encoding.ASCII));
@@ -88,9 +86,11 @@ namespace CMineNew.Render{
         }
 
         protected override void OnRenderFrame(FrameEventArgs e) {
-            var now = DateTime.Now.Ticks;
-            _delay = Math.Min(now - _lastTick, CMine.TicksPerSecond / 30);
-            _lastTick = now;
+            _loopStopwatch.Stop();
+            //Blue
+            LoopDelayViewer.Add(_loopStopwatch.ElapsedTicks);
+            _delay = VSync == VSyncMode.On ? CMine.TicksPerSecond / 60 : _loopStopwatch.ElapsedTicks;
+            _loopStopwatch.Restart();
             if (_room != null) {
                 _stopwatch.Restart();
                 _room.Tick(_delay);
@@ -105,7 +105,7 @@ namespace CMineNew.Render{
                 LoopDelayViewer.Draw();
             }
 
-            SwapBuffers();
+            Context.SwapBuffers();
         }
 
         #region Room events
