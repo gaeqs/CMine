@@ -46,47 +46,15 @@ namespace CMineNew.Text{
             VertexArrayObject.Unbind();
         }
 
-        public void Draw(StaticText text) {
-            var units = CMine.Window.UnitsPerPixel;
-            var textCoords = text.Font.CharacterMap;
-            var sizes = text.Font.CharactersSize;
-            var amount = 0;
-            var x = text.Position.X;
-            var pointer = 0;
-
-            foreach (var c in text.Text.ToCharArray()) {
-                if (!textCoords.ContainsKey(c)) continue;
-                var charSize = sizes[c];
-                var coords = textCoords[c];
-                _buffer[pointer++] = x;
-                _buffer[pointer++] = text.Position.Y;
-
-                _buffer[pointer++] = charSize.Width * units.X;
-                _buffer[pointer++] = charSize.Height * units.Y;
-
-                _buffer[pointer++] = text.Color.R;
-                _buffer[pointer++] = text.Color.G;
-                _buffer[pointer++] = text.Color.B;
-                _buffer[pointer++] = text.Color.A;
-
-                _buffer[pointer++] = coords.MinX;
-                _buffer[pointer++] = coords.MinY;
-                _buffer[pointer++] = coords.MaxX;
-                _buffer[pointer++] = coords.MaxY;
-                x += charSize.Width * units.X * 0.62f;
-                amount++;
-            }
-
-            
-            
+        public void Draw(float[] buffer, int amount, TrueTypeFont font) {
             _dataVBO.Bind(BufferTarget.ArrayBuffer);
-            _dataVBO.SetData(BufferTarget.ArrayBuffer, _buffer, BufferUsageHint.StreamDraw);
+            _dataVBO.SetSubData(BufferTarget.ArrayBuffer, buffer, 0);
 
             _vertexArrayObject.Bind();
             _shaderProgram.Use();
 
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, text.Font.TextureId);
+            GL.BindTexture(TextureTarget.Texture2D, font.TextureId);
             _vertexArrayObject.DrawnInstanced(amount);
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
             VertexArrayObject.Unbind();
