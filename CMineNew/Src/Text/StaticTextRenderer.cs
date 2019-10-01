@@ -1,4 +1,3 @@
-using System;
 using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -31,17 +30,17 @@ namespace CMineNew.Text{
         public StaticTextRenderer(ShaderProgram shader) {
             _shaderProgram = shader;
             _vertexArrayObject = new VertexArrayObject(RectangleVerticesArray, RectangleIndicesArray);
-            _vertexArrayObject.Bind(); 
+            _vertexArrayObject.Bind();
             _dataVBO = new VertexBufferObject();
             _dataVBO.Bind(BufferTarget.ArrayBuffer);
             _dataVBO.SetData(BufferTarget.ArrayBuffer, MaxObjects * InstanceDataLength, BufferUsageHint.StreamDraw);
-            
+
             var builder = new AttributePointerBuilder(_vertexArrayObject, InstanceDataLength / sizeof(float), 3);
             builder.AddPointer(2, true);
             builder.AddPointer(2, true);
             builder.AddPointer(4, true);
             builder.AddPointer(4, true);
-            
+
             VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
             VertexArrayObject.Unbind();
         }

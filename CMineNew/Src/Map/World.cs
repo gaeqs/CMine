@@ -239,11 +239,9 @@ namespace CMineNew.Map{
                 region.Tick(delay);
             }
 
-            _player.Tick(delay);
-
-            //foreach (var entity in _entities) {
-            //    entity.Tick(delay);
-            //}
+            foreach (var entity in _entities) {
+                entity.Tick(delay);
+            }
 
             foreach (var staticText in _staticTexts) {
                 staticText.Tick(delay, this);

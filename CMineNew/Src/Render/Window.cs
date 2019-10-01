@@ -17,6 +17,7 @@ namespace CMineNew.Render{
         private Room _room;
         private Vector2 _unitsPerPixel;
         private long _delay;
+        private bool _vsync;
 
         private Stopwatch _stopwatch, _loopStopwatch;
 
@@ -31,6 +32,7 @@ namespace CMineNew.Render{
             _room = null;
             _stopwatch = new Stopwatch();
             _loopStopwatch = new Stopwatch();
+            _vsync = vSync;
         }
 
         public EventHandler OnLoaded {
@@ -89,7 +91,7 @@ namespace CMineNew.Render{
             _loopStopwatch.Stop();
             //Blue
             LoopDelayViewer.Add(_loopStopwatch.ElapsedTicks);
-            _delay = VSync == VSyncMode.On ? CMine.TicksPerSecond / 60 : _loopStopwatch.ElapsedTicks;
+            _delay = _vsync ? CMine.TicksPerSecond / 60 : _loopStopwatch.ElapsedTicks;
             _loopStopwatch.Restart();
             if (_room != null) {
                 _stopwatch.Restart();
@@ -102,7 +104,7 @@ namespace CMineNew.Render{
                 _stopwatch.Stop();
                 //Red
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
-                LoopDelayViewer.Draw();
+                //LoopDelayViewer.Draw();
             }
 
             Context.SwapBuffers();

@@ -21,14 +21,14 @@ namespace CMineNew{
             Path.DirectorySeparatorChar + "CMine";
 
         //Temporary constant.
-        public const int ChunkRadius = 4;
+        public const int ChunkRadius = 8;
 
         public static Window Window;
         public static TextureMap Textures;
 
         public static void Load() {
-            Window = new Window(1920 / 2, 1080 / 2,
-                GameWindowFlags.Default, true, (window, args) => {
+            Window = new Window(1920, 1080,
+                GameWindowFlags.Fullscreen, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     Textures = new TextureMap();
                     BlockManager.Load();
