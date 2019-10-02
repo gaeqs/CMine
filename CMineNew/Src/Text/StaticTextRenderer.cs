@@ -16,8 +16,6 @@ namespace CMineNew.Text{
 
         private static readonly int[] RectangleIndicesArray = {0, 1, 3, 0, 3, 2};
 
-        private float[] _buffer = new float[MaxObjects * InstanceDataLength / sizeof(float)];
-
         private ShaderProgram _shaderProgram;
         private VertexArrayObject _vertexArrayObject;
         private VertexBufferObject _dataVBO;

@@ -1,12 +1,12 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static.Type;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockAir : Block{
         public BlockAir(Chunk chunk, Vector3i position)
-            : base(BlockStaticDataAir.Instance, chunk, position, Color4.Transparent) {
+            : base(BlockStaticDataAir.Instance, chunk, position, new Rgba32I(0, 0, 0, 0)) {
         }
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();

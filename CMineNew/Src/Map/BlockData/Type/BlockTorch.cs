@@ -1,16 +1,14 @@
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData.Model;
-using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Static.Type;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockTorch : Block{
         private Area2d _textureArea;
 
         public BlockTorch(Chunk chunk, Vector3i position)
-            : base(BlockStaticDataTorch.Instance, chunk, position, Color4.Transparent) {
+            : base(BlockStaticDataTorch.Instance, chunk, position, new Rgba32I(0, 0, 0, 0)) {
             _textureArea = CMine.Textures.Areas["default:torch"];
         }
 

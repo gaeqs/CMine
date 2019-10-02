@@ -2,12 +2,12 @@ using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
-using OpenTK.Graphics;
+using CMineNew.Texture;
 
 namespace CMineNew.Map.Generator.Population{
     public class OakTreeGenerator{
         private static readonly BlockSnapshot Log = new BlockSnapshotOakLog();
-        private static readonly BlockSnapshot Leaves = new BlockSnapshotOakLeaves(Color4.Green);
+        private static readonly BlockSnapshot Leaves = new BlockSnapshotOakLeaves(new Rgba32I(0, 255, 0, 255));
 
         private int _seed;
 

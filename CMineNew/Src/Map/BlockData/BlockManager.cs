@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
+using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
@@ -11,13 +12,13 @@ namespace CMineNew.Map.BlockData{
             Register(BlockSnapshotAir.Instance);
             Register(BlockSnapshotStone.Instance);
             Register(BlockSnapshotDirt.Instance);
-            Register(new BlockSnapshotGrass(Color4.Green));
-            Register(new BlockSnapshotTallGrass(Color4.Green));
+            Register(new BlockSnapshotGrass(new Rgba32I(0, 255, 0, 255)));
+            Register(new BlockSnapshotTallGrass(new Rgba32I(0, 255, 0, 255)));
             Register(new BlockSnapshotWater(BlockWater.MaxWaterLevel));
             Register(new BlockSnapshotBricks());
             Register(new BlockSnapshotBricksSlab(false));
             Register(new BlockSnapshotOakLog());
-            Register(new BlockSnapshotOakLeaves(Color4.Green));
+            Register(new BlockSnapshotOakLeaves(new Rgba32I(0, 255, 0, 255)));
             Register(BlockSnapshotSand.Instance);
             Register(new BlockSnapshotTorch());
         }

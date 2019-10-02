@@ -1,8 +1,7 @@
-using OpenTK.Graphics;
-using OpenTK.Platform.MacOS;
+using CMineNew.Texture;
 
 namespace CMineNew.Map.BlockData.Snapshot.Interface{
     public interface IGrass{
-        Color4 GrassColor { get; set; }
+        Rgba32I GrassColor { get; set; }
     }
 }

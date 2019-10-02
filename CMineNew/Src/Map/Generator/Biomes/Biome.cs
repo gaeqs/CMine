@@ -1,5 +1,6 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes{
@@ -10,12 +11,12 @@ namespace CMineNew.Map.Generator.Biomes{
         protected readonly int _minHeight;
         protected readonly int _maxHeight;
 
-        protected readonly Color4 _grassColor;
+        protected readonly Rgba32I _grassColor;
 
         protected readonly World _world;
         protected readonly int _seed;
 
-        public Biome(string id, BiomeTemperature temperature, int minHeight, int maxHeight, Color4 grassColor, World world,
+        public Biome(string id, BiomeTemperature temperature, int minHeight, int maxHeight, Rgba32I grassColor, World world,
             int seed) {
             _id = id;
             _temperature = temperature;
@@ -34,7 +35,7 @@ namespace CMineNew.Map.Generator.Biomes{
 
         public int MaxHeight => _maxHeight;
 
-        public Color4 GrassColor => _grassColor;
+        public Rgba32I GrassColor => _grassColor;
 
         public World World => _world;
         public int Seed => _seed;
@@ -45,7 +46,7 @@ namespace CMineNew.Map.Generator.Biomes{
         
         public abstract int GetColumnHeight(int x, int z);
 
-        public abstract BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Color4 grassColor);
+        public abstract BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Rgba32I grassColor);
     }
 
 

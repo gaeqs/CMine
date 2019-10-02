@@ -3,6 +3,7 @@ using CMine.Map.Generator.Noise;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator.Population;
+using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
@@ -12,7 +13,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
         private readonly OctaveGenerator _treeOctaveGenerator;
 
         public BiomeForest(World world, int seed)
-            : base("default:forest", BiomeTemperature.Normal, 62, 70, Color4.Green, world, seed) {
+            : base("default:forest", BiomeTemperature.Normal, 62, 70, new Rgba32I(0, 255, 0, 255), world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 6);
             _heightGenerator.SetScale(1 / 20f);
             _treeGenerator = new OakTreeGenerator(seed);
@@ -25,7 +26,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             return (int) Math.Floor(normalized * (_maxHeight - _minHeight) + _minHeight);
         }
 
-        public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Color4 grassColor) {
+        public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Rgba32I grassColor) {
             var y = position.Y;
             if (y > columnHeight) {
                 return y > 60 ? BlockSnapshotAir.Instance : (BlockSnapshot) new BlockSnapshotWater(8);

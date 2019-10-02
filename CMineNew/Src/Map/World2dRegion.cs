@@ -1,12 +1,12 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.Generator.Biomes;
+using CMineNew.Texture;
 using CMineNew.Util;
-using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map{
     public class World2dRegion{
@@ -23,7 +23,7 @@ namespace CMineNew.Map{
 
         private readonly Biome[,] _biomes;
         private readonly int[,] _heights, _interpolatedHeights;
-        private readonly Color4[,] _interpolatedGrassColors;
+        private readonly Rgba32I[,] _interpolatedGrassColors;
 
         private readonly SunlightData[,] _sunlightData;
 
@@ -33,7 +33,7 @@ namespace CMineNew.Map{
             _biomes = new Biome[RegionLength, RegionLength];
             _heights = new int[RegionLength, RegionLength];
             _interpolatedHeights = new int[RegionLength, RegionLength];
-            _interpolatedGrassColors = new Color4[RegionLength, RegionLength];
+            _interpolatedGrassColors = new Rgba32I[RegionLength, RegionLength];
             _sunlightData = new SunlightData[RegionLength, RegionLength];
         }
 
@@ -47,7 +47,7 @@ namespace CMineNew.Map{
 
         public int[,] InterpolatedHeights => _interpolatedHeights;
 
-        public Color4[,] InterpolatedGrassColors => _interpolatedGrassColors;
+        public Rgba32I[,] InterpolatedGrassColors => _interpolatedGrassColors;
 
         public SunlightData[,] SunlightData => _sunlightData;
 
@@ -136,11 +136,11 @@ namespace CMineNew.Map{
                     _biomes[x, z] = grid.GetBiomeOrDefault((string) formatter.Deserialize(stream));
                     _heights[x, z] = (int) formatter.Deserialize(stream);
                     _interpolatedHeights[x, z] = (int) formatter.Deserialize(stream);
-                    _interpolatedGrassColors[x, z] = new Color4(
-                        (float) formatter.Deserialize(stream),
-                        (float) formatter.Deserialize(stream),
-                        (float) formatter.Deserialize(stream),
-                        (float) formatter.Deserialize(stream));
+                    _interpolatedGrassColors[x, z] = new Rgba32I(
+                        (byte) formatter.Deserialize(stream),
+                        (byte) formatter.Deserialize(stream),
+                        (byte) formatter.Deserialize(stream),
+                        (byte) formatter.Deserialize(stream));
 
                     var light = new SunlightData(this, new Vector2i(x, z));
                     light.Load(stream, formatter);
@@ -149,7 +149,7 @@ namespace CMineNew.Map{
             }
 
             stream.Close();
-            
+
             stopwatch.Stop();
             _world.DelayViewer.AddRegion2dLoad(stopwatch.ElapsedTicks);
 
@@ -157,10 +157,10 @@ namespace CMineNew.Map{
         }
 
         private void Interpolate(World2dRegion[,] regions, Vector2i position, Vector2i local, out int height,
-            out Color4 grassColor) {
+            out Rgba32I grassColor) {
             const int radius = 5;
             height = 0;
-            var gColor = Vector3.Zero;
+            var gColor = Vector3i.Zero;
             for (var x = -radius; x <= radius; x++) {
                 for (var z = -radius; z <= radius; z++) {
                     var rx = 1;
@@ -185,25 +185,26 @@ namespace CMineNew.Map{
                         relativeLocal.Y -= RegionLength;
                         rz++;
                     }
-
                     var region = regions[rx, rz];
                     if (region == null) {
                         var biome = _world.WorldGenerator.BiomeGrid.GetBiome(relative);
                         height += biome.GetColumnHeight(relative);
                         var bgColor = biome.GrassColor;
-                        gColor += new Vector3(bgColor.R, bgColor.G, bgColor.B);
+                        gColor += new Vector3i(bgColor.R, bgColor.G, bgColor.B);
                     }
                     else {
                         height += region._heights[relativeLocal.X, relativeLocal.Y];
                         var bgColor = region._biomes[relativeLocal.X, relativeLocal.Y].GrassColor;
-                        gColor += new Vector3(bgColor.R, bgColor.G, bgColor.B);
+                        gColor += new Vector3i(bgColor.R, bgColor.G, bgColor.B);
                     }
                 }
             }
 
-            height /= radius * radius * 4;
-            gColor /= radius * radius * 4;
-            grassColor = new Color4(gColor.X, gColor.Y, gColor.Z, 1);
+            const int d = radius * 2 + 1;
+
+            height /= d * d;
+            gColor /= d * d;
+            grassColor = new Rgba32I((byte) gColor.X, (byte) gColor.Y, (byte) gColor.Z, 255);
         }
 
         private World2dRegion[,] GetNeighbourRegions() {

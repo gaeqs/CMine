@@ -1,14 +1,14 @@
 using System;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
         private readonly bool[] _visibleFaces;
 
-        public CubicBlock(BlockStaticDataCubic staticData, Chunk chunk, Vector3i position, Color4 textureFilter)
+        public CubicBlock(BlockStaticDataCubic staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter)
             : base(staticData, chunk, position, textureFilter) {
             _visibleFaces = new bool[6];
         }

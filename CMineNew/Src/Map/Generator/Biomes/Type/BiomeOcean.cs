@@ -2,6 +2,7 @@ using System;
 using CMine.Map.Generator.Noise;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes.Type{
@@ -10,7 +11,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
 
         public BiomeOcean(World world, int seed)
             : base("default:ocean", BiomeTemperature.Normal, 30, 55, 
-                new Color4(0, 153, 0, 255), world, seed) {
+                new Rgba32I(0, 153, 0, 255), world, seed) {
             _heightGenerator = new SimplexOctaveGenerator(seed, 4);
             _heightGenerator.SetScale(1 / 100f);
         }
@@ -21,7 +22,7 @@ namespace CMineNew.Map.Generator.Biomes.Type{
             return (int) Math.Floor(normalized * (_maxHeight - _minHeight) + _minHeight);
         }
 
-        public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Color4 grassColor) {
+        public override BlockSnapshot GetBlockSnapshot(Vector3i position, int columnHeight, Rgba32I grassColor) {
             var y = position.Y;
             if (y > columnHeight) {
                 return y > 60 ? BlockSnapshotAir.Instance : (BlockSnapshot) new BlockSnapshotWater(8);

@@ -221,6 +221,7 @@
     <Compile Include="Src\Test\FpsViewer.cs" />
     <Compile Include="Src\Test\LoopDelayViewer.cs" />
     <Compile Include="Src\Test\PositionViewer.cs" />
+    <Compile Include="Src\Texture\Rgba32I.cs" />
     <Compile Include="Src\Texture\TextureMap.cs" />
     <Compile Include="Src\Text\StaticText.cs" />
     <Compile Include="Src\Text\StaticTextRenderer.cs" />

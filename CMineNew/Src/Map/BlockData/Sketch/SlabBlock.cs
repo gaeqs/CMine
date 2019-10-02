@@ -3,8 +3,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class SlabBlock : Block{
@@ -13,7 +13,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         protected bool _upside;
         private bool[] _visibleFaces;
 
-        public SlabBlock(BlockStaticDataSlab staticData, Chunk chunk, Vector3i position, Color4 textureFilter,
+        public SlabBlock(BlockStaticDataSlab staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter,
             bool upside)
             : base(staticData, chunk, position, textureFilter) {
             _upside = upside;

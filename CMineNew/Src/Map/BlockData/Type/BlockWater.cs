@@ -4,12 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
-using CMineNew.Map.BlockData.Model;
-using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.Task.Type;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockWater : Block{
@@ -36,7 +34,7 @@ namespace CMineNew.Map.BlockData.Type{
         private readonly float[] _vertexWaterLevel;
 
         public BlockWater(Chunk chunk, Vector3i position, int level)
-            : base(BlockStaticDataWater.Instance, chunk, position, Color4.Transparent) {
+            : base(BlockStaticDataWater.Instance, chunk, position, new Rgba32I(0, 0, 0, 0)) {
             _visibleFaces = new bool[6];
             _waterLevel = level;
             _vertexWaterLevel = new float[4];

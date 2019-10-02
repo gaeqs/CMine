@@ -1,11 +1,11 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
-using OpenTK.Graphics;
+using CMineNew.Texture;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public class MultiTexturedCubicBlock : CubicBlock{
         public MultiTexturedCubicBlock(BlockStaticDataMultiTexturedCubic staticData, Chunk chunk, Vector3i position,
-            Color4 textureFilter)
+            Rgba32I textureFilter)
             : base(staticData, chunk, position, textureFilter) {
         }
 

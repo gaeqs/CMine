@@ -6,6 +6,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Type;
+using CMineNew.Texture;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -19,12 +20,12 @@ namespace CMineNew.Map.BlockData{
         protected Chunk _chunk;
         protected Vector3i _position;
         protected bool[] _collidableFaces;
-        protected Color4 _textureFilter;
+        protected Rgba32I _textureFilter;
         protected WeakReference<Block>[] _neighbours;
         protected BlockLight _blockLight;
         protected BlockLightSource _blockLightSource;
 
-        public Block(BlockStaticData staticData, Chunk chunk, Vector3i position, Color4 textureFilter) {
+        public Block(BlockStaticData staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter) {
             _staticData = staticData;
             _chunk = chunk;
             _position = position;
@@ -64,7 +65,7 @@ namespace CMineNew.Map.BlockData{
 
         public bool[] CollidableFaces => _collidableFaces;
 
-        public Color4 TextureFilter {
+        public Rgba32I TextureFilter {
             get => _textureFilter;
             set => _textureFilter = value;
         }
@@ -158,11 +159,11 @@ namespace CMineNew.Map.BlockData{
             _blockLight.LinearSunlight = (sbyte) formatter.Deserialize(stream);
             _blockLight.Sunlight = (sbyte) formatter.Deserialize(stream);
             if (this is BlockAir) return;
-            var r = (float) formatter.Deserialize(stream);
-            var g = (float) formatter.Deserialize(stream);
-            var b = (float) formatter.Deserialize(stream);
-            var a = (float) formatter.Deserialize(stream);
-            _textureFilter = new Color4(r, g, b, a);
+            var r = (byte) formatter.Deserialize(stream);
+            var g = (byte) formatter.Deserialize(stream);
+            var b = (byte) formatter.Deserialize(stream);
+            var a = (byte) formatter.Deserialize(stream);
+            _textureFilter = new Rgba32I(r, g, b, a);
         }
 
         #region light

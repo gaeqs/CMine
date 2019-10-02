@@ -1,12 +1,12 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Map.BlockData.Static.Type;
-using OpenTK.Graphics;
+using CMineNew.Texture;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockOakLeaves : TexturedCubicBlock{
         public BlockOakLeaves(Chunk chunk, Vector3i position)
-            : base(BlockStaticDataOakLeaves.Instance, chunk, position, Color4.Green) {
+            : base(BlockStaticDataOakLeaves.Instance, chunk, position, new Rgba32I(0, 255, 0, 255)) {
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {

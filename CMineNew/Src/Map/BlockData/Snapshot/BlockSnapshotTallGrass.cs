@@ -4,13 +4,14 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot.Interface;
 using CMineNew.Map.BlockData.Type;
+using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotTallGrass : BlockSnapshot, IGrass{
-        private Color4 _grassColor;
+        private Rgba32I _grassColor;
 
-        public BlockSnapshotTallGrass(Color4 grassColor) : base("default:tall_grass") {
+        public BlockSnapshotTallGrass(Rgba32I grassColor) : base("default:tall_grass") {
             _grassColor = grassColor;
         }
 
@@ -30,7 +31,7 @@ namespace CMineNew.Map.BlockData.Snapshot{
             return new BlockSnapshotTallGrass(_grassColor);
         }
 
-        public Color4 GrassColor {
+        public Rgba32I GrassColor {
             get => _grassColor;
             set => _grassColor = value;
         }
@@ -43,11 +44,11 @@ namespace CMineNew.Map.BlockData.Snapshot{
         }
 
         public override void Load(Stream stream, BinaryFormatter formatter) {
-            var r = (float) formatter.Deserialize(stream);
-            var g = (float) formatter.Deserialize(stream);
-            var b = (float) formatter.Deserialize(stream);
-            var a = (float) formatter.Deserialize(stream);
-            _grassColor = new Color4(r, g, b, a);
+            var r = (byte) formatter.Deserialize(stream);
+            var g = (byte) formatter.Deserialize(stream);
+            var b = (byte) formatter.Deserialize(stream);
+            var a = (byte) formatter.Deserialize(stream);
+            _grassColor = new Rgba32I(r, g, b, a);
         }
     }
 }

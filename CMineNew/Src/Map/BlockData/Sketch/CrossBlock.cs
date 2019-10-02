@@ -1,11 +1,11 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
+using CMineNew.Texture;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CrossBlock : Block{
-        public CrossBlock(BlockStaticDataCross staticData, Chunk chunk, Vector3i position, Color4 textureFilter)
+        public CrossBlock(BlockStaticDataCross staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter)
             : base(staticData, chunk, position, textureFilter) {
         }
 

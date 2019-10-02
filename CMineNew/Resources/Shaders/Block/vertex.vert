@@ -5,13 +5,13 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texturePosition;
 layout (location = 3) in vec3 worldPosition;
 layout (location = 4) in vec4 textureArea;
-layout (location = 5) in vec4 blockColorFilter;
+layout (location = 5) in float blockColorFilter;
 layout (location = 6) in float blockLight;
 layout (location = 7) in float sunlight;
 
 out vec3 fragPos, fragNormal;
 out vec2 fragTexCoord;
-out vec4 fragColorFilter;
+flat out float fragColorFilter;
 out float fragLight;
 
 layout (std140, binding = 0) uniform Uniforms {
