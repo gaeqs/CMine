@@ -229,6 +229,7 @@
     <Compile Include="Src\Util\FolderUtils.cs" />
     <Compile Include="Src\Util\ForceUtils.cs" />
     <Compile Include="Src\Util\ModelLinesUtil.cs" />
+    <Compile Include="Src\Util\ReferenceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

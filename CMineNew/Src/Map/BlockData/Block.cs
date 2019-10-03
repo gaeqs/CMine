@@ -7,6 +7,7 @@ using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Texture;
+using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -96,7 +97,7 @@ namespace CMineNew.Map.BlockData{
         public Block[] Neighbours {
             set {
                 for (var i = 0; i < _neighbours.Length; i++) {
-                    _neighbours[i] = value[i]?._weakReference ?? new WeakReference<Block>(null);
+                    _neighbours[i] = value[i]?._weakReference ?? ReferenceUtils.EmptyWeakBlockReference;
                 }
             }
         }
@@ -231,7 +232,7 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 if (!_neighbours[i].TryGetTarget(out var neighbour)) {
                     neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace) i));
-                    _neighbours[i] = neighbour?._weakReference ?? new WeakReference<Block>(null);
+                    _neighbours[i] = neighbour?._weakReference ?? ReferenceUtils.EmptyWeakBlockReference;
                     if (neighbour == null) {
                         continue;
                     }
