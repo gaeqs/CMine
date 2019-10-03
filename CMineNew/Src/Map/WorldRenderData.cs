@@ -18,10 +18,6 @@ namespace CMineNew.Map{
             _skyBox = new SkyBox(Textures.sky_box_right, Textures.sky_box_left, Textures.sky_box_top,
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
             _shaderData = new WorldShaderData();
-
-            var vec = new Vector3(0.5f, 0.5f, 0.5f);
-            //_lightManager.AddDirectionalLight(new DirectionalLight(new Vector3(-1, -1, 0),
-            //    vec, vec, vec));
         }
 
         public PhysicCamera Camera => _camera;

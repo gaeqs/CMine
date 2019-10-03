@@ -10,6 +10,6 @@ uniform samplerCube skyBox;
 
 void main() {
     gAlbedo = texture(skyBox, fragTexCoord).rgb;
-    gNormal = vec2(0);
+    gNormal = vec2(2);
     gBrightness = vec3(1);
 }

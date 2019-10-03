@@ -23,6 +23,5 @@ void main() {
     gBrightness = vec3(1) * light;
     gAlbedo = texture.rgb;
 
-    //W = Specular Weight
     gNormal = fragNormal.xy;
 }

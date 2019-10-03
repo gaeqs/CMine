@@ -31,14 +31,13 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
 
 void main() {
     vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
-    vec3 normal = texture2D(gNormal, fragTexCoords).rgb;
-
-
-    if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
+    vec2 normalXY = texture2D(gNormal, fragTexCoords).rg;
+    
+    if (normalXY == 2 && normalXY.y == 2) {
         FragColor = vec4(modelAmbientColor, 1);
     }
     else {
-
+        vec3 normal = vec3(normalXY, sqrt(1 - dot(normalXY, normalXY)));
         float depth = texture2D(gDepth, fragTexCoords).r * 2 - 1;
         vec4 projected = vec4(fragPos, depth, 1);
         vec4 position4 = invertedViewProjection * projected;

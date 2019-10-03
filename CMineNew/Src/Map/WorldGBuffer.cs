@@ -131,10 +131,10 @@ namespace CMineNew.Map{
         }
 
         private void Resize() {
-            ConfigureTexture(_width, _height, _depthTexture, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent);
-            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.HalfFloat);
-            ConfigureTexture(_width, _height, _albedoTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
-            ConfigureTexture(_width, _height, _brightnessTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
+            ConfigureTexture(_width, _height, _depthTexture, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Float);
+            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rg16, PixelFormat.Rg, PixelType.Int);
+            ConfigureTexture(_width, _height, _albedoTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.Float);
+            ConfigureTexture(_width, _height, _brightnessTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.Float);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
@@ -156,13 +156,13 @@ namespace CMineNew.Map{
         }
 
         private static void ConfigureTexture(int width, int height, int texture,
-            PixelInternalFormat format, PixelFormat outFormat, PixelType pixelType = PixelType.Float) {
+            PixelInternalFormat internalFormat, PixelFormat outFormat, PixelType pixelType) {
             GL.BindTexture(TextureTarget.Texture2D, texture);
             GL.PixelStore(PixelStoreParameter.PackAlignment, 1);
             var nearest = (int) All.Nearest;
             GL.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, ref nearest);
             GL.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, ref nearest);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, format, width, height, 0, outFormat, pixelType,
+            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, width, height, 0, outFormat, pixelType,
                 IntPtr.Zero);
         }
 
