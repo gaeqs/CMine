@@ -136,8 +136,7 @@ namespace CMineNew.Render.Object{
             SetUInt("gAlbedo", 0);
             SetUInt("gDepth", 1);
             SetUInt("gNormal", 2);
-            SetUInt("gBrightness", 3);
-            SetUInt("skyBox", 4);
+            SetUInt("skyBox", 3);
         }
 
         public void SetupForLight() {

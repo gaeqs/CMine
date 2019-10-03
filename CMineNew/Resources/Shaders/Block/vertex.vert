@@ -31,12 +31,12 @@ void main () {
     gl_Position = viewProjection * modelPosition;
     fragPos = modelPosition.xyz;
     fragNormal = mat3(transpose(inverse(model))) * normal;
-    
+
     vec2 minT = textureArea.xy;
     vec2 maxT = textureArea.zw;
     vec2 size = maxT - minT;
-    
+
     fragTexCoord = minT + texturePosition * size;
     fragColorFilter = blockColorFilter;
-    fragLight = 1; //max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
+    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
 }

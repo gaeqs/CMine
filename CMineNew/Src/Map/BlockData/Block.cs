@@ -25,7 +25,11 @@ namespace CMineNew.Map.BlockData{
         protected BlockLight _blockLight;
         protected BlockLightSource _blockLightSource;
 
+        protected readonly WeakReference<Block> _weakReference;
+
         public Block(BlockStaticData staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter) {
+            _weakReference = new WeakReference<Block>(this);
+            
             _staticData = staticData;
             _chunk = chunk;
             _position = position;
@@ -78,6 +82,8 @@ namespace CMineNew.Map.BlockData{
 
         public BlockStaticData StaticData => _staticData;
 
+        public WeakReference<Block> WeakReference => _weakReference;
+
         public WeakReference<Block>[] NeighbourReferences {
             get => _neighbours;
             set {
@@ -90,7 +96,7 @@ namespace CMineNew.Map.BlockData{
         public Block[] Neighbours {
             set {
                 for (var i = 0; i < _neighbours.Length; i++) {
-                    _neighbours[i] = new WeakReference<Block>(value[i]);
+                    _neighbours[i] = value[i]?._weakReference ?? new WeakReference<Block>(null);
                 }
             }
         }
@@ -130,11 +136,11 @@ namespace CMineNew.Map.BlockData{
         public abstract void OnRemove(Block newBlock);
 
         public void OnNeighbourBlockChange0(Block from, Block to, BlockFace relative) {
-            _neighbours[(int) relative] = new WeakReference<Block>(to);
+            _neighbours[(int) relative] = to._weakReference;
             var side = relative != BlockFace.Up && relative != BlockFace.Down &&
                        (BlockHeight > to.BlockHeight || BlockYOffset < to.BlockYOffset);
 
-            _collidableFaces[(int) relative] = to == null || to.Passable || side;
+            _collidableFaces[(int) relative] = to.Passable || side;
             OnNeighbourBlockChange(from, to, relative);
         }
 
@@ -225,7 +231,7 @@ namespace CMineNew.Map.BlockData{
             for (var i = 0; i < _neighbours.Length; i++) {
                 if (!_neighbours[i].TryGetTarget(out var neighbour)) {
                     neighbour = World.GetBlock(_position + BlockFaceMethods.GetRelative((BlockFace) i));
-                    _neighbours[i] = new WeakReference<Block>(neighbour);
+                    _neighbours[i] = neighbour?._weakReference ?? new WeakReference<Block>(null);
                     if (neighbour == null) {
                         continue;
                     }

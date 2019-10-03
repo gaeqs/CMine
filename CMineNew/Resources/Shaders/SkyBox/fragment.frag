@@ -2,12 +2,14 @@
 
 in vec3 fragTexCoord;
 
-layout (location = 0) out vec4 gNormal;
-layout (location = 1) out vec4 gAlbedo;
+layout (location = 0) out vec2 gNormal;
+layout (location = 1) out vec3 gAlbedo;
+layout (location = 2) out vec3 gBrightness;
 
 uniform samplerCube skyBox;
 
 void main() {
-    gAlbedo = vec4(texture(skyBox, fragTexCoord).rgb, 0);
-    gNormal = vec4(0);// normal = Zero represents that the pixel is from the background.
+    gAlbedo = texture(skyBox, fragTexCoord).rgb;
+    gNormal = vec2(0);
+    gBrightness = vec3(1);
 }

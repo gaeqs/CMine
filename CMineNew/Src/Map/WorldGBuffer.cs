@@ -132,8 +132,8 @@ namespace CMineNew.Map{
 
         private void Resize() {
             ConfigureTexture(_width, _height, _depthTexture, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent);
-            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rgba16f, PixelFormat.Rgba);
-            ConfigureTexture(_width, _height, _albedoTexture, PixelInternalFormat.Rgba32f, PixelFormat.Rgba);
+            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.HalfFloat);
+            ConfigureTexture(_width, _height, _albedoTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
             ConfigureTexture(_width, _height, _brightnessTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);

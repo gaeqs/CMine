@@ -29,27 +29,13 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
 }
 
 void main() {
-    vec4 albedoFull = texture2D(gAlbedo, fragTexCoords);
+    vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
     vec3 normal = texture2D(gNormal, fragTexCoords).rgb;
 
-    vec3 albedo = albedoFull.rgb;
-    float colorFilter = albedoFull.a;
-
     if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
-        FragColor = vec4(albedo, 1);
+        FragColor = vec4(modelAmbientColor, 1);
     }
     else {
-
-        if (albedo.r == albedo.g && albedo.r == albedo.b) {
-            uint color = floatBitsToUint(colorFilter);
-            uint a = color & 0xFF;
-            if(a > 100) {
-                uint r = color >> 24;
-                uint g = (color >> 16) & 0xFF;
-                uint b = (color >> 8) & 0xFF;
-                albedo = vec3(r, g, b) * albedo.r  / 255.0;
-            }
-        }
 
         float depth = texture2D(gDepth, fragTexCoords).r * 2 - 1;
         vec4 projected = vec4(fragPos, depth, 1);
@@ -58,7 +44,7 @@ void main() {
 
         vec3 brightness = texture2D(gBrightness, fragTexCoords).rgb;
 
-        vec3 result = calculateGlobalAmbient(albedo) + albedo * brightness;
+        vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
 
         FragColor = vec4(result, 1);
 

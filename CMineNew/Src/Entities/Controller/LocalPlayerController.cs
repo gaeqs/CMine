@@ -128,9 +128,9 @@ namespace CMineNew.Entities.Controller{
                 var matInstance = new BlockSnapshotTorch();
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
-                var position = result.Position;
+                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);;
                 var block = _player.World.GetBlock(position);
-                Console.WriteLine(block.TextureFilter);
+                Console.WriteLine(block.BlockLight.Sunlight);
 
                 //if (!matInstance.CanBePlaced(position, _player.World)) return;
                 //if (!matInstance.Passable &&
