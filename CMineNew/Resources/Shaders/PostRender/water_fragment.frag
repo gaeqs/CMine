@@ -31,7 +31,7 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
 void main() {
     vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
     vec2 normalXY = texture2D(gNormal, fragTexCoords).rg;
-    if (normalXY == 2 && normalXY.y == 2) {
+    if (normalXY.x == 2 && normalXY.y == 2) {
         FragColor = vec4(modelAmbientColor, 1);
     }
     else {
