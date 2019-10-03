@@ -11,7 +11,7 @@ layout (location = 7) in float sunlight;
 
 out vec3 fragPos, fragNormal;
 out vec2 fragTexCoord;
-flat out float fragColorFilter;
+flat out vec4 fragColorFilter;
 out float fragLight;
 
 layout (std140, binding = 0) uniform Uniforms {
@@ -37,6 +37,14 @@ void main () {
     vec2 size = maxT - minT;
 
     fragTexCoord = minT + texturePosition * size;
-    fragColorFilter = blockColorFilter;
+
+    uint color = floatBitsToUint(blockColorFilter);
+    uint a = color & 0xFF;
+    uint r = color >> 24;
+    uint g = (color >> 16) & 0xFF;
+    uint b = (color >> 8) & 0xFF;
+  
+
+    fragColorFilter = vec4(r, g, b, a) / 255.0;
     fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
 }
