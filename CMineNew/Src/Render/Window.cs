@@ -104,7 +104,7 @@ namespace CMineNew.Render{
                 _stopwatch.Stop();
                 //Red
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
-                //LoopDelayViewer.Draw();
+                LoopDelayViewer.Draw();
             }
 
             Context.SwapBuffers();

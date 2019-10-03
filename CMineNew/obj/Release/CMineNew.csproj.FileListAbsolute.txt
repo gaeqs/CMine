@@ -7,7 +7,6 @@ D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csprojAssemblyReference.cac
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.Resources.Shaders.Shaders.resources
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.Resources.Textures.Textures.resources
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.GenerateResource.cache
-D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.CoreCompileInputs.cache
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.csproj.CopyComplete
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.exe
 D:\RiderProjects\CMine\CMineNew\obj\Release\CMineNew.pdb

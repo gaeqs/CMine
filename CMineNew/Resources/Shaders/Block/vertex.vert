@@ -38,5 +38,5 @@ void main () {
     
     fragTexCoord = minT + texturePosition * size;
     fragColorFilter = blockColorFilter;
-    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
+    fragLight = 1; //max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
 }
