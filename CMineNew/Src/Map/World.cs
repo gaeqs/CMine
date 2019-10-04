@@ -269,10 +269,9 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            foreach (var region in _chunkRegions.Values.Where(region => !region.Deleted)) {
-                if (_renderData.Camera.IsVisible(region)) {
-                    region.Render.Draw();
-                }
+            var renders = (from region in _chunkRegions.Values.Where(region => !region.Deleted) where _renderData.Camera.IsVisible(region) select region.Render).ToList();
+            foreach (var render in renders) {
+                render.Draw();
             }
 
             DrawSelectedBlock();
@@ -297,8 +296,8 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            foreach (var region in _chunkRegions.Values) {
-                region.Render.DrawAfterPostRender();
+            foreach (var render in renders) {
+                render.DrawAfterPostRender();
             }
 
 

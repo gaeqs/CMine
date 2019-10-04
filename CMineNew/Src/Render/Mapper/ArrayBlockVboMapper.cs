@@ -123,6 +123,7 @@ namespace CMineNew.Render.Mapper{
                 ResizeBuffer();
                 _requiresResize = false;
             }
+
             switch (task.Type) {
                 case VboMapperTaskType.Add:
                     AddToMap(task.Key, task.Data);
@@ -204,14 +205,13 @@ namespace CMineNew.Render.Mapper{
 
         private void ResizeBuffer() {
             var newArray = new float[_array.Length << 1];
-            for (var i = 0;
-                i < _array.Length;
-                i++) {
+            for (var i = 0; i < _array.Length; i++) {
                 newArray[i] = _array[i];
             }
 
             _array = newArray;
             _maximumAmount <<= 1;
+            if(_vbo == null) return;
             _vbo.Bind(_bufferTarget);
             _vbo.SetData(_bufferTarget, _maximumAmount * _elementSize << 2, BufferUsageHint.StreamDraw);
         }
