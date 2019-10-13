@@ -18,7 +18,7 @@ namespace CMineNew.Map.BlockData.Static{
 
         public string Id { get; }
 
-        public BlockModel BlockModel { get; }
+        public BlockModel BlockModel { get; protected set; }
 
         public bool Passable { get; }
 

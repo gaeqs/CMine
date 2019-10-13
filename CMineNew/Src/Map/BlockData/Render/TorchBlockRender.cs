@@ -114,9 +114,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void Draw(bool first) {
             CheckVbo();
-            if (first) {
-                _shader.Use();
-            }
+            _shader.Use();
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
             _vao.Bind();

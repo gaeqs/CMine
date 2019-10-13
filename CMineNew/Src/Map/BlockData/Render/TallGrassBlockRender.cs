@@ -1,15 +1,12 @@
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
-using CMineNew.Util;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
-    public class CrossBlockRender : BlockRender{
-        private const int MaxBlocks = 50;
+    public class TallGrassBlockRender : BlockRender{
+        private const int MaxBlocks = 800;
         private const int InstanceDataLength = 3 + 4 + 1 + 1 + 1;
         private const int InstanceFloatDataLength = InstanceDataLength * sizeof(float);
 
@@ -33,7 +30,7 @@ namespace CMineNew.Map.BlockData.Render{
         private readonly VboMapper<Block> _mapper;
         private bool _generated;
 
-        public CrossBlockRender(ChunkRegion chunkRegion) {
+        public TallGrassBlockRender(ChunkRegion chunkRegion) {
             _chunkRegion = chunkRegion;
             _vao = null;
             _dataBuffer = null;
@@ -61,12 +58,11 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void Draw(bool first) {
             CheckVbo();
-            if (first) {
-                _shader.Use();
-            }
+            _shader.Use();
+
             GL.Disable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.FrontAndBack);
-            
+
             _vao.Bind();
             _mapper.OnBackground = false;
             _mapper.FlushQueue();
@@ -81,7 +77,8 @@ namespace CMineNew.Map.BlockData.Render{
         }
 
         private void Generate() {
-            _shader = ShaderManager.GetOrCreateShader("cubic_block", Shaders.block_vertex, Shaders.block_fragment);
+            _shader = ShaderManager.GetOrCreateShader("tall_grass", Shaders.tall_grass_vertex,
+                Shaders.tall_grass_fragment);
             _vao = new VertexArrayObject(Vertices, Indices);
             _vao.Bind();
             _dataBuffer = new VertexBufferObject();

@@ -63,8 +63,8 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void DrawAfterPostRender(bool first) {
             CheckVbos();
+            _shader.Use();
             if (first) {
-                _shader.Use();
                 GL.ActiveTexture(TextureUnit.Texture1);
                 GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
             }

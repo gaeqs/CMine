@@ -101,7 +101,7 @@ namespace CMineNew.Render{
                 //Green
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
                 _stopwatch.Restart();
-                _room.Draw();
+                _room.Draw(_delay);
                 _stopwatch.Stop();
                 //Red
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);

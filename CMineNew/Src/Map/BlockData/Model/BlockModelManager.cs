@@ -13,6 +13,7 @@ namespace CMineNew.Map.BlockData.Model{
             _models.Add(WaterBlockModel.Key, new WaterBlockModel());
             _models.Add(SlabBlockModel.Key, new SlabBlockModel());
             _models.Add(TorchBlockModel.Key, new TorchBlockModel());
+            _models.Add(TallGrassBlockModel.Key, new TallGrassBlockModel());
             _loaded = true;
         }
 

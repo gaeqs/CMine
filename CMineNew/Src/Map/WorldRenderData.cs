@@ -57,11 +57,11 @@ namespace CMineNew.Map{
             _camera.Tick(delay);
         }
 
-        public void SetShaderData(Vector3 sunlightDirection, bool waterShader) {
+        public void SetShaderData(Vector3 sunlightDirection, bool waterShader, long ticks) {
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
             _shaderData.SetData(_camera.ViewProjection, _camera.Position,
-                sunlightDirection, min * min, max * max, waterShader);
+                sunlightDirection, min * min, max * max, waterShader, ticks);
         }
     }
 }

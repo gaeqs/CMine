@@ -32,6 +32,14 @@
         <value>Block/fragment.frag;System.String</value>
     </data>
 
+    <data name="tall_grass_vertex" type="System.Resources.ResXFileRef">
+        <value>TallGrass/vertex.vert;System.String</value>
+    </data>
+
+    <data name="tall_grass_fragment" type="System.Resources.ResXFileRef">
+        <value>TallGrass/fragment.frag;System.String</value>
+    </data>
+
     <data name="slab_vertex" type="System.Resources.ResXFileRef">
         <value>Slab/vertex.vert;System.String</value>
     </data>

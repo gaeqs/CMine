@@ -251,10 +251,10 @@ namespace CMineNew.Map{
             _renderData.CameraTick(_player, delay);
         }
 
-        public override void Draw() {
+        public override void Draw(long delay) {
             //Set shader data.
 
-            _renderData.SetShaderData(new Vector3(-1, -1, -1).Normalized(), _player.EyesOnWater);
+            _renderData.SetShaderData(new Vector3(-1, -1, -1).Normalized(), _player.EyesOnWater, delay);
 
             //Bind GBuffer and draw background.
             _renderData.BindGBuffer();

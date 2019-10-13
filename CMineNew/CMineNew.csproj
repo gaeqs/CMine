@@ -94,10 +94,12 @@
     <Compile Include="Src\Map\BlockData\Model\BlockModelManager.cs" />
     <Compile Include="Src\Map\BlockData\Model\CrossBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\SlabBlockModel.cs" />
+    <Compile Include="Src\Map\BlockData\Model\TallGrassBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\TorchBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Model\WaterBlockModel.cs" />
     <Compile Include="Src\Map\BlockData\Render\CrossBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Render\SlabBlockRender.cs" />
+    <Compile Include="Src\Map\BlockData\Render\TallGrassBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Render\TorchBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Render\WaterBlockRender.cs" />
     <Compile Include="Src\Map\BlockData\Sketch\CrossBlock.cs" />
@@ -269,6 +271,8 @@
     <Content Include="Resources\Shaders\Slab\vertex.vert" />
     <Content Include="Resources\Shaders\StaticText\fragment.frag" />
     <Content Include="Resources\Shaders\StaticText\vertex.vert" />
+    <Content Include="Resources\Shaders\TallGrass\fragment.frag" />
+    <Content Include="Resources\Shaders\TallGrass\vertex.vert" />
     <Content Include="Resources\Shaders\Water\fragment.frag" />
     <Content Include="Resources\Shaders\Water\vertex.vert" />
     <Content Include="Resources\Textures\bricks.png" />

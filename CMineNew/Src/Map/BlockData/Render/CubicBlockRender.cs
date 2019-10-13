@@ -1,12 +1,7 @@
-using System;
-using System.Linq;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
-using CMineNew.Util;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -31,7 +26,7 @@ namespace CMineNew.Map.BlockData.Render{
             _generated = false;
 
             foreach (var face in BlockFaceMethods.All) {
-                _mappers[(int) face] = new ArrayBlockVboMapper(_chunkRegion, null, null, 
+                _mappers[(int) face] = new ArrayBlockVboMapper(_chunkRegion, null, null,
                     InstanceDataLength, MaxFaces);
             }
         }
@@ -47,7 +42,7 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
-                    filter.ValueF, 
+                    filter.ValueF,
                     blockLight / Block.MaxBlockLightF,
                     sunlight / Block.MaxBlockLightF
                 }, 0));
@@ -60,9 +55,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void Draw(bool first) {
             CheckVbos();
-            if (first) {
-                _shader.Use();
-            }
+            _shader.Use();
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
 

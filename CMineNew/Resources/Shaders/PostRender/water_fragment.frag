@@ -17,6 +17,7 @@ layout (std140, binding = 0) uniform Uniforms {
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
     bool waterShader;
+    int millis;
 
 };
 
