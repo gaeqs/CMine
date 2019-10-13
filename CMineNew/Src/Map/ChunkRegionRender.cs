@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Render;
@@ -36,26 +36,30 @@ namespace CMineNew.Map{
 
         public void Draw() {
             if (_deleted) return;
-
             foreach (var render in _renders.Values) {
-                render.Draw();
+                render.Draw(true);
             }
+        }
+
+        public void Draw(string renderName, bool first) {
+            if (_deleted) return;
+            if (!_renders.TryGetValue(renderName, out var render)) return;
+            render.Draw(first);
         }
 
         public void DrawAfterPostRender() {
             if (_deleted) return;
-
             foreach (var render in _renders.Values) {
-                render.DrawAfterPostRender();
+                render.DrawAfterPostRender(true);
             }
         }
-
-        public void FlushInBackground() {
+        
+        public void DrawAfterPostRender(string renderName, bool first) {
             if (_deleted) return;
-            foreach (var render in _renders.Values) {
-                render.FlushInBackground();
-            }
+            if (!_renders.TryGetValue(renderName, out var render)) return;
+            render.DrawAfterPostRender(first);
         }
+
 
         public void CleanUp() {
             if (_deleted) return;

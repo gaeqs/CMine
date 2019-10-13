@@ -16,6 +16,8 @@ namespace CMineNew.Map.BlockData.Model{
             _loaded = true;
         }
 
+        public static Dictionary<string, BlockModel> Models => _models;
+
         public static void AddModel(string key, BlockModel model) {
             if (!_loaded) {
                 Load();

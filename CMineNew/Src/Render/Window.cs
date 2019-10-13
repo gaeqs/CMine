@@ -92,6 +92,7 @@ namespace CMineNew.Render{
             //Blue
             LoopDelayViewer.Add(_loopStopwatch.ElapsedTicks);
             _delay = _vsync ? CMine.TicksPerSecond / 60 : _loopStopwatch.ElapsedTicks;
+            _delay = Math.Min(CMine.TicksPerSecond / 30, _delay);
             _loopStopwatch.Restart();
             if (_room != null) {
                 _stopwatch.Restart();
@@ -104,7 +105,7 @@ namespace CMineNew.Render{
                 _stopwatch.Stop();
                 //Red
                 LoopDelayViewer.Add(_stopwatch.ElapsedTicks);
-                LoopDelayViewer.Draw();
+                //LoopDelayViewer.Draw();
             }
 
             Context.SwapBuffers();

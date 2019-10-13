@@ -58,11 +58,14 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
-        public override void Draw() {
+        public override void Draw(bool first) {
             CheckVbos();
-            _shader.Use();
+            if (first) {
+                _shader.Use();
+            }
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
+
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
                 var vao = _vaos[(int) face];
@@ -73,15 +76,7 @@ namespace CMineNew.Map.BlockData.Render{
             }
         }
 
-        public override void DrawAfterPostRender() {
-        }
-
-        public override void FlushInBackground() {
-            CheckVbos();
-            foreach (var mapper in _mappers) {
-                mapper.OnBackground = true;
-                mapper.FlushQueue();
-            }
+        public override void DrawAfterPostRender(bool first) {
         }
 
         public override void CleanUp() {

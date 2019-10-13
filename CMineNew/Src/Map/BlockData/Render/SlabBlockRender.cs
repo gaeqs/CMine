@@ -1,10 +1,7 @@
-using System.Linq;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -46,7 +43,7 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
                     pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
-                    filter.R, filter.G, filter.B, filter.A, 
+                    filter.R, filter.G, filter.B, filter.A,
                     blockLight / Block.MaxBlockLightF, sunlight / Block.MaxBlockLightF,
                     slabBlock.Upside ? 1 : 0,
                 }, 0));
@@ -57,9 +54,14 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
-        public override void Draw() {
+        public override void Draw(bool first) {
             CheckVbos();
-            _shader.Use();
+            if (first) {
+                _shader.Use();
+            }
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
                 var vao = _vaos[(int) face];
@@ -70,10 +72,10 @@ namespace CMineNew.Map.BlockData.Render{
             }
         }
 
-        public override void DrawAfterPostRender() {
+        public override void DrawAfterPostRender(bool first) {
         }
 
-        public override void FlushInBackground() {
+        public virtual void FlushInBackground() {
             CheckVbos();
             foreach (var mapper in _mappers) {
                 mapper.OnBackground = true;

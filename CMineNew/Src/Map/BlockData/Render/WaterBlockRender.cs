@@ -58,15 +58,18 @@ namespace CMineNew.Map.BlockData.Render{
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
-        public override void Draw() {
+        public override void Draw(bool first) {
         }
 
-        public override void DrawAfterPostRender() {
-            var camera = _chunkRegion.World.Camera;
+        public override void DrawAfterPostRender(bool first) {
             CheckVbos();
-            _shader.Use();
-            GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
+            if (first) {
+                _shader.Use();
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
+            }
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
 
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
@@ -78,7 +81,7 @@ namespace CMineNew.Map.BlockData.Render{
             }
         }
 
-        public override void FlushInBackground() {
+        public virtual void FlushInBackground() {
             CheckVbos();
             foreach (var mapper in _mappers) {
                 mapper.OnBackground = true;

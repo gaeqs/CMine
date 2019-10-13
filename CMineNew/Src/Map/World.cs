@@ -9,6 +9,7 @@ using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
+using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
@@ -269,10 +270,17 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            var renders = (from region in _chunkRegions.Values.Where(region => !region.Deleted) where _renderData.Camera.IsVisible(region) select region.Render).ToList();
-            foreach (var render in renders) {
-                render.Draw();
+            var renders = (from region in _chunkRegions.Values.Where(region => !region.Deleted)
+                where _renderData.Camera.IsVisible(region)
+                select region.Render).ToList();
+            foreach (var model in BlockModelManager.Models.Values) {
+                var first = true;
+                foreach (var render in renders) {
+                    render.Draw(model.Id, first);
+                    first = false;
+                }
             }
+
 
             DrawSelectedBlock();
 
@@ -296,8 +304,12 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
 
-            foreach (var render in renders) {
-                render.DrawAfterPostRender();
+            foreach (var model in BlockModelManager.Models.Values) {
+                var first = true;
+                foreach (var render in renders) {
+                    render.DrawAfterPostRender(model.Id, first);
+                    first = false;
+                }
             }
 
 

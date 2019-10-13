@@ -112,19 +112,23 @@ namespace CMineNew.Map.BlockData.Render{
             _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Remove, block, null, 0));
         }
 
-        public override void Draw() {
+        public override void Draw(bool first) {
             CheckVbo();
-            _shader.Use();
+            if (first) {
+                _shader.Use();
+            }
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
             _vao.Bind();
             _mapper.OnBackground = false;
             _mapper.FlushQueue();
             _vao.DrawnInstanced(_mapper.Amount);
         }
 
-        public override void DrawAfterPostRender() {
+        public override void DrawAfterPostRender(bool first) {
         }
 
-        public override void FlushInBackground() {
+        public virtual void FlushInBackground() {
             CheckVbo();
             _mapper.OnBackground = true;
             _mapper.FlushQueue();
