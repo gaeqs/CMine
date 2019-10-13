@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
@@ -6,14 +5,15 @@ using CMineNew.DataStructure.Queue;
 
 namespace CMineNew.Map.BlockData{
     public static class BlockLightMethods{
+        private const int Faces = 6;
+
         public static void ExpandFrom(Block from, BlockLightSource source, sbyte light) {
             var queue = new Queue<Block>();
-            var neighbours = from.NeighbourReferences;
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 if (!from.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                neighbours[i].TryGetTarget(out var neighbour);
+                var neighbour = from.GetNeighbour((BlockFace) i);
                 Expand(queue, neighbour, source, light, from, opposite);
             }
 
@@ -60,20 +60,13 @@ namespace CMineNew.Map.BlockData{
             updatedBlocks?.Enqueue(to);
 
             var toLight = (sbyte) (light - to.StaticData.BlockLightPassReduction);
-            var neighbours = to.NeighbourReferences;
 
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 if (!to.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                if (!neighbours[i].TryGetTarget(out var neighbour)) {
-                    neighbour = to.World.GetBlock(to.Position + BlockFaceMethods.GetRelative(face));
-                    neighbours[i] = new WeakReference<Block>(neighbour);
-                    if (neighbour == null) {
-                        continue;
-                    }
-                }
-
+                var neighbour = from.GetNeighbour((BlockFace) i);
+                if (neighbour == null) continue;
                 Expand(updatedBlocks, neighbour, source, toLight, to, opposite);
             }
         }
@@ -86,17 +79,14 @@ namespace CMineNew.Map.BlockData{
             light.Source = null;
             removedBlocksList.Add(block);
 
-            var neighbours = block.NeighbourReferences;
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                if (!neighbours[i].TryGetTarget(out var neighbour)) {
-                    neighbour = block.World.GetBlock(block.Position + BlockFaceMethods.GetRelative(face));
-                    neighbours[i] = new WeakReference<Block>(neighbour);
-                    if (neighbour == null) {
-                        continue;
-                    }
+                var neighbour = block.GetNeighbour((BlockFace) i);
+                if (neighbour == null) {
+                    continue;
                 }
+
 
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
                 if (oldLight < neighbour.BlockLight.Light || !Equals(neighbour.BlockLight.Source, source)) continue;
@@ -126,7 +116,8 @@ namespace CMineNew.Map.BlockData{
                 if (elem == null) continue;
                 var light = elem.CalculateLightFromNeighbours(out var face);
                 if (light <= 0) continue;
-                if (elem.NeighbourReferences[(int) face].TryGetTarget(out var block)) {
+                var block = elem.GetNeighbour(face);
+                if (block != null) {
                     Expand(queue, elem, block.BlockLight.Source, light, block, face);
                 }
             }

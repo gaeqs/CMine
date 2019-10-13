@@ -167,7 +167,8 @@ namespace CMineNew.Map.BlockData.Type{
                 if (!(to is BlockWater)) {
                     _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
                 }
-
+                
+                
                 var newData = to == null ||
                               !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
                 _visibleFaces[(int) relative] = newData;

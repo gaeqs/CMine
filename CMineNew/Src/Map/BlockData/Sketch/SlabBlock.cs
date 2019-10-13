@@ -32,7 +32,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
-                _neighbours[i].TryGetTarget(out var block);
+                var block = GetNeighbour((BlockFace) i);
                 var face = (BlockFace) i;
 
                 var visibleBySlab = face == BlockFace.Up && !_upside || face == BlockFace.Down && _upside;
@@ -56,7 +56,7 @@ namespace CMineNew.Map.BlockData.Sketch{
                 if(!_visibleFaces[i]) continue;
                 var face = (BlockFace) i;
                 var visibleBySlab = face == BlockFace.Up && !_upside || face == BlockFace.Down && _upside;
-                _neighbours[i].TryGetTarget(out var block);
+                var block = GetNeighbour((BlockFace) i);
                 if (visibleBySlab) {
                     render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
                 }

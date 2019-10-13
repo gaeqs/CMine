@@ -6,7 +6,7 @@ namespace CMineNew.Map.BlockData.Static.Type{
 
         private BlockStaticDataTallGrass()
             : base("default:tall_grass", true, false, 0,
-                Block.MaxBlockLight, Block.MaxBlockLight, "default:tall_grass") {
+                1, 0, "default:tall_grass") {
             BlockModel = BlockModelManager.GetModelOrNull(TallGrassBlockModel.Key);
         }
     }

@@ -18,7 +18,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
-                _neighbours[i].TryGetTarget(out var block);
+                var block = GetNeighbour((BlockFace) i);
                 var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
                 var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
                 if (!vis || !addToRender) continue;
@@ -31,7 +31,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 if (!_visibleFaces[i]) continue;
-                _neighbours[i].TryGetTarget(out var block);
+                var block = GetNeighbour((BlockFace) i);
                 var light = block?.BlockLight;
                 render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
             }

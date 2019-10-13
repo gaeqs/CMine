@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
@@ -7,15 +6,16 @@ using CMineNew.Geometry;
 
 namespace CMineNew.Map.BlockData{
     public static class SunlightMethods{
+        private const int Faces = 6;
+
         public static void ExpandFrom(Block from, Vector3i source, sbyte light) {
             if (light <= 0) return;
             var queue = new Queue<Block>();
-            var neighbours = from.NeighbourReferences;
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 if (!from.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                neighbours[i].TryGetTarget(out var neighbour);
+                var neighbour = from.GetNeighbour((BlockFace) i);
                 Expand(queue, neighbour, source, light, from, opposite);
             }
 
@@ -63,18 +63,14 @@ namespace CMineNew.Map.BlockData{
             updatedBlocks?.Enqueue(to);
 
             var toLight = (sbyte) (light - to.StaticData.BlockLightPassReduction);
-            var neighbours = to.NeighbourReferences;
 
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 if (!to.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                if (!neighbours[i].TryGetTarget(out var neighbour)) {
-                    neighbour = to.World.GetBlock(to.Position + BlockFaceMethods.GetRelative(face));
-                    neighbours[i] = new WeakReference<Block>(neighbour);
-                    if (neighbour == null) {
-                        continue;
-                    }
+                var neighbour = to.GetNeighbour((BlockFace) i);
+                if (neighbour == null) {
+                    continue;
                 }
 
                 Expand(updatedBlocks, neighbour, source, toLight, to, opposite);
@@ -90,16 +86,12 @@ namespace CMineNew.Map.BlockData{
             light.SunlightSource = block.Position;
             removedBlocksList.Add(block);
 
-            var neighbours = block.NeighbourReferences;
-            for (var i = 0; i < neighbours.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                if (!neighbours[i].TryGetTarget(out var neighbour)) {
-                    neighbour = block.World.GetBlock(block.Position + BlockFaceMethods.GetRelative(face));
-                    neighbours[i] = new WeakReference<Block>(neighbour);
-                    if (neighbour == null) {
-                        continue;
-                    }
+                var neighbour = block.GetNeighbour((BlockFace) i);
+                if (neighbour == null) {
+                    continue;
                 }
 
                 if (!block.CanLightPassThrough(face) || !neighbour.CanLightBePassedFrom(opposite, block)) continue;
@@ -130,7 +122,8 @@ namespace CMineNew.Map.BlockData{
                 if (elem == null) continue;
                 var light = elem.CalculateSunlightFromNeighbours(out var face);
                 if (light <= 0) continue;
-                if (elem.NeighbourReferences[(int) face].TryGetTarget(out var block)) {
+                var block = elem.GetNeighbour(face);
+                if (block != null) {
                     Expand(queue, elem, block.BlockLight.SunlightSource, light, block, face);
                 }
             }
