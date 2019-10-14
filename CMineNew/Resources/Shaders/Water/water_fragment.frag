@@ -30,11 +30,10 @@ void main() {
 
     float light = fragLight * 0.8 + 0.2;
     FragColor = ambient * light;
-    
+
     vec3 distance = fragPos - cameraPosition;
     float lengthSquared = dot(distance, distance);
-
-    vec4 color = texture(skyBox, distance);
-    float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
-    FragColor = mix(FragColor, color, a);
+    float length = 1 - lengthSquared / 1000;
+    
+    FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
 }

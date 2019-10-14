@@ -145,5 +145,11 @@ namespace CMineNew.Render.Object{
             SetUInt("gDepth", 0);
             SetUInt("gNormal", 1);
         }
+        
+        public void SetupForWater() {
+            Use();
+            SetUInt("sampler", 0);
+            SetUInt("skyBox", 1);
+        }
     }
 }

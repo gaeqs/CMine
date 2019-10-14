@@ -737,5 +737,39 @@ namespace CMineNew.Resources.Shaders {
                 return ResourceManager.GetString("water_vertex", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///in vec3 fragPos, fragNormal;
+        ///in vec2 fragTexCoords;
+        ///in vec4 fragColorFilter;
+        ///in float fragLight;
+        ///
+        ///out vec4 FragColor;
+        ///
+        ///layout (std140, binding = 0) uniform Uniforms {
+        ///
+        ///    mat4 viewProjection;
+        ///    vec3 cameraPosition;
+        ///    vec3 sunlightDirection;
+        ///    float viewDistanceSquared;
+        ///    float viewDistanceOffsetSquared;
+        ///    bool waterShader;
+        ///    int millis;
+        ///
+        ///};
+        ///
+        ///uniform sampler2D sampler;
+        ///uniform samplerCube skyBox;
+        ///
+        ///void main() {
+        ///    vec4 ambient = texture(sampler, fragT [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string water_water_fragment {
+            get {
+                return ResourceManager.GetString("water_water_fragment", resourceCulture);
+            }
+        }
     }
 }

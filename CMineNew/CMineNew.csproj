@@ -275,6 +275,7 @@
     <Content Include="Resources\Shaders\TallGrass\vertex.vert" />
     <Content Include="Resources\Shaders\Water\fragment.frag" />
     <Content Include="Resources\Shaders\Water\vertex.vert" />
+    <Content Include="Resources\Shaders\Water\water_fragment.frag" />
     <Content Include="Resources\Textures\bricks.png" />
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />

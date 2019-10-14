@@ -1,20 +1,17 @@
-using System.Linq;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
     public class WaterBlockRender : BlockRender{
         private const int MaxFaces = 750;
-        private const int InstanceDataLength = 3 + 4 + 4 + 1 + 1 + 4; 
+        private const int InstanceDataLength = 3 + 4 + 4 + 1 + 1 + 4;
         private const int InstanceFloatDataLength = sizeof(float) * InstanceDataLength;
 
         private readonly ChunkRegion _chunkRegion;
-        private ShaderProgram _shader;
+        private ShaderProgram _shader, _waterShader;
         private readonly VertexArrayObject[] _vaos;
         private readonly VertexBufferObject[] _dataBuffers;
         private readonly VboMapper<Block>[] _mappers;
@@ -63,13 +60,21 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void DrawAfterPostRender(bool first) {
             CheckVbos();
-            _shader.Use();
+            if (_chunkRegion.World.Player.EyesOnWater) {
+                _waterShader.Use();
+            }
+            else {
+                _shader.Use();
+            }
+
             if (first) {
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
                 GL.ActiveTexture(TextureUnit.Texture1);
                 GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
             }
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+
+            GL.Disable(EnableCap.CullFace);
 
             foreach (var face in BlockFaceMethods.All) {
                 var mapper = _mappers[(int) face];
@@ -97,8 +102,12 @@ namespace CMineNew.Map.BlockData.Render{
 
         private void Generate() {
             _shader = ShaderManager.GetOrCreateShader("water_block", Shaders.water_vertex, Shaders.water_fragment);
+            _waterShader = ShaderManager.GetOrCreateShader("water_water_block", Shaders.water_vertex,
+                Shaders.water_water_fragment);
             _shader.Use();
-            _shader.SetUInt("skyBox", 1);
+            _shader.SetupForWater();
+            _waterShader.Use();
+            _waterShader.SetupForWater();
             foreach (var face in BlockFaceMethods.All) {
                 var vao = BlockFaceVertices.CreateVao(face);
                 vao.Bind();
@@ -124,23 +133,6 @@ namespace CMineNew.Map.BlockData.Render{
                 mapper.Vao = vao;
                 mapper.Vbo = vbo;
             }
-        }
-
-        private void OnResize(VertexArrayObject vao, VertexBufferObject oldBuffer, VertexBufferObject newBuffer) {
-            vao.LinkBuffer(newBuffer);
-            vao.UnlinkBuffer(oldBuffer);
-
-            vao.Bind();
-
-            newBuffer.Bind(BufferTarget.ArrayBuffer);
-            var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
-            builder.AddPointer(3, true);
-            builder.AddPointer(4, true);
-            builder.AddPointer(4, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(4, true);
-            VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 
         private void CheckVbos() {

@@ -56,6 +56,10 @@
         <value>Water/fragment.frag;System.String</value>
     </data>
 
+    <data name="water_water_fragment" type="System.Resources.ResXFileRef">
+        <value>Water/water_fragment.frag;System.String</value>
+    </data>
+    
     <data name="block_lines_vertex" type="System.Resources.ResXFileRef">
         <value>BlockLines/vertex.vert;System.String</value>
     </data>
