@@ -153,42 +153,41 @@ namespace CMineNew.Map{
             ForEachChunkPosition((x, y, z, block) => {
                 if (block == null) return;
                 block.OnPlace0(null, triggerWorldUpdates, expandSunlight, addToRender);
-                var references = block.NeighbourReferences;
                 switch (x) {
                     case 0: {
-                        if (!references[(int) BlockFace.West].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.East);
+                        var target = block.GetNeighbour(BlockFace.West);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.East);
                         break;
                     }
                     case 15: {
-                        if (!references[(int) BlockFace.East].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.West);
+                        var target = block.GetNeighbour(BlockFace.East);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.West);
                         break;
                     }
                 }
 
                 switch (y) {
                     case 0: {
-                        if (!references[(int) BlockFace.Down].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.Up);
+                        var target = block.GetNeighbour(BlockFace.Down);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.Up);
                         break;
                     }
                     case 15: {
-                        if (!references[(int) BlockFace.Up].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.Down);
+                        var target = block.GetNeighbour(BlockFace.Up);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.Down);
                         break;
                     }
                 }
 
                 switch (z) {
                     case 0: {
-                        if (!references[(int) BlockFace.North].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.South);
+                        var target = block.GetNeighbour(BlockFace.North);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.South);
                         break;
                     }
                     case 15: {
-                        if (!references[(int) BlockFace.South].TryGetTarget(out var target)) return;
-                        target.OnNeighbourBlockChange0(null, block, BlockFace.North);
+                        var target = block.GetNeighbour(BlockFace.South);
+                        target?.OnNeighbourBlockChange0(null, block, BlockFace.North);
                         break;
                     }
                 }
