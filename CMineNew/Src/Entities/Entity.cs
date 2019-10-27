@@ -12,7 +12,7 @@ namespace CMineNew.Entities{
     public class Entity{
         protected readonly World _world;
         protected readonly Guid _guid;
-        protected Vector3 _position;
+        protected Vector3 _position, _renderPosition;
         protected readonly Aabb _collisionBox;
         
         /// <summary>
@@ -37,6 +37,7 @@ namespace CMineNew.Entities{
             _world = world;
             _guid = guid;
             _position = position;
+            _renderPosition = position;
             _collisionBox = collisionBox;
         }
 
@@ -62,6 +63,8 @@ namespace CMineNew.Entities{
                 UpdatePosition(old);
             }
         }
+
+        public Vector3 RenderPosition => _renderPosition;
 
         /// <summary>
         /// The entity's collision box.
@@ -90,7 +93,14 @@ namespace CMineNew.Entities{
         /// </summary>
         /// <param name="dif">The time difference difference between the last tick and the current one.</param>
         public virtual void RenderTick(long dif) {
-            
+            const int MaxDelay = CMine.TicksPerSecond / 70;
+            if (dif >= MaxDelay) {
+                _renderPosition = _position;
+            }
+            else {
+                var u = (_position - _renderPosition) / MaxDelay;
+                _renderPosition += u * dif;
+            }
         }
 
         protected bool Equals(Entity other) {

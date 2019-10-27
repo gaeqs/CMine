@@ -44,9 +44,8 @@ namespace CMineNew.Map{
                 }
 
                 _stopwatch.Stop();
-                Console.WriteLine(_stopwatch.ElapsedMilliseconds);
-                load = (_stopwatch.ElapsedTicks * 1000 / CMine.TicksPerSecondF) / 14;
-                Thread.Sleep(Math.Max(0, 14 - (int) _stopwatch.ElapsedMilliseconds));
+                load = _stopwatch.ElapsedTicks * 1000 / (CMine.TicksPerSecondF * 14);
+                Thread.Sleep(new TimeSpan(Math.Max(CMine.TicksPerSecond / 70 - _stopwatch.ElapsedTicks, 0)));
             }
         }
     }

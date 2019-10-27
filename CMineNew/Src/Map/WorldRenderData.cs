@@ -52,7 +52,7 @@ namespace CMineNew.Map{
         }
 
         public void CameraTick(Player player, long delay) {
-            _camera.ToPosition = player.Position + new Vector3(0, player.EyesHeight, 0);
+            _camera.ToPosition = player.RenderPosition + new Vector3(0, player.EyesHeight, 0);
             _camera.ToRotation = player.HeadRotation;
             _camera.Tick(delay);
         }
