@@ -32,9 +32,6 @@ namespace CMineNew.Entities.Controller{
         }
 
         public override void Tick(long dif) {
-            //Handle mouse movement.
-            HandleMouseMovement();
-
             //Calculates the movement's direction.
             var direction = Vector3.Zero;
             if (_w && !_s) {
@@ -59,6 +56,11 @@ namespace CMineNew.Entities.Controller{
             if (_space) {
                 _player.ManageJump();
             }
+        }
+
+        public override void RenderTick(long dif) {
+            //Handle mouse movement.
+            HandleMouseMovement();
         }
 
         public override void HandleKeyPush(KeyboardKeyEventArgs eventArgs) {

@@ -169,6 +169,11 @@ namespace CMineNew.Entities{
             _eyesOnWater = eyesBlock is BlockWater water && water.WaterHeight + water.Position.Y - _position.Y >= _eyesHeight;
         }
 
+        public override void RenderTick(long dif) {
+            base.RenderTick(dif);
+            _controller?.RenderTick(dif);
+        }
+
         /// <summary>
         /// When a position update is sent and the chunk where the player is has changed,
         /// sends a request to load nearby chunks and unloaded far ones.

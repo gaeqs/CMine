@@ -25,6 +25,12 @@ namespace CMineNew.Entities.Controller{
         /// </summary>
         /// <param name="dif">The delay between the last tick and the current one in ticks.</param>
         public abstract void Tick(long dif);
+        
+        /// <summary>
+        /// Method called every render loop.
+        /// </summary>
+        /// <param name="dif">The delay between the last tick and the current one in ticks.</param>
+        public abstract void RenderTick(long dif);
 
         /// <summary>
         /// Method called when a key is pushed.
