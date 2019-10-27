@@ -27,7 +27,7 @@ namespace CMineNew.Map{
         private readonly string _folder;
 
         private readonly WorldRenderData _renderData;
-
+        private readonly WorldThread _worldThread;
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
         private readonly WorldTaskManager _worldTaskManager;
@@ -40,7 +40,6 @@ namespace CMineNew.Map{
         private readonly Player _player;
 
         private readonly Collection<StaticText> _staticTexts;
-
         private readonly DelayViewer _delayViewer;
 
         public World(string name, TrueTypeFont ttf) : base(name) {
@@ -77,6 +76,9 @@ namespace CMineNew.Map{
             _asyncChunkGenerator.StartThread();
 
             _asyncChunkGenerator.GenerateChunkArea = true;
+            
+            _worldThread = new WorldThread(this);
+            _worldThread.StartThread();
         }
 
         public string Folder => _folder;
@@ -84,6 +86,8 @@ namespace CMineNew.Map{
         public PhysicCamera Camera => _renderData.Camera;
 
         public WorldRenderData RenderData => _renderData;
+
+        public WorldThread WorldThread => _worldThread;
 
         public WorldGenerator WorldGenerator => _worldGenerator;
 
@@ -234,14 +238,9 @@ namespace CMineNew.Map{
         }
 
         public override void Tick(long delay) {
-            _worldTaskManager.Tick(delay);
-
-            foreach (var region in _chunkRegions.Values) {
-                region.Tick(delay);
-            }
-
+            
             foreach (var entity in _entities) {
-                entity.Tick(delay);
+                entity.RenderTick(delay);
             }
 
             foreach (var staticText in _staticTexts) {
@@ -368,6 +367,7 @@ namespace CMineNew.Map{
 
         public override void Close() {
             _asyncChunkGenerator.Kill();
+            _worldThread.Kill();
             foreach (var region in _chunkRegions.Values) {
                 region.Delete();
             }

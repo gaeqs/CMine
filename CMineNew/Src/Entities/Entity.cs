@@ -80,8 +80,17 @@ namespace CMineNew.Entities{
         /// A virtual method that is called every game loop.
         /// This method is meant to be overriden by other entities.
         /// </summary>
-        /// <param name="dif"></param>
+        /// <param name="dif">The time difference difference between the last tick and the current one.</param>
         public virtual void Tick(long dif) {
+        }
+
+        /// <summary>
+        /// A virtual method that is called every render loop.
+        /// This method is meant to be overriden by other entities.
+        /// </summary>
+        /// <param name="dif">The time difference difference between the last tick and the current one.</param>
+        public virtual void RenderTick(long dif) {
+            
         }
 
         protected bool Equals(Entity other) {

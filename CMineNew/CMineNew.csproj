@@ -198,6 +198,7 @@
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\Map\WorldRenderData.cs" />
     <Compile Include="Src\Map\WorldShaderData.cs" />
+    <Compile Include="Src\Map\WorldThread.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
     <Compile Include="Src\RayTrace\Pointer.cs" />
     <Compile Include="Src\Render\Camera.cs" />

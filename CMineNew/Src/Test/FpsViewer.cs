@@ -25,9 +25,11 @@ namespace CMineNew.Test{
 
             var chunks = 0;
             var regions = 0;
+            var load = 0f;
             if (CMine.Window.Room is World world) {
                 chunks = world.AsyncChunkGenerator.ChunksToGenerateSize;
                 regions = world.ChunkRegions.Count;
+                load = world.WorldThread.Load * 100;
             }
 
             var chunkVelocity = _lastChunks - chunks;
@@ -35,7 +37,7 @@ namespace CMineNew.Test{
 
 
             Text = "(" + regions + ") (" + chunks + ") [ " + chunkVelocity + "] " +
-                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} " + _loops;
+                   "(" + VertexBufferObject.Buffers + ") {" + BuffersSize() + "} " + " ("+load+"%) " + _loops ;
             _ticks = 0;
             _loops = 0;
         }
