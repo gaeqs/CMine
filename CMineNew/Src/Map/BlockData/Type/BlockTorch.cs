@@ -1,6 +1,6 @@
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static.Type;
-using CMineNew.Texture;
 using OpenTK;
 
 namespace CMineNew.Map.BlockData.Type{
@@ -9,7 +9,7 @@ namespace CMineNew.Map.BlockData.Type{
 
         public BlockTorch(Chunk chunk, Vector3i position)
             : base(BlockStaticDataTorch.Instance, chunk, position, new Rgba32I(0, 0, 0, 0)) {
-            _textureArea = CMine.Textures.Areas["default:torch"];
+            _textureArea = CMine.TextureMap.Areas["default:torch"];
         }
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();

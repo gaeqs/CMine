@@ -103,6 +103,16 @@ namespace CMineNew.Resources.Textures {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] gui_hotbar {
+            get {
+                object obj = ResourceManager.GetObject("gui_hotbar", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] oak_leaves {
             get {
                 object obj = ResourceManager.GetObject("oak_leaves", resourceCulture);

@@ -68,7 +68,7 @@ namespace CMineNew.Map.BlockData.Render{
             }
 
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
+            GL.BindTexture(TextureTarget.Texture2D, CMine.TextureMap.Texture);
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.BindTexture(TextureTarget.TextureCubeMap, _chunkRegion.World.RenderData.SkyBox.Id);
 

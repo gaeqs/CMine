@@ -134,11 +134,11 @@ namespace CMineNew.Entities.Controller{
                 var block = _player.World.GetBlock(position);
                 Console.WriteLine(block.BlockLight.LinearSunlight +" -> "+block.BlockLight.Sunlight);
 
-                //if (!matInstance.CanBePlaced(position, _player.World)) return;
-                //if (!matInstance.Passable &&
-                //    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
-                //        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-                //_player.World.SetBlock(matInstance, position);
+                if (!matInstance.CanBePlaced(position, _player.World)) return;
+                if (!matInstance.Passable &&
+                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
+                _player.World.SetBlock(matInstance, position);
             }
         }
 

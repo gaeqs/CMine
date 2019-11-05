@@ -1,12 +1,11 @@
 using CMineNew.Loader;
-using CMineNew.Render;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using CMineNew.Resources.Textures;
 using OpenTK.Graphics.OpenGL;
 
-namespace CMineNew.RayTrace{
-    public static class Pointer{
+namespace CMineNew.Render.Gui {
+    public static class Pointer {
         private static readonly Vertex[] Vertices = {
             new Vertex(-0.01f, -0.01f, 1, 0, 0, 0, 0, 1),
             new Vertex(0.01f, -0.01f, 1, 0, 0, 0, 1, 1),

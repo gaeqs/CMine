@@ -1,6 +1,6 @@
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
-using CMineNew.Texture;
 using OpenTK;
 
 namespace CMineNew.Map.BlockData.Sketch{

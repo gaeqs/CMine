@@ -8,7 +8,7 @@ namespace CMineNew.Map.BlockData.Static{
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, string[] texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureAreas = new Area2d[texture.Length];
-            var areas = CMine.Textures.Areas;
+            var areas = CMine.TextureMap.Areas;
             for (var i = 0; i < texture.Length; i++) {
                 _textureAreas[i] = areas[texture[i]];
             }

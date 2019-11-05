@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using CMineNew.Color;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
-using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{

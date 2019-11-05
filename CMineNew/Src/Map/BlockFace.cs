@@ -4,8 +4,8 @@ using CMineNew.Geometry;
 using CMineNew.Render.Object;
 using OpenTK;
 
-namespace CMineNew.Map{
-    public enum BlockFace{
+namespace CMineNew.Map {
+    public enum BlockFace {
         Up = 0,
         Down = 1,
         West = 2,
@@ -14,18 +14,18 @@ namespace CMineNew.Map{
         South = 5
     }
 
-    public static class BlockFaceMethods{
+    public static class BlockFaceMethods {
         public static readonly BlockFace[] All =
             {BlockFace.Up, BlockFace.Down, BlockFace.West, BlockFace.East, BlockFace.North, BlockFace.South};
 
         private static readonly BlockFace[] Opposites =
             {BlockFace.Down, BlockFace.Up, BlockFace.East, BlockFace.West, BlockFace.South, BlockFace.North};
 
-        private static readonly Vector3i[] Relatives =
-            {new Vector3i(0, 1, 0),  new Vector3i(0, -1, 0),
-                new Vector3i(-1, 0, 0), new Vector3i(1, 0, 0),
-                new Vector3i(0, 0, -1), new Vector3i(0, 0, 1), 
-            };
+        private static readonly Vector3i[] Relatives = {
+            new Vector3i(0, 1, 0), new Vector3i(0, -1, 0),
+            new Vector3i(-1, 0, 0), new Vector3i(1, 0, 0),
+            new Vector3i(0, 0, -1), new Vector3i(0, 0, 1),
+        };
 
         public static BlockFace GetOpposite(BlockFace face) {
             return Opposites[(int) face];
@@ -41,7 +41,7 @@ namespace CMineNew.Map{
         }
     }
 
-    public static class BlockFaceVertices{
+    public static class BlockFaceVertices {
         private static Vector3[] _north = {
             new Vector3(1, 0, 0),
             new Vector3(0, 0, 0),
@@ -101,6 +101,21 @@ namespace CMineNew.Map{
                     return CreateVao(_south, yHeight, yHeight);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(face), face, null);
+            }
+        }
+
+        public static VertexArrayObject CreateCubeVao() {
+            var indices = new int[6 * 6];
+            var indicesOffset = 0;
+            var indicesDataOffset = 0;
+            for (var i = 0; i < 6; i++) {
+                indices[indicesOffset++] = indicesDataOffset;
+                indices[indicesOffset++] = 1 + indicesDataOffset;
+                indices[indicesOffset++] = 3 + indicesDataOffset;
+                indices[indicesOffset++] = indicesDataOffset;
+                indices[indicesOffset++] = 3 + indicesDataOffset;
+                indices[indicesOffset++] = 2 + indicesDataOffset;
+                indicesDataOffset += 4;
             }
         }
 

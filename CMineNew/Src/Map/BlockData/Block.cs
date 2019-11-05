@@ -1,12 +1,12 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.Color;
 using CMineNew.DataStructure.List;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Type;
-using CMineNew.Texture;
 using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics;

@@ -7,7 +7,7 @@ namespace CMineNew.Map.BlockData.Static{
         public BlockStaticDataTexturedCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, string texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = CMine.Textures.Areas[texture];
+            _textureArea = CMine.TextureMap.Areas[texture];
         }
         
         public BlockStaticDataTexturedCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,

@@ -129,11 +129,19 @@
     </data>
 
     <data name="loop_delay_viewer_vertex" type="System.Resources.ResXFileRef">
-        <value>LoopDelayViewer/vertex.vert;System.String</value>
-    </data>
+    <value>LoopDelayViewer/vertex.vert;System.String</value>
+</data>
 
     <data name="loop_delay_viewer_fragment" type="System.Resources.ResXFileRef">
         <value>LoopDelayViewer/fragment.frag;System.String</value>
+    </data>
+
+    <data name="gui_2d_element_vertex" type="System.Resources.ResXFileRef">
+        <value>Gui/2dElement/vertex.vert;System.String</value>
+    </data>
+
+    <data name="gui_2d_element_fragment" type="System.Resources.ResXFileRef">
+        <value>Gui/2dElement/fragment.frag;System.String</value>
     </data>
     
 </root>

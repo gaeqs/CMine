@@ -80,6 +80,11 @@
     <Compile Include="Src\Geometry\Sphere.cs" />
     <Compile Include="Src\Geometry\Vector2i.cs" />
     <Compile Include="Src\Geometry\Vector3i.cs" />
+    <Compile Include="Src\Inventory\AbstractInventory.cs" />
+    <Compile Include="Src\Inventory\IInventory.cs" />
+    <Compile Include="Src\Inventory\Hotbar.cs" />
+    <Compile Include="Src\Inventory\IPlayerInventory.cs" />
+    <Compile Include="Src\Inventory\PlayerInventory.cs" />
     <Compile Include="Src\Light\CameraFlashLight.cs" />
     <Compile Include="Src\Light\DirectionalLight.cs" />
     <Compile Include="Src\Light\FlashLight.cs" />
@@ -200,9 +205,12 @@
     <Compile Include="Src\Map\WorldShaderData.cs" />
     <Compile Include="Src\Map\WorldThread.cs" />
     <Compile Include="Src\RayTrace\BlockRayTracer.cs" />
-    <Compile Include="Src\RayTrace\Pointer.cs" />
     <Compile Include="Src\Render\Camera.cs" />
     <Compile Include="Src\Render\Frustum.cs" />
+    <Compile Include="Src\Render\Gui\AspectRatioMode.cs" />
+    <Compile Include="Src\Render\Gui\Gui2dElement.cs" />
+    <Compile Include="Src\Render\Gui\Pointer.cs" />
+    <Compile Include="Src\Render\Gui\WorldGui.cs" />
     <Compile Include="Src\Render\Mapper\ArrayBlockVboMapper.cs" />
     <Compile Include="Src\Render\Mapper\BlockVboMapper.cs" />
     <Compile Include="Src\Render\Mapper\GenericVboMapper.cs" />
@@ -224,8 +232,10 @@
     <Compile Include="Src\Test\FpsViewer.cs" />
     <Compile Include="Src\Test\LoopDelayViewer.cs" />
     <Compile Include="Src\Test\PositionViewer.cs" />
-    <Compile Include="Src\Texture\Rgba32I.cs" />
-    <Compile Include="Src\Texture\TextureMap.cs" />
+    <Compile Include="Src\Color\Rgba32I.cs" />
+    <Compile Include="Src\Color\Texture.cs" />
+    <Compile Include="Src\Color\TextureManager.cs" />
+    <Compile Include="Src\Color\TextureMap.cs" />
     <Compile Include="Src\Text\StaticText.cs" />
     <Compile Include="Src\Text\StaticTextRenderer.cs" />
     <Compile Include="Src\Text\TrueTypeFont.cs" />
@@ -253,6 +263,8 @@
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />
     <Content Include="Resources\Shaders\Block\vertex.vert" />
+    <Content Include="Resources\Shaders\Gui\2dElement\fragment.frag" />
+    <Content Include="Resources\Shaders\Gui\2dElement\vertex.vert" />
     <Content Include="Resources\Shaders\Light\directional_light_fragment.frag" />
     <Content Include="Resources\Shaders\Light\flash_light_fragment.frag" />
     <Content Include="Resources\Shaders\Light\flash_light_vertex.vert" />
@@ -281,6 +293,7 @@
     <Content Include="Resources\Textures\dirt.png" />
     <Content Include="Resources\Textures\grass_side.png" />
     <Content Include="Resources\Textures\grass_top.png" />
+    <Content Include="Resources\Textures\Gui\hotbar.png" />
     <Content Include="Resources\Textures\oak_leaves.png" />
     <Content Include="Resources\Textures\oak_log_side.png" />
     <Content Include="Resources\Textures\oak_log_top.png" />
@@ -296,6 +309,9 @@
     <Content Include="Resources\Textures\tall_grass.png" />
     <Content Include="Resources\Textures\torch.png" />
     <Content Include="Resources\Textures\water.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Shaders\Gui" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

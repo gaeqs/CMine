@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.Generator.Biomes;
-using CMineNew.Texture;
 using CMineNew.Util;
 
 namespace CMineNew.Map{

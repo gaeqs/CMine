@@ -253,6 +253,53 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 440 core
         ///
+        ///in vec3 fragPos;
+        ///in vec2 fragTexCoord;
+        ///
+        ///out vec4 FragColor;
+        ///
+        ///uniform sampler2D pointer;
+        ///
+        ///void main() {
+        ///    vec4 texture = texture(pointer, fragTexCoord);
+        ///    if(texture.w &lt; 0.1) discard;
+        ///    FragColor = vec4(1);
+        ///}.
+        /// </summary>
+        internal static string gui_2d_element_fragment {
+            get {
+                return ResourceManager.GetString("gui_2d_element_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///
+        ///out vec3 fragPos;
+        ///out vec2 fragTexCoord;
+        ///
+        ///uniform float aspectRatio;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position, 1);
+        ///    gl_Position.y *= aspectRatio;
+        ///    fragTexCoord = texturePosition;
+        ///}
+        ///.
+        /// </summary>
+        internal static string gui_2d_element_vertex {
+            get {
+                return ResourceManager.GetString("gui_2d_element_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
         ///in vec4 fragColor;
         ///out vec4 FragColor;
         ///

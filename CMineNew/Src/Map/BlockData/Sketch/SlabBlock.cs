@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
-using CMineNew.Texture;
 using OpenTK;
 
 namespace CMineNew.Map.BlockData.Sketch{

@@ -2,7 +2,9 @@ using System;
 using CMineNew.Collision;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
+using CMineNew.Inventory;
 using CMineNew.Map;
+using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.RayTrace;
 using CMineNew.Util;
@@ -57,6 +59,8 @@ namespace CMineNew.Entities{
         private readonly BlockRayTracer _blockRayTracer;
         private bool _eyesOnWater;
 
+        private PlayerInventory _inventory;
+
         /// <summary>
         /// Creates a player.
         /// </summary>
@@ -71,6 +75,10 @@ namespace CMineNew.Entities{
             _headRotation = Vector2.Zero;
             _blockRayTracer = new BlockRayTracer(world, _position + new Vector3(0, _eyesHeight, 0),
                 world.Camera.LookAt, 5);
+            
+            //Empty inventory
+            _inventory = new PlayerInventory();
+            _inventory.Hotbar[2, 0] = new BlockSnapshotBricks();
         }
 
         /// <summary>
@@ -107,6 +115,11 @@ namespace CMineNew.Entities{
         /// Whether the player's eyes are on water. This is used to apply the water shading.
         /// </summary>
         public bool EyesOnWater => _eyesOnWater;
+
+        /// <summary>
+        /// The player's inventory.
+        /// </summary>
+        public PlayerInventory Inventory => _inventory;
 
         /// <summary>
         /// Moves the player towards the given direction.

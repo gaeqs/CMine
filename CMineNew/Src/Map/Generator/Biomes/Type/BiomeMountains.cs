@@ -1,9 +1,9 @@
 using System;
 using CMine.Map.Generator.Noise;
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator.Population;
-using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes.Type{

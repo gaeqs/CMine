@@ -1,4 +1,4 @@
-using CMineNew.Texture;
+using CMineNew.Color;
 
 namespace CMineNew.Map.BlockData.Snapshot.Interface{
     public interface IGrass{

@@ -7,7 +7,7 @@ namespace CMineNew.Map.BlockData.Static{
         public BlockStaticDataTexturedCross(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, string texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = CMine.Textures.Areas[texture];
+            _textureArea = CMine.TextureMap.Areas[texture];
         }
 
         public BlockStaticDataTexturedCross(string id, bool passable, bool lightSource, sbyte lightSourceLight,

@@ -1,8 +1,8 @@
 using System;
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
-using CMineNew.Texture;
 
 namespace CMineNew.Map.Generator.Population{
     public class OakTreeGenerator{

@@ -1,18 +1,19 @@
 using System;
 using System.Drawing;
 using System.IO;
+using CMineNew.Color;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.RayTrace;
 using CMineNew.Render;
+using CMineNew.Render.Gui;
 using CMineNew.Test;
 using CMineNew.Text;
-using CMineNew.Texture;
 using OpenTK;
 
-namespace CMineNew{
-    public class CMine{
+namespace CMineNew {
+    public class CMine {
         public const int TicksPerSecond = 10000000;
         public const float TicksPerSecondF = 10000000f;
 
@@ -21,16 +22,18 @@ namespace CMineNew{
             Path.DirectorySeparatorChar + "CMine";
 
         //Temporary constant.
-        public const int ChunkRadius = 8;
+        public const int ChunkRadius = 4;
 
         public static Window Window;
-        public static TextureMap Textures;
+        public static TextureManager TextureManager;
+        public static TextureMap TextureMap;
 
         public static void Load() {
             Window = new Window(1920, 1080,
                 GameWindowFlags.Fullscreen, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
-                    Textures = new TextureMap();
+                    TextureMap = new TextureMap();
+                    TextureManager = new TextureManager();
                     BlockManager.Load();
                     BlockModelManager.Load();
                     Pointer.Load();

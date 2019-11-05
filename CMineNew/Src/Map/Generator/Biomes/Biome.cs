@@ -1,6 +1,6 @@
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Texture;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.Generator.Biomes{

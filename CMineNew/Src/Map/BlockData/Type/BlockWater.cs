@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.Task.Type;
-using CMineNew.Texture;
 using OpenTK;
 
 namespace CMineNew.Map.BlockData.Type{
@@ -19,7 +19,7 @@ namespace CMineNew.Map.BlockData.Type{
         protected const int SouthLeft = 2;
         protected const int SouthRight = 3;
 
-        public static Area2d TextureArea = CMine.Textures.Areas["default:water"];
+        public static Area2d TextureArea = CMine.TextureMap.Areas["default:water"];
 
         private readonly bool[] _visibleFaces;
         protected int _waterLevel;

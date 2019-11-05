@@ -7,8 +7,8 @@ using CMineNew.Geometry;
 using CMineNew.Loader;
 using CMineNew.Resources.Textures;
 
-namespace CMineNew.Texture{
-    public class TextureMap{
+namespace CMineNew.Color {
+    public class TextureMap {
         private int _texture;
         private Dictionary<string, Area2d> _areas;
 
@@ -28,7 +28,7 @@ namespace CMineNew.Texture{
             bitmaps.Add("default:oak_leaves", ToBitmap(Textures.oak_leaves));
             bitmaps.Add("default:sand", ToBitmap(Textures.sand));
             bitmaps.Add("default:torch", ToBitmap(Textures.torch));
-            
+
 
             CreateTextureMap(bitmaps);
         }

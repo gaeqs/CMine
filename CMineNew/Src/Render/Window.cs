@@ -54,7 +54,7 @@ namespace CMineNew.Render{
 
         protected override void OnLoad(EventArgs e) {
             var thread = Thread.CurrentThread;
-            thread.Priority = ThreadPriority.Highest;
+            thread.Priority = ThreadPriority.Normal;
             thread.Name = "Render thread";
             Console.WriteLine("OpenGL Version: " + GL.GetString(StringName.Version));
             Console.WriteLine("Graphic Card: " + GL.GetString(StringName.Vendor) + " - " +
@@ -163,6 +163,7 @@ namespace CMineNew.Render{
         protected override void OnClosing(CancelEventArgs e) {
             _room.Close();
             ShaderManager.CleanUp();
+            CMine.TextureManager.CleanUp();
         }
 
         #endregion

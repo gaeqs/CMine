@@ -24,6 +24,11 @@
         <value>pointer.png;System.Byte[]</value>
     </data>
 
+    <data name="gui_hotbar" type="System.Resources.ResXFileRef">
+        <value>Gui/hotbar.png;System.Byte[]</value>
+    </data>
+
+
     <data name="sky_box_back" type="System.Resources.ResXFileRef">
         <value>SkyBox/back.png;System.Byte[]</value>
     </data>

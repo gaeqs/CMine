@@ -1,7 +1,10 @@
 using CMineNew.Entities;
 using CMineNew.Map.BlockData;
+using CMineNew.Map.BlockData.Model;
 using CMineNew.RayTrace;
 using CMineNew.Render;
+using CMineNew.Render.Gui;
+using CMineNew.Render.Object;
 using CMineNew.Resources.Textures;
 using OpenTK;
 
@@ -11,6 +14,7 @@ namespace CMineNew.Map{
         private readonly WorldGBuffer _gBuffer;
         private readonly SkyBox _skyBox;
         private readonly WorldShaderData _shaderData;
+        private readonly VertexArrayObject _cubeVertexArrayObject;
 
         public WorldRenderData() {
             _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
@@ -18,6 +22,7 @@ namespace CMineNew.Map{
             _skyBox = new SkyBox(Textures.sky_box_right, Textures.sky_box_left, Textures.sky_box_top,
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
             _shaderData = new WorldShaderData();
+            LoadCubeVao();    
         }
 
         public PhysicCamera Camera => _camera;
@@ -27,6 +32,8 @@ namespace CMineNew.Map{
 
         public WorldShaderData ShaderData => _shaderData;
 
+        public VertexArrayObject CubeVertexArrayObject => _cubeVertexArrayObject;
+        
         public void BindGBuffer() {
             _gBuffer.Bind();
         }
@@ -62,6 +69,11 @@ namespace CMineNew.Map{
             const int max = (CMine.ChunkRadius - 1) << 4;
             _shaderData.SetData(_camera.ViewProjection, _camera.Position,
                 sunlightDirection, min * min, max * max, waterShader, ticks);
+        }
+
+
+        private void LoadCubeVao() {
+            BlockFaceVertices.CreateVao()
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace CMineNew.Texture{
+namespace CMineNew.Color{
     public struct Rgba32I{
         //R, G, B, A
         private uint _value;

@@ -15,6 +15,7 @@ using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
 using CMineNew.Render;
+using CMineNew.Render.Gui;
 using CMineNew.Test;
 using CMineNew.Text;
 using OpenTK;
@@ -39,6 +40,8 @@ namespace CMineNew.Map{
         private readonly HashSet<Entity> _entities;
         private readonly Player _player;
 
+        public readonly WorldGui _gui;
+        
         private readonly Collection<StaticText> _staticTexts;
         private readonly DelayViewer _delayViewer;
 
@@ -58,17 +61,16 @@ namespace CMineNew.Map{
 
             _worldTaskManager = new WorldTaskManager();
 
-            if (Load(out var seed)) {
-                _worldGenerator = new DefaultWorldGenerator(this, seed);
-            }
-            else {
-                _worldGenerator = new DefaultWorldGenerator(this, new Random().Next());
-            }
+            _worldGenerator = Load(out var seed) ? 
+                new DefaultWorldGenerator(this, seed) : new DefaultWorldGenerator(this, new Random().Next());
 
             _entities = new HashSet<Entity>();
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
             _player.Controller = new LocalPlayerController(_player, _renderData.Camera);
             _entities.Add(_player);
+            
+            _gui = new WorldGui(this);
+            _gui.GenerateDefault();
 
             _unloadedChunkGenerationManager = new UnloadedChunkGenerationManager(this);
             _unloadedChunkGenerationManager.Load();
@@ -108,6 +110,8 @@ namespace CMineNew.Map{
 
         public UnloadedChunkGenerationManager UnloadedChunkGenerationManager => _unloadedChunkGenerationManager;
 
+        public WorldGui Gui => _gui;
+        
         public DelayViewer DelayViewer => _delayViewer;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
@@ -267,7 +271,7 @@ namespace CMineNew.Map{
 
             GL.Enable(EnableCap.DepthTest);
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
+            GL.BindTexture(TextureTarget.Texture2D, CMine.TextureMap.Texture);
 
             var renders = (from region in _chunkRegions.Values.Where(region => !region.Deleted)
                 where _renderData.Camera.IsVisible(region)
@@ -301,7 +305,7 @@ namespace CMineNew.Map{
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, CMine.Textures.Texture);
+            GL.BindTexture(TextureTarget.Texture2D, CMine.TextureMap.Texture);
 
             foreach (var model in BlockModelManager.Models.Values) {
                 var first = true;
@@ -315,6 +319,7 @@ namespace CMineNew.Map{
             //Draws front data
 
             GL.Disable(EnableCap.DepthTest);
+            _gui.Draw();
             foreach (var staticText in _staticTexts) {
                 staticText.Draw();
             }

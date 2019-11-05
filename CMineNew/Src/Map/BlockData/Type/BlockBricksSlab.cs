@@ -1,7 +1,7 @@
+using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Map.BlockData.Static.Type;
-using CMineNew.Texture;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockBricksSlab : TexturedSlabBlock{
