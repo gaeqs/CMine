@@ -1,7 +1,7 @@
 using CMineNew.Geometry;
 
-namespace CMineNew.Map.BlockData.Static{
-    public class BlockStaticDataTexturedSlab : BlockStaticDataSlab{
+namespace CMineNew.Map.BlockData.Static {
+    public class BlockStaticDataTexturedSlab : BlockStaticDataSlab {
         private readonly Area2d _textureArea;
 
         public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
@@ -9,7 +9,7 @@ namespace CMineNew.Map.BlockData.Static{
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
             _textureArea = CMine.TextureMap.Areas[texture];
         }
-        
+
         public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, Area2d texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
@@ -17,5 +17,9 @@ namespace CMineNew.Map.BlockData.Static{
         }
 
         public Area2d TextureArea => _textureArea;
+
+        public override Area2d GetTextureArea(BlockFace face) {
+            return _textureArea;
+        }
     }
 }

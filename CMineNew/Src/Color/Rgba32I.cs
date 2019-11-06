@@ -1,5 +1,7 @@
-namespace CMineNew.Color{
-    public struct Rgba32I{
+using OpenTK;
+
+namespace CMineNew.Color {
+    public struct Rgba32I {
         //R, G, B, A
         private uint _value;
 
@@ -25,7 +27,11 @@ namespace CMineNew.Color{
         public byte B => (byte) ((_value >> 8) & 0xFF);
 
         public byte A => (byte) (_value & 0xFF);
-        
+
+        public Vector4 ToVector() {
+            return new Vector4(R, G, B, A) / 255f;
+        }
+
         public override string ToString() {
             return _value.ToString("X");
         }

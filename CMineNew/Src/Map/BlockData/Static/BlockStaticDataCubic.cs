@@ -1,7 +1,7 @@
 using CMineNew.Map.BlockData.Model;
 
 namespace CMineNew.Map.BlockData.Static{
-    public class BlockStaticDataCubic : BlockStaticData{
+    public abstract class BlockStaticDataCubic : BlockStaticData{
 
         public BlockStaticDataCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction ) : 

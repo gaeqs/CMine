@@ -1,19 +1,14 @@
-using System;
-using CMineNew.Geometry;
 using CMineNew.Map;
-using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Map.Generator.Population;
 using CMineNew.Render;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Input;
 
-namespace CMineNew.Entities.Controller{
+namespace CMineNew.Entities.Controller {
     /// <summary>
     /// Represents a PlayerControlled that translates mouse and keyboard inputs intro player's actions.
     /// </summary>
-    public class LocalPlayerController : PlayerController{
+    public class LocalPlayerController : PlayerController {
         private readonly Player _player;
         private readonly Camera _camera;
         private bool _w, _a, _s, _d, _control, _space;
@@ -112,33 +107,19 @@ namespace CMineNew.Entities.Controller{
         public override void HandleMousePush(MouseButtonEventArgs args) {
             //This method is provisional! It will be reformed when inventories are added.
             if (args.Button == MouseButton.Right) {
-                var matInstance = new BlockSnapshotBricks();
+                var matInstance = _player.Inventory.Hotbar.SelectedBlock;
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 if (!matInstance.CanBePlaced(position, _player.World)) return;
-                if (!matInstance.Passable &&
-                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
+                if (!matInstance.Passable && _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision,
+                        _player.Position,
                         position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
                 _player.World.SetBlock(matInstance, position);
             }
             else if (args.Button == MouseButton.Left) {
                 if (_player.BlockRayTracer.Result == null) return;
-                _player.World.SetBlock(new BlockSnapshotAir(), _player.BlockRayTracer.Result.Position);
-            }
-            else if (args.Button == MouseButton.Middle) {
-                var matInstance = new BlockSnapshotTorch();
-                if (_player.BlockRayTracer.Result == null) return;
-                var result = _player.BlockRayTracer.Result;
-                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);;
-                var block = _player.World.GetBlock(position);
-                Console.WriteLine(block.BlockLight.LinearSunlight +" -> "+block.BlockLight.Sunlight);
-
-                if (!matInstance.CanBePlaced(position, _player.World)) return;
-                if (!matInstance.Passable &&
-                    _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision, _player.Position,
-                        position.ToFloat(), null, out var data) && data.Distance > 0.01f) return;
-                _player.World.SetBlock(matInstance, position);
+                _player.World.SetBlock(BlockSnapshotAir.Instance, _player.BlockRayTracer.Result.Position);
             }
         }
 
@@ -151,10 +132,9 @@ namespace CMineNew.Entities.Controller{
         public void HandleMouseMovement() {
             GameWindow window = CMine.Window;
             if (window.Focused) {
-                
                 var mouse = Mouse.GetState();
                 var newPosition = new Vector2(mouse.X, mouse.Y);
-                
+
                 var deltaX = newPosition.X - _lastMousePosition.X;
                 var deltaY = newPosition.Y - _lastMousePosition.Y;
 
@@ -171,6 +151,10 @@ namespace CMineNew.Entities.Controller{
                 //Moves the cursor to the center of the window.
                 Mouse.SetPosition(window.X + window.Width / 2, window.Y + window.Height / 2);
             }
+        }
+
+        public override void HandleMouseWheel(MouseWheelEventArgs eventArgs) {
+            _player.Inventory.Hotbar.Selected += eventArgs.Delta > 0 ? -1 : 1;
         }
     }
 }

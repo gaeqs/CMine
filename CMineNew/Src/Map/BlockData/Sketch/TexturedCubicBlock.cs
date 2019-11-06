@@ -8,16 +8,14 @@ namespace CMineNew.Map.BlockData.Sketch{
             Rgba32I textureFilter)
             : base(staticData, chunk, position, textureFilter) {
         }
-
-        public Area2d TextureArea => ((BlockStaticDataTexturedCubic) _staticData).TextureArea;
-
+        
         public override Block Clone(Chunk chunk, Vector3i position) {
             return new TexturedCubicBlock((BlockStaticDataTexturedCubic) _staticData, _chunk, _position,
                 _textureFilter);
         }
 
         public override Area2d GetTextureArea(BlockFace face) {
-            return TextureArea;
+            return _staticData.GetTextureArea(face);;
         }
     }
 }

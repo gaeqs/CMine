@@ -143,5 +143,13 @@
     <data name="gui_2d_element_fragment" type="System.Resources.ResXFileRef">
         <value>Gui/2dElement/fragment.frag;System.String</value>
     </data>
+
+    <data name="gui_block_element_vertex" type="System.Resources.ResXFileRef">
+        <value>Gui/BlockElement/vertex.vert;System.String</value>
+    </data>
+
+    <data name="gui_block_element_fragment" type="System.Resources.ResXFileRef">
+        <value>Gui/BlockElement/fragment.frag;System.String</value>
+    </data>
     
 </root>

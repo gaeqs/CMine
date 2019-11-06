@@ -55,5 +55,11 @@ namespace CMineNew.Entities.Controller{
         /// </summary>
         /// <param name="eventArgs">The event.</param>
         public abstract void HandleMouseRelease(MouseButtonEventArgs eventArgs);
+        
+        /// <summary>
+        /// Method called when a mouse wheel is moved.
+        /// </summary>
+        /// <param name="eventArgs">The event.</param>
+        public abstract void HandleMouseWheel(MouseWheelEventArgs eventArgs);
     }
 }

@@ -11,6 +11,7 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
+using CMineNew.Map.BlockData.Type;
 using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
@@ -23,8 +24,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace CMineNew.Map{
-    public class World : Room{
+namespace CMineNew.Map {
+    public class World : Room {
         private readonly string _folder;
 
         private readonly WorldRenderData _renderData;
@@ -41,7 +42,7 @@ namespace CMineNew.Map{
         private readonly Player _player;
 
         public readonly WorldGui _gui;
-        
+
         private readonly Collection<StaticText> _staticTexts;
         private readonly DelayViewer _delayViewer;
 
@@ -61,14 +62,21 @@ namespace CMineNew.Map{
 
             _worldTaskManager = new WorldTaskManager();
 
-            _worldGenerator = Load(out var seed) ? 
-                new DefaultWorldGenerator(this, seed) : new DefaultWorldGenerator(this, new Random().Next());
+            _worldGenerator = Load(out var seed)
+                ? new DefaultWorldGenerator(this, seed)
+                : new DefaultWorldGenerator(this, new Random().Next());
 
             _entities = new HashSet<Entity>();
+
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
             _player.Controller = new LocalPlayerController(_player, _renderData.Camera);
+            _player.Inventory.Hotbar[0, 0] = new BlockSnapshotBricks();
+            _player.Inventory.Hotbar[1, 0] = new BlockSnapshotSand();
+            _player.Inventory.Hotbar[2, 0] = new BlockSnapshotDirt();
+            _player.Inventory.Hotbar[3, 0] = new BlockSnapshotStone();
+            _player.Inventory.Hotbar[4, 0] = new BlockSnapshotTorch();
             _entities.Add(_player);
-            
+
             _gui = new WorldGui(this);
             _gui.GenerateDefault();
 
@@ -78,7 +86,7 @@ namespace CMineNew.Map{
             _asyncChunkGenerator.StartThread();
 
             _asyncChunkGenerator.GenerateChunkArea = true;
-            
+
             _worldThread = new WorldThread(this);
             _worldThread.StartThread();
         }
@@ -111,7 +119,7 @@ namespace CMineNew.Map{
         public UnloadedChunkGenerationManager UnloadedChunkGenerationManager => _unloadedChunkGenerationManager;
 
         public WorldGui Gui => _gui;
-        
+
         public DelayViewer DelayViewer => _delayViewer;
 
         public ChunkRegion GetChunkRegion(Vector3i position) {
@@ -242,7 +250,6 @@ namespace CMineNew.Map{
         }
 
         public override void Tick(long delay) {
-            
             foreach (var entity in _entities) {
                 entity.RenderTick(delay);
             }
@@ -370,9 +377,14 @@ namespace CMineNew.Map{
             _player.Controller?.HandleMouseRelease(args);
         }
 
+        public override void MouseWheel(MouseWheelEventArgs args) {
+            _player.Controller?.HandleMouseWheel(args);
+        }
+
         public override void Close() {
             _asyncChunkGenerator.Kill();
             _worldThread.Kill();
+            _gui.CleanUp();
             foreach (var region in _chunkRegions.Values) {
                 region.Delete();
             }

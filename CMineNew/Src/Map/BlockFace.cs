@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CMineNew.Geometry;
 using CMineNew.Render.Object;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map {
     public enum BlockFace {
@@ -81,8 +82,7 @@ namespace CMineNew.Map {
             new Vector3(0, 0, 0),
             new Vector3(1, 0, 0),
             new Vector3(0, 0, 1),
-            new Vector3(1, 0, 1),
-            new Vector3(0, -1, 0)
+            new Vector3(1, 0, 1), new Vector3(0, -1, 0)
         };
 
         public static VertexArrayObject CreateVao(BlockFace face, float yHeight = 1) {
@@ -106,9 +106,18 @@ namespace CMineNew.Map {
 
         public static VertexArrayObject CreateCubeVao() {
             var indices = new int[6 * 6];
+            var vertices = new Vertex[4 * 6];
             var indicesOffset = 0;
             var indicesDataOffset = 0;
+            var verticesOffset = 0;
+
             for (var i = 0; i < 6; i++) {
+                var faceVertices = GetVertices((BlockFace) i);
+                vertices[verticesOffset++] = new Vertex(faceVertices[0], faceVertices[4], new Vector2(0, 1));
+                vertices[verticesOffset++] = new Vertex(faceVertices[1], faceVertices[4], new Vector2(1, 1));
+                vertices[verticesOffset++] = new Vertex(faceVertices[2], faceVertices[4], new Vector2(0, 0));
+                vertices[verticesOffset++] = new Vertex(faceVertices[3], faceVertices[4], new Vector2(1, 0));
+
                 indices[indicesOffset++] = indicesDataOffset;
                 indices[indicesOffset++] = 1 + indicesDataOffset;
                 indices[indicesOffset++] = 3 + indicesDataOffset;
@@ -116,6 +125,45 @@ namespace CMineNew.Map {
                 indices[indicesOffset++] = 3 + indicesDataOffset;
                 indices[indicesOffset++] = 2 + indicesDataOffset;
                 indicesDataOffset += 4;
+            }
+
+            var vao =  new VertexArrayObject(vertices, indices);
+            //vao.Bind();
+            //var vboData = new VertexBufferObject();
+            //vao.LinkBuffer(vboData);
+            //vboData.Bind(BufferTarget.ArrayBuffer);
+//
+            //vboData.SetData(BufferTarget.ArrayBuffer, new[] {
+            //    0, 0, 0, 0, 
+            //    1, 1, 1, 1,  
+            //    2, 2, 2, 2, 
+            //    3, 3, 3, 3, 
+            //    4, 4, 4, 4,
+            //    5, 5, 5, 5}, BufferUsageHint.StaticDraw);
+            //var builder = new AttributePointerBuilder(vao, 1, 3);
+            //builder.AddPointer(1, false);
+            //VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
+            //VertexArrayObject.Unbind(); 
+
+            return vao;
+        }
+
+        private static Vector3[] GetVertices(BlockFace face) {
+            switch (face) {
+                case BlockFace.Up:
+                    return _up;
+                case BlockFace.Down:
+                    return _down;
+                case BlockFace.East:
+                    return _east;
+                case BlockFace.West:
+                    return _west;
+                case BlockFace.North:
+                    return _north;
+                case BlockFace.South:
+                    return _south;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(face), face, null);
             }
         }
 

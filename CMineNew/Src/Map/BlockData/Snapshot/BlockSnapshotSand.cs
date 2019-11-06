@@ -1,11 +1,12 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotSand : BlockSnapshot{
         public static readonly BlockSnapshotSand Instance = new BlockSnapshotSand();
-        public BlockSnapshotSand() : base("default:sand") {
+        public BlockSnapshotSand() : base("default:sand", BlockStaticDataSand.Instance) {
         }
 
         public override BlockModel BlockModel => BlockModelManager.GetModelOrNull(CubicBlockModel.Key);

@@ -1,7 +1,8 @@
+using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 
 namespace CMineNew.Map.BlockData.Static{
-    public class BlockStaticData{
+    public abstract class BlockStaticData{
         public BlockStaticData(string id, BlockModel blockModel, bool passable,
             float blockHeight, float blockYOffset, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction) {
@@ -33,5 +34,7 @@ namespace CMineNew.Map.BlockData.Static{
         public sbyte BlockLightPassReduction { get; }
 
         public sbyte SunlightPassReduction { get; }
+
+        public abstract Area2d GetTextureArea(BlockFace face);
     }
 }

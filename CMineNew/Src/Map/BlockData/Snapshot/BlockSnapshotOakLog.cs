@@ -1,10 +1,11 @@
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotOakLog : BlockSnapshot{
-        public BlockSnapshotOakLog() : base("default:oak_log") {
+        public BlockSnapshotOakLog() : base("default:oak_log", BlockStaticDataOakLog.Instance) {
         }
 
         public override BlockModel BlockModel => BlockModelManager.GetModelOrNull(CubicBlockModel.Key);

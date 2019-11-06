@@ -2,13 +2,14 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotBricksSlab : BlockSnapshot{
         private bool _upside;
 
-        public BlockSnapshotBricksSlab(bool upside) : base("default:bricks_slab") {
+        public BlockSnapshotBricksSlab(bool upside) : base("default:bricks_slab", BlockStaticDataBricksSlab.Instance) {
             _upside = upside;
         }
 

@@ -4,6 +4,7 @@ using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot.Interface;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.BlockData.Type;
 using OpenTK.Graphics;
 
@@ -11,7 +12,7 @@ namespace CMineNew.Map.BlockData.Snapshot{
     public class BlockSnapshotOakLeaves : BlockSnapshot, IGrass{
         private Rgba32I _grassColor;
 
-        public BlockSnapshotOakLeaves(Rgba32I grassColor) : base("default:oak_leaves") {
+        public BlockSnapshotOakLeaves(Rgba32I grassColor) : base("default:oak_leaves", BlockStaticDataOakLeaves.Instance) {
             _grassColor = grassColor;
         }
 

@@ -6,11 +6,11 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Gui {
     public class Gui2dElement {
-        private readonly string _name;
-        private Vector2 _position;
-        private Vector2 _size;
-        private Texture _texture;
-        private AspectRatioMode _aspectRatioMode;
+        protected readonly string _name;
+        protected Vector2 _position;
+        protected Vector2 _size;
+        protected Texture _texture;
+        protected AspectRatioMode _aspectRatioMode;
 
         public Gui2dElement(string name, Vector2 position, Vector2 size, Texture texture,
             AspectRatioMode aspectRatioMode) {
@@ -36,6 +36,11 @@ namespace CMineNew.Render.Gui {
         public Texture Texture {
             get => _texture;
             set => _texture = value;
+        }
+
+        public AspectRatioMode AspectRatioMode {
+            get => _aspectRatioMode;
+            set => _aspectRatioMode = value;
         }
 
         public Vector2 GetSizeWithAspectRatio(float aspectRatio) {

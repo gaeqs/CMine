@@ -1,7 +1,7 @@
 using CMineNew.Geometry;
 
-namespace CMineNew.Map.BlockData.Static{
-    public class BlockStaticDataMultiTexturedCubic : BlockStaticDataCubic{
+namespace CMineNew.Map.BlockData.Static {
+    public class BlockStaticDataMultiTexturedCubic : BlockStaticDataCubic {
         private readonly Area2d[] _textureAreas;
 
         public BlockStaticDataMultiTexturedCubic(string id, bool passable, bool lightSource, sbyte lightSourceLight,
@@ -21,5 +21,9 @@ namespace CMineNew.Map.BlockData.Static{
         }
 
         public Area2d[] TextureAreas => _textureAreas;
+
+        public override Area2d GetTextureArea(BlockFace face) {
+            return _textureAreas[(int) face];
+        }
     }
 }

@@ -2,13 +2,14 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.BlockData.Type;
 
-namespace CMineNew.Map.BlockData.Snapshot{
-    public class BlockSnapshotWater : BlockSnapshot{
+namespace CMineNew.Map.BlockData.Snapshot {
+    public class BlockSnapshotWater : BlockSnapshot {
         private int _waterLevel;
 
-        public BlockSnapshotWater(int waterLevel) : base("default:water") {
+        public BlockSnapshotWater(int waterLevel) : base("default:water", BlockStaticDataWater.Instance) {
             _waterLevel = waterLevel;
         }
 

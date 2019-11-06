@@ -2,16 +2,21 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Model;
+using CMineNew.Map.BlockData.Static;
 
 namespace CMineNew.Map.BlockData.Snapshot{
     public abstract class BlockSnapshot{
         private readonly string _id;
-
-        public BlockSnapshot(string id) {
+        private readonly BlockStaticData _data;
+        
+        public BlockSnapshot(string id, BlockStaticData data) {
             _id = id;
+            _data = data;
         }
 
         public string Id => _id;
+
+        public BlockStaticData Data => _data;
 
         public abstract BlockModel BlockModel { get; }
 

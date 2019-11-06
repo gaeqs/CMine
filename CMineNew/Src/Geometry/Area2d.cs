@@ -1,11 +1,11 @@
 using System;
 using OpenTK;
 
-namespace CMineNew.Geometry{
+namespace CMineNew.Geometry {
     /// <summary>
     /// Represents a 2D area.
     /// </summary>
-    public struct Area2d{
+    public struct Area2d {
         private float _minX, _minY, _maxX, _maxY;
 
         /// <summary>
@@ -106,6 +106,10 @@ namespace CMineNew.Geometry{
             var minY = Math.Min(_minY, _maxY);
             _maxY = Math.Max(_minY, _maxY);
             _minY = minY;
+        }
+
+        public Vector4 ToVector() {
+            return new Vector4(_minX, _minY, _maxX, _maxY);
         }
 
         public override string ToString() {

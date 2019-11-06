@@ -21,5 +21,9 @@ namespace CMineNew.Map.BlockData.Static{
         }
 
         public Area2d[] TextureAreas => _textureAreas;
+        
+        public override Area2d GetTextureArea(BlockFace face) {
+            return _textureAreas[(int) face];
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace CMineNew.Map.BlockData.Static.Type{
 
         private BlockStaticDataBricksSlab()
             : base("default:bricks_slab", false, false, 0,
-                Block.MaxBlockLight, Block.MaxBlockLight, "default:bricks_slab") {
+                Block.MaxBlockLight, Block.MaxBlockLight, "default:bricks") {
         }
     }
 }
