@@ -1,3 +1,4 @@
+using System;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Render;
@@ -120,6 +121,12 @@ namespace CMineNew.Entities.Controller {
             else if (args.Button == MouseButton.Left) {
                 if (_player.BlockRayTracer.Result == null) return;
                 _player.World.SetBlock(BlockSnapshotAir.Instance, _player.BlockRayTracer.Result.Position);
+            }
+            else if (args.Button == MouseButton.Middle) {
+                if (_player.BlockRayTracer.Result == null) return;
+                var result = _player.BlockRayTracer.Result;
+                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.Light);
             }
         }
 

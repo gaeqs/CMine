@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CMineNew.DataStructure.List;
 using CMineNew.DataStructure.Queue;
 
-namespace CMineNew.Map.BlockData{
-    public static class BlockLightMethods{
+namespace CMineNew.Map.BlockData {
+    public static class BlockLightMethods {
         private const int Faces = 6;
 
         public static void ExpandFrom(Block from, BlockLightSource source, sbyte light) {
@@ -52,21 +53,27 @@ namespace CMineNew.Map.BlockData{
 
         private static void Expand(Queue<Block> updatedBlocks, Block to, BlockLightSource source,
             sbyte light, Block from, BlockFace fromFace) {
+
             if (to == null || !to.CanLightBePassedFrom(fromFace, from)) return;
             var blockLight = to.BlockLight;
             if (blockLight.Light >= light) return;
+            
             blockLight.Light = light;
             blockLight.Source = source;
             updatedBlocks?.Enqueue(to);
 
             var toLight = (sbyte) (light - to.StaticData.BlockLightPassReduction);
+            if (toLight < 1) return;
 
             for (var i = 0; i < Faces; i++) {
                 var face = (BlockFace) i;
+                
                 if (!to.CanLightPassThrough(face)) continue;
                 var opposite = BlockFaceMethods.GetOpposite(face);
-                var neighbour = from.GetNeighbour((BlockFace) i);
+                var neighbour = to.GetNeighbour((BlockFace) i);
                 if (neighbour == null) continue;
+                
+                
                 Expand(updatedBlocks, neighbour, source, toLight, to, opposite);
             }
         }
