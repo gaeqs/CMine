@@ -2,22 +2,20 @@ using System;
 using System.Collections.Generic;
 using OpenTK;
 
-namespace CMineNew.Geometry{
-    
+namespace CMineNew.Geometry {
     /// <summary>
     /// Represents a 3D integer vector.
     /// </summary>
     [Serializable]
-    public struct Vector3i{
-        
+    public struct Vector3i {
         public static readonly Vector3i Zero = new Vector3i(0);
         public static readonly Vector3i One = new Vector3i(1);
-        
+
         private int _x;
         private int _y;
         private int _z;
 
-        
+
         /// <summary>
         /// Creates a vector filled with the given value.
         /// </summary>
@@ -27,7 +25,7 @@ namespace CMineNew.Geometry{
             _y = v;
             _z = v;
         }
-        
+
         /// <summary>
         /// Creates a vector filled with the given array.
         /// </summary>
@@ -61,7 +59,7 @@ namespace CMineNew.Geometry{
             _y = (int) Math.Round(y);
             _z = (int) Math.Round(z);
         }
-        
+
         /// <summary>
         /// Creates a vector filled with the given array.
         /// </summary>
@@ -71,7 +69,7 @@ namespace CMineNew.Geometry{
             _y = (int) Math.Round(array[1]);
             _z = (int) Math.Round(array[2]);
         }
-        
+
         /// <summary>
         /// Creates a vector filled with the given array.
         /// </summary>
@@ -142,7 +140,7 @@ namespace CMineNew.Geometry{
             get => _z;
             set => _z = value;
         }
-        
+
         public Vector3i Add(int x, int y, int z) {
             _x += x;
             _y += y;
@@ -272,6 +270,11 @@ namespace CMineNew.Geometry{
             return new Vector3(_x, _y, _z);
         }
 
+        public Vector2i ToVector2i(bool useZ = false) {
+            return new Vector2i(_x, useZ ? _z : _y);
+        }
+
+
         public override string ToString() {
             return "{" + _x + ", " + _y + ", " + _z + "}";
         }
@@ -282,7 +285,7 @@ namespace CMineNew.Geometry{
 
         public static bool operator !=(Vector3i left, Vector3i right) {
             return !left.Equals(right);
-        } 
+        }
 
         public bool Equals(Vector3i other) {
             return _x == other._x && _y == other._y && _z == other._z;

@@ -6,8 +6,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 
-namespace CMineNew.Map{
-    public class SunlightData{
+namespace CMineNew.Map {
+    public class SunlightData {
         private readonly World2dRegion _region;
         private readonly Vector2i _position;
 
@@ -37,127 +37,64 @@ namespace CMineNew.Map{
         }
 
         public void SetBlock(int y, int lightReduction) {
-            var list = RemovePreviousBlock(y, lightReduction);
+            var previousLight = (sbyte) (GetLightFor(y) - 1);
+            var upperLight = GetLightFor(y + 1) - 1;
+            var nextLight = (sbyte) Math.Max(upperLight - lightReduction, 0);
+            if (previousLight == nextLight) return;
+            if (nextLight < previousLight) {
+                if (_lightMinHeight[0] == int.MinValue || Math.Abs(y - _lightMinHeight[0]) > 100) {
+                    Opaque(y, previousLight, nextLight, true);
+                }
+                else {
+                    Opaque(y, previousLight, nextLight, false);
+                }
+            }
+            else {
+                Opaque(y, (sbyte) (upperLight + 1), nextLight, true);
+            }
+        }
 
-            var old0Height = _lightMinHeight[0];
+        private void Opaque(int y, sbyte previousLight, sbyte modifiedLight, bool modifyAll) {
+            for (var i = previousLight - 1; i > modifiedLight; i--) {
+                _lightMinHeight[i] = y;
+            }
 
-            if (lightReduction > 0) {
-                var light = GetLightFor(y) - 1;
-                var newLight = Math.Max(0, light - lightReduction) - 1;
-                if (newLight == -1 && _lightMinHeight[0] > y) return;
+            previousLight = modifiedLight;
 
-                for (var i = 0; i <= newLight; i++) {
-                    _lightMinHeight[Math.Max(0, i - lightReduction)] = _lightMinHeight[i];
+            IEnumerable<Block> blocks;
+
+            if (modifyAll) {
+                blocks = _region.World.GetVerticalColumn(_position, y - 1);
+            }
+            else {
+                blocks = _region.World.GetVerticalColumn(_position, y - 1, _lightMinHeight[0]);
+            }
+
+            var enumerable = blocks as Block[] ?? blocks.ToArray();
+            foreach (var block in enumerable) {
+                if (block == null) continue;
+                var reduction = block.StaticData.SunlightPassReduction;
+                if (reduction == 0) {
+                    block.BlockLight.LinearSunlight = modifiedLight;
+                    continue;
                 }
 
-                for (var i = newLight + 1; i <= light; i++) {
+                modifiedLight -= (sbyte) Math.Max(modifiedLight - reduction, 0);
+
+                for (var i = previousLight - 1; i >= modifiedLight; i--) {
                     _lightMinHeight[i] = y;
                 }
+
+                previousLight = modifiedLight;
+                block.BlockLight.LinearSunlight = modifiedLight;
             }
-
-            if (lightReduction == 0 && list.Count == 0) return;
-
-            //Update block
-
-
-            var chunkPositionInRegion = _position >> Chunk.WorldPositionShift;
-            var worldPositionInChunk = _position - (chunkPositionInRegion << Chunk.WorldPositionShift);
-            var regionPosition = _region.Position;
-            var world = _region.World;
-            var regionY = y >> ChunkRegion.WorldPositionShift;
-            var chunkY = y >> Chunk.WorldPositionShift;
-            var regions = new List<ChunkRegion>();
-            regions.AddRange(from region in world.ChunkRegions.Values
-                let rPos = region.Position
-                where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
-                select region);
-
-            regions.Sort((r1, r2) => r2.Position.Y - r1.Position.Y);
-
-            foreach (var chunks in regions.Select(region => region.Chunks)) {
-                for (var cy = 3; cy >= 0; cy--) {
-                    var chunk = chunks[chunkPositionInRegion.X, cy, chunkPositionInRegion.Y];
-                    if (chunk == null || chunk.Position.Y > chunkY) continue;
-                    var blocks = chunk.Blocks;
-                    for (var by = 15; by >= 0; by--) {
-                        var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
-                        if (block.Position.Y >= y || block.Position.Y <= old0Height) continue;
-                        block.UpdateLinearSunlight(GetLightFor(block.Position.Y));
-                        block.TriggerLightChange();
-                    }
-                }
+            
+            foreach (var block in enumerable) {
+                block?.RemoveSunlight();
             }
-
-            foreach (var block in list) {
-                block.TriggerLightChange();
+            foreach (var block in enumerable) {
+                block?.ExpandSunlight();
             }
-        }
-
-        private List<Block> RemovePreviousBlock(int y, int newReduction) {
-            var add = 0;
-            for (var i = _lightMinHeight.Length - 1; i >= 0; i--) {
-                var lightY = _lightMinHeight[i];
-                if (lightY == y) {
-                    add++;
-                }
-
-                _lightMinHeight[Math.Min(14, i + add)] = lightY;
-            }
-
-            if (add == 15) {
-                add--;
-            }
-
-            return add < 1
-                ? new List<Block>()
-                : Check(add, _lightMinHeight[add], newReduction);
-        }
-
-        private List<Block> Check(int lastLight, int y, int newReduction) {
-            var list = new List<Block>();
-            var regionY = y >> ChunkRegion.WorldPositionShift;
-            var chunkY = y >> Chunk.WorldPositionShift;
-            var regionPosition = _region.Position;
-            var chunkPositionInRegion = _position >> Chunk.WorldPositionShift;
-            var worldPositionInChunk = _position - (chunkPositionInRegion << Chunk.WorldPositionShift);
-            var world = _region.World;
-
-            var regions = new List<ChunkRegion>();
-            regions.AddRange(from region in world.ChunkRegions.Values
-                let rPos = region.Position
-                where rPos.X == regionPosition.X && rPos.Z == regionPosition.Y && rPos.Y >= regionY
-                select region);
-
-            regions.Sort((r1, r2) => r2.Position.Y - r1.Position.Y);
-
-            foreach (var chunks in regions.Select(region => region.Chunks)) {
-                for (var cy = 3; cy >= 0; cy--) {
-                    if (lastLight <= newReduction) return list;
-                    var chunk = chunks[chunkPositionInRegion.X, cy, chunkPositionInRegion.Y];
-                    if (chunk == null || chunk.Position.Y > chunkY) continue;
-                    var blocks = chunk.Blocks;
-                    for (var by = 15; by >= 0; by--) {
-                        if (lastLight <= newReduction) return list;
-                        var block = blocks[worldPositionInChunk.X, by, worldPositionInChunk.Y];
-                        if (block.Position.Y >= y) continue;
-                        var reduction = block.StaticData.SunlightPassReduction;
-
-                        if (reduction > 0) {
-                            var nLight = Math.Max(-1, lastLight - reduction);
-                            for (var i = lastLight; i > nLight; i--) {
-                                _lightMinHeight[i] = block.Position.Y;
-                            }
-
-                            lastLight = nLight;
-                        }
-
-                        block.UpdateLinearSunlight((sbyte) (lastLight + 1));
-                        list.Add(block);
-                    }
-                }
-            }
-
-            return list;
         }
 
         public void Save(Stream stream, BinaryFormatter formatter) {

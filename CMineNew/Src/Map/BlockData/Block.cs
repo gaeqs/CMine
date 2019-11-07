@@ -230,6 +230,11 @@ namespace CMineNew.Map.BlockData{
             var light = (sbyte) (_blockLight.Sunlight - _staticData.BlockLightPassReduction);
             SunlightMethods.ExpandFrom(this, _position, light);
         }
+        
+        public void RemoveSunlight() {
+            SunlightMethods.RemoveLightSource(_position, this);
+        }
+
 
         public void UpdateLinearSunlight(sbyte light) {
             var old = _blockLight.Sunlight;
@@ -245,7 +250,7 @@ namespace CMineNew.Map.BlockData{
                 SunlightMethods.ExpandFrom(this, _position, (sbyte) (light - _staticData.BlockLightPassReduction));
             }
         }
-
+        
         public void TriggerLightChange(bool self = true) {
             if (self) {
                 OnSelfLightChange();

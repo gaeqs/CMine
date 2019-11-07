@@ -218,7 +218,7 @@ namespace CMineNew.Map {
             return region;
         }
 
-        public Block[] getVerticalColumn(Vector2i position, int yTop, int yBottom) {
+        public Block[] GetVerticalColumn(Vector2i position, int yTop, int yBottom) {
             if (yTop == yBottom) return new[] {GetBlock(new Vector3i(position.X, yTop, position.Y))};
             if (yTop < yBottom) {
                 var aux = yTop;
@@ -226,25 +226,60 @@ namespace CMineNew.Map {
                 yBottom = aux;
             }
 
-            var array = new Block[yTop - yBottom + 1];
+            try {
+                var array = new Block[yTop - yBottom + 1];
 
-            var worldPosition = new Vector3i(position.X, yTop, position.Y);
-            var region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
-            var chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
-            while (yTop >= yBottom) {
-                array[yTop - yBottom] = chunk.GetBlockFromWorldPosition(worldPosition);
-                yTop--;
-                worldPosition.Y = yTop;
-                if (region.Position.Y != yTop >> ChunkRegion.WorldPositionShift) {
-                    region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
+                var worldPosition = new Vector3i(position.X, yTop, position.Y);
+                var region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
+                var chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+                while (yTop >= yBottom) {
+                    array[yTop - yBottom] = chunk?.GetBlockFromWorldPosition(worldPosition);
+                    yTop--;
+                    worldPosition.Y = yTop;
+                    if (yTop >> ChunkRegion.WorldPositionShift != (yTop + 1) >> ChunkRegion.WorldPositionShift) {
+                        _chunkRegions.TryGetValue(worldPosition >> ChunkRegion.WorldPositionShift, out region);
+                    }
+
+                    if (yTop >> Chunk.WorldPositionShift != (yTop + 1) >> Chunk.WorldPositionShift) {
+                        chunk = region?.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+                    }
                 }
 
-                if (chunk.Position.Y != yTop >> Chunk.WorldPositionShift) {
-                    chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+                return array;
+            }
+            catch (OverflowException ex) {
+                Console.WriteLine(yTop +" - "+yBottom);
+                throw;
+            }
+        }
+
+        public IEnumerable<Block> GetVerticalColumn(Vector2i position, int yTop) {
+            var list = new List<Block>();
+
+            var regionPosition = position >> ChunkRegion.WorldPositionShift;
+            var chunkPosition = position >> Chunk.WorldPositionShift;
+            var chunkPositionInRegion = chunkPosition - (regionPosition << ChunkRegion.ChunkPositionShift);
+            var blockPositionInChunk = position - (chunkPosition << Chunk.WorldPositionShift);
+            
+            var regions = _chunkRegions.Where(target => target.Key.ToVector2i(true) == regionPosition)
+                .Select(target => target.Value).ToList();
+            regions.Sort((o1, o2) => o2.Position.Y - o1.Position.Y);
+            
+            foreach (var chunks in regions.Where(region => region.Position.Y <= yTop >> ChunkRegion.WorldPositionShift)
+                .Select(region => region.Chunks)) {
+                for (var i = 3; i >= 0; i--) {
+                    var chunk = chunks[chunkPositionInRegion.X, i, chunkPositionInRegion.Y];
+                    if (chunk == null || chunk.Position.Y > yTop >> Chunk.WorldPositionShift) continue;
+                    var blocks = chunk.Blocks;
+                    for (var n = 15; n >= 0; n--) {
+                        var block = blocks[blockPositionInChunk.X, n, blockPositionInChunk.Y];
+                        if (block == null || block.Position.Y > yTop) continue;
+                        list.Add(block);
+                    }
                 }
             }
 
-            return array;
+            return list;
         }
 
         public void Save() {
