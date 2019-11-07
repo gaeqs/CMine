@@ -125,7 +125,9 @@ namespace CMineNew.Entities.Controller {
             else if (args.Button == MouseButton.Middle) {
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
-                var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                var position = result.Position;
+                Console.Write(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight + " | ");
+                position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight);
             }
         }
