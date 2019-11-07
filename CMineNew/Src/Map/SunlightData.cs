@@ -35,52 +35,65 @@ namespace CMineNew.Map {
             return 0;
         }
 
-        public void SetBlock(int y, int lightReduction) {
+        public sbyte SetBlock(int y, int lightReduction, Block block) {
             var previousLight = GetLightFor(y);
             var upperLight = GetLightFor(y + 1);
             var nextLight = (sbyte) Math.Max(upperLight - lightReduction, 0);
-            if (previousLight == nextLight) return;
-            
-            Opaque(y, upperLight, nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100);
+
+            if (_region.World.Player.Inventory.Hotbar.Selected == 3) {
+                Console.WriteLine(previousLight + " - " + upperLight + " - " + nextLight);
+            }
+
+            if (previousLight == nextLight) return nextLight;
+
+            Opaque(block, y, upperLight, nextLight,
+                nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100);
+
+            return nextLight;
         }
 
-        private void Opaque(int y, sbyte previousLight, bool modifyAll) {
-            //for (var i = previousLight - 1; i >= modifiedLight; i--) {
-            //    _lightHeight[i] = y;
-            //}
-            //previousLight = modifiedLight;
-
-            var blocks = modifyAll ? 
-                _region.World.GetVerticalColumn(_position, y) :
-                _region.World.GetVerticalColumn(_position, y, _lightHeight[0]);
-
-            var modifiedLight = previousLight;
-
+        private void Opaque(Block thisBlock, int y, sbyte previousLight, sbyte modifiedLight, bool modifyAll) {
+            
+            var blocks = modifyAll
+                ? _region.World.GetVerticalColumn(_position, y - 1)
+                : _region.World.GetVerticalColumn(_position, y - 1, _lightHeight[0]);
             var enumerable = blocks as Block[] ?? blocks.ToArray();
             
+            for (var i = previousLight; i > modifiedLight; i--) {
+                _lightHeight[i - 1] = y;
+            }
+
+            previousLight = modifiedLight;
+
             foreach (var block in enumerable) {
                 if (block == null) continue;
+                if (block.Position.Y >= y) {
+                    Console.WriteLine("ERROOOOOOOR " + modifyAll + " " + y);
+                }
+
                 var reduction = block.StaticData.SunlightPassReduction;
-                if (reduction == 0) {
+                if (reduction == 0 || modifiedLight == 0) {
                     block.BlockLight.LinearSunlight = modifiedLight;
                     continue;
                 }
 
                 modifiedLight = (sbyte) Math.Max(modifiedLight - reduction, 0);
 
-                for (var i = previousLight - 1; i >= modifiedLight; i--) {
-                    _lightHeight[i] = y;
+                for (var i = previousLight; i > modifiedLight; i--) {
+                    _lightHeight[i - 1] = block.Position.Y;
                 }
 
                 previousLight = modifiedLight;
                 block.BlockLight.LinearSunlight = modifiedLight;
             }
-            
-            
-            
+
+
+            thisBlock.RemoveSunlight();
             foreach (var block in enumerable) {
                 block?.RemoveSunlight();
             }
+
+            thisBlock.ExpandSunlight();
             foreach (var block in enumerable) {
                 block?.ExpandSunlight();
             }
