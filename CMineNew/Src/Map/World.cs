@@ -11,7 +11,6 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
-using CMineNew.Map.BlockData.Type;
 using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
 using CMineNew.Map.Task;
@@ -217,6 +216,35 @@ namespace CMineNew.Map {
 
 
             return region;
+        }
+
+        public Block[] getVerticalColumn(Vector2i position, int yTop, int yBottom) {
+            if (yTop == yBottom) return new[] {GetBlock(new Vector3i(position.X, yTop, position.Y))};
+            if (yTop < yBottom) {
+                var aux = yTop;
+                yTop = yBottom;
+                yBottom = aux;
+            }
+
+            var array = new Block[yTop - yBottom + 1];
+
+            var worldPosition = new Vector3i(position.X, yTop, position.Y);
+            var region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
+            var chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+            while (yTop >= yBottom) {
+                array[yTop - yBottom] = chunk.GetBlockFromWorldPosition(worldPosition);
+                yTop--;
+                worldPosition.Y = yTop;
+                if (region.Position.Y != yTop >> ChunkRegion.WorldPositionShift) {
+                    region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
+                }
+
+                if (chunk.Position.Y != yTop >> Chunk.WorldPositionShift) {
+                    chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+                }
+            }
+
+            return array;
         }
 
         public void Save() {

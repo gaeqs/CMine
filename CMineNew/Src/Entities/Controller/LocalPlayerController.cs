@@ -126,7 +126,7 @@ namespace CMineNew.Entities.Controller {
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
-                Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.Light);
+                Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight);
             }
         }
 
