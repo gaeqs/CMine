@@ -17,7 +17,7 @@ uniform vec4 colorFilter;
 void main () {
     gl_Position = projection * (model * vec4(position * instanceSize - instanceSize / 2, 1) - vec4(0, 0, 2, 0));
     gl_Position /= gl_Position.w;
-    gl_Position += vec4(instancePosition + vec2(instanceSize / 2), 0, 0);
+    gl_Position += vec4(instancePosition, 0, 0);
     
     vec4 textureArea = instanceTextureAreas[ gl_VertexID / 4];
     vec2 minT = textureArea.xy;

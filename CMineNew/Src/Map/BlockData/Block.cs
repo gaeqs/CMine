@@ -303,12 +303,7 @@ namespace CMineNew.Map.BlockData{
             //Calculate the linear sunlight.
             var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
             var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-            _blockLight.LinearSunlight = sunlightData.SetBlock(_position.Y, _staticData.SunlightPassReduction, this);
-
-            //Calculates the initial sunlight.
-
-            _blockLight.Sunlight = _blockLight.LinearSunlight;
-            _blockLight.SunlightSource = _position;
+            sunlightData.SetBlock(_position.Y, _staticData.SunlightPassReduction, this);
         }
 
         #endregion

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
+using CMineNew.Map.BlockData.Type;
 
-namespace CMineNew.Map {
-    public class SunlightData {
+namespace CMineNew.Map{
+    public class SunlightData{
         private readonly World2dRegion _region;
         private readonly Vector2i _position;
 
@@ -35,7 +36,7 @@ namespace CMineNew.Map {
             return 0;
         }
 
-        public sbyte SetBlock(int y, int lightReduction, Block block) {
+        public void SetBlock(int y, int lightReduction, Block block) {
             var previousLight = GetLightFor(y);
             var upperLight = GetLightFor(y + 1);
             var nextLight = (sbyte) Math.Max(upperLight - lightReduction, 0);
@@ -44,33 +45,45 @@ namespace CMineNew.Map {
                 Console.WriteLine(previousLight + " - " + upperLight + " - " + nextLight);
             }
 
-            if (previousLight == nextLight) return nextLight;
+            if (previousLight == Block.MaxBlockLight && lightReduction == 0) {
+                block.BlockLight.LinearSunlight = upperLight;
+                block.BlockLight.Sunlight = block.BlockLight.LinearSunlight;
+                block.BlockLight.SunlightSource = block.Position;
+                return;
+            }
+            if (upperLight == 0) {
+                block.BlockLight.LinearSunlight = 0;
+                block.BlockLight.Sunlight = 0;
+                block.BlockLight.SunlightSource = block.Position;
+                return;
+            }
 
-            Opaque(block, y, upperLight, nextLight,
+            block.BlockLight.LinearSunlight = nextLight;
+            block.BlockLight.Sunlight = block.BlockLight.LinearSunlight;
+            block.BlockLight.SunlightSource = block.Position;
+
+            if (previousLight == nextLight) {
+                return;
+            }
+
+            Opaque(block, y, upperLight, nextLight, 
                 nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100);
-
-            return nextLight;
         }
 
         private void Opaque(Block thisBlock, int y, sbyte previousLight, sbyte modifiedLight, bool modifyAll) {
-            
             var blocks = modifyAll
                 ? _region.World.GetVerticalColumn(_position, y - 1)
                 : _region.World.GetVerticalColumn(_position, y - 1, _lightHeight[0]);
             var enumerable = blocks as Block[] ?? blocks.ToArray();
-            
+
             for (var i = previousLight; i > modifiedLight; i--) {
                 _lightHeight[i - 1] = y;
             }
-
+           
             previousLight = modifiedLight;
 
             foreach (var block in enumerable) {
                 if (block == null) continue;
-                if (block.Position.Y >= y) {
-                    Console.WriteLine("ERROOOOOOOR " + modifyAll + " " + y);
-                }
-
                 var reduction = block.StaticData.SunlightPassReduction;
                 if (reduction == 0 || modifiedLight == 0) {
                     block.BlockLight.LinearSunlight = modifiedLight;

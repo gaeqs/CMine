@@ -129,10 +129,6 @@ namespace CMineNew.Entities.Controller {
                 Console.Write(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight + " | ");
                 position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight);
-                var block = _player.World.GetBlock(position);
-                var regionPosition = block.Position - (block.Chunk.Region.Position << World2dRegion.WorldPositionShift);
-                var sunlightData = block.Chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-                Console.WriteLine(sunlightData);
             }
         }
 

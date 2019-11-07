@@ -188,11 +188,10 @@ namespace CMineNew.Map {
                 return chunk;
             }
 
-            chunk = new Chunk(region, position);
-            chunk.Natural = true;
+            chunk = new Chunk(region, position) {Natural = true};
+            region.SetChunk(chunk, chunkPositionInRegion);
             _worldGenerator.GenerateChunkData(chunk);
             _unloadedChunkGenerationManager.FlushToAllChunks();
-            region.SetChunk(chunk, chunkPositionInRegion);
 
             return chunk;
         }
@@ -230,8 +229,8 @@ namespace CMineNew.Map {
                 var array = new Block[yTop - yBottom + 1];
 
                 var worldPosition = new Vector3i(position.X, yTop, position.Y);
-                var region = _chunkRegions[worldPosition >> ChunkRegion.WorldPositionShift];
-                var chunk = region.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
+                _chunkRegions.TryGetValue(worldPosition >> ChunkRegion.WorldPositionShift, out var region);
+                var chunk = region?.GetChunkFromChunkPosition(worldPosition >> Chunk.WorldPositionShift);
                 while (yTop >= yBottom) {
                     array[yTop - yBottom] = chunk?.GetBlockFromWorldPosition(worldPosition);
                     yTop--;

@@ -3,8 +3,8 @@ using CMineNew.Map;
 using CMineNew.Render.Object;
 using OpenTK;
 
-namespace CMineNew.Render.Gui {
-    public class GuiHotbarBlock : GuiBlockElement {
+namespace CMineNew.Render.Gui{
+    public class GuiHotbarBlock : GuiBlockElement{
         private readonly InventoryHotbar _hotbar;
         private readonly Gui2dElement _background;
         private readonly int _index;
@@ -15,7 +15,7 @@ namespace CMineNew.Render.Gui {
             _hotbar = hotbar;
             _background = background;
             _index = index;
-            _position = background.Position + new Vector2(background.Size.X * index / 5, 0.07f);
+            _position = background.Position + new Vector2(background.Size.X * (index) / 5, 0.05f);
             Snapshot = _hotbar[index, 0];
             _selected = false;
         }
@@ -26,7 +26,7 @@ namespace CMineNew.Render.Gui {
 
         public override void Draw(World world, ShaderProgram shader, VertexArrayObject vao) {
             Snapshot = _hotbar[_index, 0];
-            
+
             if (_hotbar.Selected == _index) {
                 if (!_selected) {
                     _selected = true;
@@ -40,9 +40,9 @@ namespace CMineNew.Render.Gui {
                 }
             }
 
-            var ratio = _background.GetSizeWithAspectRatio(world.Camera.Frustum.AspectRatio).X / 5f;
+            var ratio = _background.Size.X * 1.2f / 5f;
             Size = new Vector3(ratio);
-            
+
             base.Draw(world, shader, vao);
         }
     }
