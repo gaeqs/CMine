@@ -126,9 +126,27 @@ namespace CMineNew.Entities.Controller {
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position;
-                Console.Write(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight + " | ");
+
+                var clickedBlock = _player.World.GetBlock(position);
                 position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
-                Console.WriteLine(_player.World.GetBlock(position)?.BlockLight?.LinearSunlight);
+                var relativeBlock = _player.World.GetBlock(position);
+
+                Console.Write(clickedBlock?.BlockLight?.LinearSunlight
+                              + "(" + clickedBlock?.SunlightData.GetLightFor(clickedBlock.Position.Y) + ") | ");
+                Console.WriteLine(relativeBlock?.BlockLight?.LinearSunlight + " (" +
+                                  relativeBlock?.SunlightData.GetLightFor(relativeBlock.Position.Y) + ")");
+
+
+                for (var i = 0; i < clickedBlock?._lightBlocks.Count; i++) {
+                    Console.WriteLine(clickedBlock._lightBlocks[i].Position.Y  +" ("+ 
+                                      clickedBlock._lightBlocks[i].Id+") - " + clickedBlock._lightValues[i]);
+                }
+                Console.WriteLine("-----------------------");
+                for (var i = 0; i < relativeBlock?._lightBlocks.Count; i++) {
+                    Console.WriteLine(relativeBlock._lightBlocks[i].Position.Y  +" ("+ 
+                                      relativeBlock._lightBlocks[i].Id+") - " + relativeBlock._lightValues[i]);
+                }
+                Console.WriteLine("#######################");
             }
         }
 

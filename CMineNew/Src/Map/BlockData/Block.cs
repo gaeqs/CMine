@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Color;
@@ -11,8 +12,8 @@ using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics;
 
-namespace CMineNew.Map.BlockData{
-    public abstract class Block{
+namespace CMineNew.Map.BlockData {
+    public abstract class Block {
         public const sbyte MaxBlockLight = 15;
         public const float MaxBlockLightF = MaxBlockLight;
 
@@ -25,6 +26,9 @@ namespace CMineNew.Map.BlockData{
         protected WeakReference<Block>[] _neighbours;
         protected BlockLight _blockLight;
         protected BlockLightSource _blockLightSource;
+
+        public List<int> _lightValues = new List<int>();
+        public List<Block> _lightBlocks = new List<Block>();
 
         protected readonly WeakReference<Block> _weakReference;
 
@@ -99,6 +103,13 @@ namespace CMineNew.Map.BlockData{
                 for (var i = 0; i < _neighbours.Length; i++) {
                     _neighbours[i] = value[i]?._weakReference ?? ReferenceUtils.EmptyWeakBlockReference;
                 }
+            }
+        }
+
+        public SunlightData SunlightData {
+            get {
+                var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
+                return _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
             }
         }
 
@@ -230,7 +241,7 @@ namespace CMineNew.Map.BlockData{
             var light = (sbyte) (_blockLight.Sunlight - _staticData.BlockLightPassReduction);
             SunlightMethods.ExpandFrom(this, _position, light);
         }
-        
+
         public void RemoveSunlight() {
             SunlightMethods.RemoveLightSource(_position, this);
         }
@@ -250,7 +261,7 @@ namespace CMineNew.Map.BlockData{
                 SunlightMethods.ExpandFrom(this, _position, (sbyte) (light - _staticData.BlockLightPassReduction));
             }
         }
-        
+
         public void TriggerLightChange(bool self = true) {
             if (self) {
                 OnSelfLightChange();
@@ -301,9 +312,7 @@ namespace CMineNew.Map.BlockData{
 
         private void UpdateSunlight() {
             //Calculate the linear sunlight.
-            var regionPosition = _position - (_chunk.Region.Position << World2dRegion.WorldPositionShift);
-            var sunlightData = _chunk.Region.World2dRegion.SunlightData[regionPosition.X, regionPosition.Z];
-            sunlightData.SetBlock(_position.Y, _staticData.SunlightPassReduction, this);
+            SunlightData.SetBlock(_position.Y, _staticData.SunlightPassReduction, this);
         }
 
         #endregion

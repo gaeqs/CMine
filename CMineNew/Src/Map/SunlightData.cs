@@ -6,8 +6,8 @@ using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Type;
 
-namespace CMineNew.Map{
-    public class SunlightData{
+namespace CMineNew.Map {
+    public class SunlightData {
         private readonly World2dRegion _region;
         private readonly Vector2i _position;
 
@@ -51,6 +51,7 @@ namespace CMineNew.Map{
                 block.BlockLight.SunlightSource = block.Position;
                 return;
             }
+
             if (upperLight == 0) {
                 block.BlockLight.LinearSunlight = 0;
                 block.BlockLight.Sunlight = 0;
@@ -66,11 +67,12 @@ namespace CMineNew.Map{
                 return;
             }
 
-            Opaque(block, y, upperLight, nextLight, 
+            Opaque(block, y, upperLight, nextLight,
                 nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100);
         }
 
         private void Opaque(Block thisBlock, int y, sbyte previousLight, sbyte modifiedLight, bool modifyAll) {
+            var a = modifiedLight;
             var blocks = modifyAll
                 ? _region.World.GetVerticalColumn(_position, y - 1)
                 : _region.World.GetVerticalColumn(_position, y - 1, _lightHeight[0]);
@@ -79,13 +81,15 @@ namespace CMineNew.Map{
             for (var i = previousLight; i > modifiedLight; i--) {
                 _lightHeight[i - 1] = y;
             }
-           
+
             previousLight = modifiedLight;
 
             foreach (var block in enumerable) {
                 if (block == null) continue;
+                block._lightBlocks.Add(thisBlock);
                 var reduction = block.StaticData.SunlightPassReduction;
                 if (reduction == 0 || modifiedLight == 0) {
+                    block._lightValues.Add(a);
                     block.BlockLight.LinearSunlight = modifiedLight;
                     continue;
                 }
@@ -97,6 +101,7 @@ namespace CMineNew.Map{
                 }
 
                 previousLight = modifiedLight;
+                block._lightValues.Add(a);
                 block.BlockLight.LinearSunlight = modifiedLight;
             }
 
