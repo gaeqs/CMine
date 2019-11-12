@@ -137,7 +137,7 @@ namespace CMineNew.Map {
         }
 
         public void FillWithBlocks(BlockSnapshot[,,] snapshots) {
-            AddBlockForEachChunkPosition((x, y, z, wPos) => snapshots[x, y, z].ToBlock(this, wPos));
+            AddBlockForEachChunkPosition((x, y, z, wPos) => snapshots[x, z, y].ToBlock(this, wPos));
 
             SendOnPlaceEventToAllBlocks(true, false, false);
             ForEachChunkPosition((x, y, z, block) => {

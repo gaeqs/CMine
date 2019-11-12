@@ -5,6 +5,7 @@ using CMineNew.Map.Generator.Biomes;
 
 namespace CMineNew.Map.Generator{
     public class  DefaultWorldGenerator : WorldGenerator{
+        //X, Z, Y
         private readonly BlockSnapshot[,,] _buffer =
             new BlockSnapshot[Chunk.ChunkLength, Chunk.ChunkLength, Chunk.ChunkLength];
 
@@ -35,7 +36,7 @@ namespace CMineNew.Map.Generator{
                         var position = new Vector3i(x, y, z) + chunkWorldPosition;
                         var snapshot = biome.GetBlockSnapshot(position, height, grassColor);
 
-                        _buffer[x, y, z] = snapshot;
+                        _buffer[x, z, y] = snapshot;
                         if (!(snapshot is BlockSnapshotAir)) {
                             empty = false;
                         }

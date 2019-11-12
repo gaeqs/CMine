@@ -62,18 +62,18 @@ namespace CMineNew.Map.Generator.Unloaded{
                         empty = false;
                     }
 
-                    snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
+                    snapshots[x, z, y] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
                     return;
                 }
 
-                var snapshot = snapshots[x, y, z];
+                var snapshot = snapshots[x, z, y];
                 if (snapshot != null && !(snapshot is BlockSnapshotAir) &&
                     !(snapshot is BlockSnapshotTallGrass)) return;
                 if (!(data.Snapshot is BlockSnapshotAir)) {
                     empty = false;
                 }
 
-                snapshots[x, y, z] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
+                snapshots[x, z, y] = UpdateSnapshot(data.Snapshot, blockPos, region2d);
             });
             return empty;
         }
