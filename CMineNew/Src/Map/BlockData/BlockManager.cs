@@ -5,8 +5,8 @@ using CMineNew.Map.BlockData.Type;
 using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData{
-    public class BlockManager{
-        private static Dictionary<string, BlockSnapshot> Blocks = new Dictionary<string, BlockSnapshot>();
+    public static class BlockManager{
+        private static readonly Dictionary<string, BlockSnapshot> Blocks = new Dictionary<string, BlockSnapshot>();
 
         public static void Load() {
             Register(BlockSnapshotAir.Instance);

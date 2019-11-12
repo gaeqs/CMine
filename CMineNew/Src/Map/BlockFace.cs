@@ -149,22 +149,15 @@ namespace CMineNew.Map {
         }
 
         private static Vector3[] GetVertices(BlockFace face) {
-            switch (face) {
-                case BlockFace.Up:
-                    return _up;
-                case BlockFace.Down:
-                    return _down;
-                case BlockFace.East:
-                    return _east;
-                case BlockFace.West:
-                    return _west;
-                case BlockFace.North:
-                    return _north;
-                case BlockFace.South:
-                    return _south;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(face), face, null);
-            }
+            return face switch {
+                BlockFace.Up => _up,
+                BlockFace.Down => _down,
+                BlockFace.East => _east,
+                BlockFace.West => _west,
+                BlockFace.North => _north,
+                BlockFace.South => _south,
+                _ => throw new ArgumentOutOfRangeException(nameof(face), face, null)
+            };
         }
 
         private static VertexArrayObject CreateVao(IReadOnlyList<Vector3> positions, float yHeight,

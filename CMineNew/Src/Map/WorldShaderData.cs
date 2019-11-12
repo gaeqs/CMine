@@ -10,18 +10,18 @@ namespace CMineNew.Map{
             UboObject.Float, UboObject.Float, UboObject.Boolean, UboObject.Integer
         };
 
-        private UniformBufferObject _ubo;
-        private int millis;
+        private readonly UniformBufferObject _ubo;
+        private int _millis;
 
         public WorldShaderData() {
             _ubo = new UniformBufferObject(Objects);
             _ubo.BindToBase(0);
-            millis = 0;
+            _millis = 0;
         }
 
         public void SetData(Matrix4 vp, Vector3 cp, Vector3 sd, float vds, float vdos, bool ws, long ticks) {
-            millis += (int) (ticks * 1000 / CMine.TicksPerSecond);
-            millis %= 1000000;
+            _millis += (int) (ticks * 1000 / CMine.TicksPerSecond);
+            _millis %= 1000000;
             _ubo.Orphan();
             _ubo.Set(vp, 0);
             _ubo.Set(cp, 1);
@@ -29,7 +29,7 @@ namespace CMineNew.Map{
             _ubo.Set(vds, 3);
             _ubo.Set(vdos, 4);
             _ubo.Set(ws, 5);
-            _ubo.Set(millis, 6);
+            _ubo.Set(_millis, 6);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace CMineNew.Map{
                     block.Neighbours = neighbours;
                 }
 
-                for (var i = 0; i < references.Length; i++) {
+                for (var i = 0; i < neighbours.Length; i++) {
                     neighbours[i]?.OnNeighbourBlockChange0(old, block,
                         BlockFaceMethods.GetOpposite((BlockFace) i));
                 }

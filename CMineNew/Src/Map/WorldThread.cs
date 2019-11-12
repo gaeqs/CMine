@@ -4,10 +4,10 @@ using System.Threading;
 
 namespace CMineNew.Map{
     public class WorldThread{
-        private World _world;
+        private readonly World _world;
 
         private Thread _thread;
-        private Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch;
         private bool _alive;
         private float load;
 

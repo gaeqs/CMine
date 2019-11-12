@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using CMineNew.Color;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
@@ -40,7 +41,7 @@ namespace CMineNew.Map {
         private readonly HashSet<Entity> _entities;
         private readonly Player _player;
 
-        public readonly WorldGui _gui;
+        private readonly WorldGui _gui;
 
         private readonly Collection<StaticText> _staticTexts;
         private readonly DelayViewer _delayViewer;
@@ -71,7 +72,7 @@ namespace CMineNew.Map {
             _player.Controller = new LocalPlayerController(_player, _renderData.Camera);
             _player.Inventory.Hotbar[0, 0] = new BlockSnapshotBricks();
             _player.Inventory.Hotbar[1, 0] = new BlockSnapshotSand();
-            _player.Inventory.Hotbar[2, 0] = new BlockSnapshotDirt();
+            _player.Inventory.Hotbar[2, 0] = new BlockSnapshotOakLeaves(new Rgba32I(0, 255, 0, 1));
             _player.Inventory.Hotbar[3, 0] = new BlockSnapshotStone();
             _player.Inventory.Hotbar[4, 0] = new BlockSnapshotTorch();
             _entities.Add(_player);

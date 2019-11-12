@@ -1,5 +1,6 @@
 using System;
 using CMineNew.Map;
+using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Render;
 using OpenTK;
@@ -135,18 +136,10 @@ namespace CMineNew.Entities.Controller {
                               + "(" + clickedBlock?.SunlightData.GetLightFor(clickedBlock.Position.Y) + ") | ");
                 Console.WriteLine(relativeBlock?.BlockLight?.LinearSunlight + " (" +
                                   relativeBlock?.SunlightData.GetLightFor(relativeBlock.Position.Y) + ")");
-
-
-                for (var i = 0; i < clickedBlock?._lightBlocks.Count; i++) {
-                    Console.WriteLine(clickedBlock._lightBlocks[i].Position.Y  +" ("+ 
-                                      clickedBlock._lightBlocks[i].Id+") - " + clickedBlock._lightValues[i]);
-                }
-                Console.WriteLine("-----------------------");
-                for (var i = 0; i < relativeBlock?._lightBlocks.Count; i++) {
-                    Console.WriteLine(relativeBlock._lightBlocks[i].Position.Y  +" ("+ 
-                                      relativeBlock._lightBlocks[i].Id+") - " + relativeBlock._lightValues[i]);
-                }
-                Console.WriteLine("#######################");
+                
+                if (_player.BlockRayTracer.Result == null) return;
+                if (!BlockManager.TryGet(result.Id, out var snapshot)) return;
+                _player.Inventory.Hotbar.SelectedBlock = snapshot;
             }
         }
 

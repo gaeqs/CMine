@@ -7,7 +7,7 @@ using OpenTK;
 
 namespace CMineNew.RayTrace{
     public class BlockRayTracer{
-        private World _world;
+        private readonly World _world;
 
         private Vector3 _origin;
         private Vector3 _direction;

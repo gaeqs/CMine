@@ -4,12 +4,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
-using CMineNew.Map.BlockData.Type;
 
 namespace CMineNew.Map {
     public class SunlightData {
         private readonly World2dRegion _region;
-        private readonly Vector2i _position;
+        private readonly Vector2i _worldPosition;
 
         /// <summary>
         /// Represents where the light level ends.
@@ -20,7 +19,7 @@ namespace CMineNew.Map {
 
         public SunlightData(World2dRegion region, Vector2i position) {
             _region = region;
-            _position = position;
+            _worldPosition = position + (region.Position << World2dRegion.WorldPositionShift);
             _lightHeight = new int[15];
             for (var i = 0; i < _lightHeight.Length; i++) {
                 _lightHeight[i] = int.MinValue;
@@ -41,24 +40,6 @@ namespace CMineNew.Map {
             var upperLight = GetLightFor(y + 1);
             var nextLight = (sbyte) Math.Max(upperLight - lightReduction, 0);
 
-            if (_region.World.Player.Inventory.Hotbar.Selected == 3) {
-                Console.WriteLine(previousLight + " - " + upperLight + " - " + nextLight);
-            }
-
-            if (previousLight == Block.MaxBlockLight && lightReduction == 0) {
-                block.BlockLight.LinearSunlight = upperLight;
-                block.BlockLight.Sunlight = block.BlockLight.LinearSunlight;
-                block.BlockLight.SunlightSource = block.Position;
-                return;
-            }
-
-            if (upperLight == 0) {
-                block.BlockLight.LinearSunlight = 0;
-                block.BlockLight.Sunlight = 0;
-                block.BlockLight.SunlightSource = block.Position;
-                return;
-            }
-
             block.BlockLight.LinearSunlight = nextLight;
             block.BlockLight.Sunlight = block.BlockLight.LinearSunlight;
             block.BlockLight.SunlightSource = block.Position;
@@ -67,15 +48,12 @@ namespace CMineNew.Map {
                 return;
             }
 
-            Opaque(block, y, upperLight, nextLight,
-                nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100);
+            //nextLight >= previousLight || _lightHeight[0] == int.MinValue || Math.Abs(y - _lightHeight[0]) > 100)
+            Opaque(block, y, upperLight, nextLight);
         }
 
-        private void Opaque(Block thisBlock, int y, sbyte previousLight, sbyte modifiedLight, bool modifyAll) {
-            var a = modifiedLight;
-            var blocks = modifyAll
-                ? _region.World.GetVerticalColumn(_position, y - 1)
-                : _region.World.GetVerticalColumn(_position, y - 1, _lightHeight[0]);
+        private void Opaque(Block thisBlock, int y, sbyte previousLight, sbyte modifiedLight) {
+            var blocks = _region.World.GetVerticalColumn(_worldPosition, y - 1);
             var enumerable = blocks as Block[] ?? blocks.ToArray();
 
             for (var i = previousLight; i > modifiedLight; i--) {
@@ -86,22 +64,20 @@ namespace CMineNew.Map {
 
             foreach (var block in enumerable) {
                 if (block == null) continue;
-                block._lightBlocks.Add(thisBlock);
                 var reduction = block.StaticData.SunlightPassReduction;
                 if (reduction == 0 || modifiedLight == 0) {
-                    block._lightValues.Add(a);
                     block.BlockLight.LinearSunlight = modifiedLight;
                     continue;
                 }
 
-                modifiedLight = (sbyte) Math.Max(modifiedLight - reduction, 0);
+                modifiedLight -= reduction;
+                if (modifiedLight < 0) modifiedLight = 0;
 
                 for (var i = previousLight; i > modifiedLight; i--) {
                     _lightHeight[i - 1] = block.Position.Y;
                 }
 
                 previousLight = modifiedLight;
-                block._lightValues.Add(a);
                 block.BlockLight.LinearSunlight = modifiedLight;
             }
 

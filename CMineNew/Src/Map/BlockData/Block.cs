@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Color;
@@ -10,7 +9,6 @@ using CMineNew.Map.BlockData.Static;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Util;
 using OpenTK;
-using OpenTK.Graphics;
 
 namespace CMineNew.Map.BlockData {
     public abstract class Block {
@@ -21,14 +19,11 @@ namespace CMineNew.Map.BlockData {
 
         protected Chunk _chunk;
         protected Vector3i _position;
-        protected bool[] _collidableFaces;
+        protected readonly bool[] _collidableFaces;
         protected Rgba32I _textureFilter;
-        protected WeakReference<Block>[] _neighbours;
-        protected BlockLight _blockLight;
-        protected BlockLightSource _blockLightSource;
-
-        public List<int> _lightValues = new List<int>();
-        public List<Block> _lightBlocks = new List<Block>();
+        protected readonly WeakReference<Block>[] _neighbours;
+        protected readonly BlockLight _blockLight;
+        protected readonly BlockLightSource _blockLightSource;
 
         protected readonly WeakReference<Block> _weakReference;
 

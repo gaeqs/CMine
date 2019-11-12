@@ -6,8 +6,8 @@ using CMineNew.Geometry;
 
 namespace CMineNew.Map{
     public class AsyncChunkGenerator{
-        private World _world;
-        private EDynamicPriorityQueue<Vector3i> _chunksToGenerate;
+        private readonly World _world;
+        private readonly EDynamicPriorityQueue<Vector3i> _chunksToGenerate;
         private Thread _thread;
         private bool _alive;
         private Vector3i _playerPosition;
@@ -25,9 +25,7 @@ namespace CMineNew.Map{
             set => _generateChunkArea = value;
         }
 
-        public int ChunksToGenerateSize {
-            get { return _chunksToGenerate.Size(); }
-        }
+        public int ChunksToGenerateSize => _chunksToGenerate.Size();
 
         public void StartThread() {
             if (_thread != null) return;
@@ -54,14 +52,8 @@ namespace CMineNew.Map{
                     _generateChunkArea = false;
                 }
 
-                Vector3i position;
-                if (_chunksToGenerate.Size() == 0) continue;
-                if (_chunksToGenerate.Size() < 0) {
-                    Console.WriteLine("OH NO");
-                }
-
-                position = _chunksToGenerate.Pop();
-
+                if (_chunksToGenerate.Size() <= 0) continue;
+                var position = _chunksToGenerate.Pop();
                 _world.CreateChunk(position);
             }
 
