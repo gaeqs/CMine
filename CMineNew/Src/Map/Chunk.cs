@@ -8,17 +8,20 @@ using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Map.Task;
 
-namespace CMineNew.Map{
-    public class Chunk{
+namespace CMineNew.Map {
+    public class Chunk {
         public const int ChunkLength = 16;
         public const int ChunkSize = ChunkLength * ChunkLength;
         public const int ChunkVolume = ChunkLength * ChunkLength * ChunkLength;
         public const int WorldPositionShift = 4;
 
         private readonly ChunkRegion _region;
+
         private Vector3i _position;
+
+        //X, Z, Y
         private readonly Block[,,] _blocks;
-        private WorldTaskManager _taskManager;
+        private readonly WorldTaskManager _taskManager;
 
         private byte[] _saveBuffer;
         private bool _modified, _natural;
@@ -57,7 +60,7 @@ namespace CMineNew.Map{
         public WorldTaskManager TaskManager => _taskManager;
 
         public Block GetBlock(Vector3i chunkPosition) {
-            return _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
+            return _blocks[chunkPosition.X, chunkPosition.Z, chunkPosition.Y];
         }
 
         public Block GetBlockFromWorldPosition(Vector3i worldPosition) {
@@ -69,13 +72,13 @@ namespace CMineNew.Map{
         }
 
         public Block SetBlock(BlockSnapshot snapshot, Vector3i chunkPosition, Func<Block, bool> canBeReplaced) {
-            var old = _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z];
+            var old = _blocks[chunkPosition.X, chunkPosition.Z, chunkPosition.Y];
             if (!canBeReplaced.Invoke(old)) return null;
 
             var position = (_position << WorldPositionShift) + chunkPosition;
             var block = snapshot.ToBlock(this, position);
 
-            _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z] = block;
+            _blocks[chunkPosition.X, chunkPosition.Z, chunkPosition.Y] = block;
 
             var references = old.NeighbourReferences;
             if (references != null) {
@@ -203,27 +206,27 @@ namespace CMineNew.Map{
             //East block
             blocks[(int) BlockFace.East] = chunkPosition.X == 15
                 ? World.GetBlock(position + new Vector3i(1, 0, 0))
-                : _blocks[chunkPosition.X + 1, chunkPosition.Y, chunkPosition.Z];
+                : _blocks[chunkPosition.X + 1, chunkPosition.Z, chunkPosition.Y];
             //West block
             blocks[(int) BlockFace.West] = chunkPosition.X == 0
                 ? World.GetBlock(position - new Vector3i(1, 0, 0))
-                : _blocks[chunkPosition.X - 1, chunkPosition.Y, chunkPosition.Z];
+                : _blocks[chunkPosition.X - 1, chunkPosition.Z, chunkPosition.Y];
             //South
             blocks[(int) BlockFace.South] = chunkPosition.Z == 15
                 ? World.GetBlock(position + new Vector3i(0, 0, 1))
-                : _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z + 1];
+                : _blocks[chunkPosition.X, chunkPosition.Z + 1, chunkPosition.Y];
             //North
             blocks[(int) BlockFace.North] = chunkPosition.Z == 0
                 ? World.GetBlock(position - new Vector3i(0, 0, 1))
-                : _blocks[chunkPosition.X, chunkPosition.Y, chunkPosition.Z - 1];
+                : _blocks[chunkPosition.X, chunkPosition.Z - 1, chunkPosition.Y];
             //Up
             blocks[(int) BlockFace.Up] = chunkPosition.Y == 15
                 ? World.GetBlock(position + new Vector3i(0, 1, 0))
-                : _blocks[chunkPosition.X, chunkPosition.Y + 1, chunkPosition.Z];
+                : _blocks[chunkPosition.X, chunkPosition.Z, chunkPosition.Y + 1];
             //Down
             blocks[(int) BlockFace.Down] = chunkPosition.Y == 0
                 ? World.GetBlock(position - new Vector3i(0, 1, 0))
-                : _blocks[chunkPosition.X, chunkPosition.Y - 1, chunkPosition.Z];
+                : _blocks[chunkPosition.X, chunkPosition.Z, chunkPosition.Y - 1];
             return blocks;
         }
 
@@ -253,7 +256,7 @@ namespace CMineNew.Map{
             ForEachChunkPosition((x, y, z) => {
                 var blockPos = pos + new Vector3i(x, y, z);
                 if (stream.ReadByte() == 0) {
-                    _blocks[x, y, z] = new BlockAir(this, blockPos);
+                    _blocks[x, z, y] = new BlockAir(this, blockPos);
                     return;
                 }
 
@@ -262,7 +265,7 @@ namespace CMineNew.Map{
                     throw
                         new System.Exception("Couldn't load chunk " + _position + ". Block Id " + id + " missing.");
                 var block = snapshot.ToBlock(this, blockPos);
-                _blocks[x, y, z] = block;
+                _blocks[x, z, y] = block;
 
                 block.Load(stream, formatter, version, region2d);
             });
@@ -283,9 +286,9 @@ namespace CMineNew.Map{
         public void AddBlockForEachChunkPosition(Func<int, int, int, Vector3i, Block> action) {
             var pos = _position << WorldPositionShift;
             for (var x = 0; x < ChunkLength; x++) {
-                for (var y = ChunkLength - 1; y >= 0; y--) {
-                    for (var z = 0; z < ChunkLength; z++) {
-                        _blocks[x, y, z] = action.Invoke(x, y, z, new Vector3i(x + pos.X, y + pos.Y, z + pos.Z));
+                for (var z = 0; z < ChunkLength; z++) {
+                    for (var y = ChunkLength - 1; y >= 0; y--) {
+                        _blocks[x, z, y] = action.Invoke(x, y, z, new Vector3i(x + pos.X, y + pos.Y, z + pos.Z));
                     }
                 }
             }
@@ -293,9 +296,9 @@ namespace CMineNew.Map{
 
         public void ForEachChunkPosition(Action<int, int, int, Block> action) {
             for (var x = 0; x < ChunkLength; x++) {
-                for (var y = ChunkLength - 1; y >= 0; y--) {
-                    for (var z = 0; z < ChunkLength; z++) {
-                        action.Invoke(x, y, z, _blocks[x, y, z]);
+                for (var z = 0; z < ChunkLength; z++) {
+                    for (var y = ChunkLength - 1; y >= 0; y--) {
+                        action.Invoke(x, y, z, _blocks[x, z, y]);
                     }
                 }
             }

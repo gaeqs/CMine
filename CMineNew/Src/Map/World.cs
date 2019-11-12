@@ -272,7 +272,7 @@ namespace CMineNew.Map {
                     if (chunk == null || chunk.Position.Y > yTop >> Chunk.WorldPositionShift) continue;
                     var blocks = chunk.Blocks;
                     for (var n = 15; n >= 0; n--) {
-                        var block = blocks[blockPositionInChunk.X, n, blockPositionInChunk.Y];
+                        var block = blocks[blockPositionInChunk.X, blockPositionInChunk.Y, n];
                         if (block == null || block.Position.Y > yTop) continue;
                         list.Add(block);
                     }
