@@ -36,6 +36,7 @@ namespace CMineNew.Loader{
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmap.Width, bitmap.Height, 0,
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+            GL.GenerateMipmap(TextureTarget.Texture2D);
             bitmap.UnlockBits(data);
             return id;
         }
