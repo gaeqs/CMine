@@ -36,9 +36,13 @@ namespace CMineNew.Map{
             while (_alive) {
                 _stopwatch.Restart();
                 _world.WorldTaskManager.Tick(constDelay);
+                
+                
                 foreach (var worldEntity in _world.Entities) {
+                    if(worldEntity == _world.Player) continue;
                     worldEntity.Tick(constDelay);
                 }
+                
                 foreach (var region in _world.ChunkRegions.Values) {
                     region.Tick(constDelay);
                 }

@@ -314,6 +314,8 @@ namespace CMineNew.Map {
 
         public override void Tick(long delay) {
             foreach (var entity in _entities) {
+                if (entity == _player)
+                    entity.Tick(delay);
                 entity.RenderTick(delay);
             }
 
@@ -326,7 +328,6 @@ namespace CMineNew.Map {
 
         public override void Draw(long delay) {
             //Set shader data.
-
             _renderData.SetShaderData(new Vector3(-1, -1, -1).Normalized(), _player.EyesOnWater, delay);
 
             //Bind GBuffer and draw background.

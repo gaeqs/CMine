@@ -93,14 +93,15 @@ namespace CMineNew.Entities{
         /// </summary>
         /// <param name="dif">The time difference difference between the last tick and the current one.</param>
         public virtual void RenderTick(long dif) {
-            const int maxDelay = CMine.TicksPerSecond / 70;
-            if (dif >= maxDelay) {
-                _renderPosition = _position;
-            }
-            else {
-                var u = (_position - _renderPosition) / maxDelay;
-                _renderPosition += u * dif;
-            }
+            _renderPosition = _position;
+            //const int maxDelay = CMine.TicksPerSecond / 70;
+            //if (dif >= maxDelay) {
+            //    _renderPosition = _position;
+            //}
+            //else {
+            //    var u = (_position - _renderPosition) / maxDelay;
+            //    _renderPosition += u * dif / CMine.TicksPerSecondF;
+            //}
         }
 
         protected bool Equals(Entity other) {
