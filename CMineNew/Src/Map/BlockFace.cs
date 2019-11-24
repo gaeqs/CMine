@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using CMineNew.Geometry;
 using CMineNew.Render.Object;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
-namespace CMineNew.Map {
-    public enum BlockFace {
+namespace CMineNew.Map{
+    public enum BlockFace{
         Up = 0,
         Down = 1,
         West = 2,
@@ -15,7 +14,7 @@ namespace CMineNew.Map {
         South = 5
     }
 
-    public static class BlockFaceMethods {
+    public static class BlockFaceMethods{
         public static readonly BlockFace[] All =
             {BlockFace.Up, BlockFace.Down, BlockFace.West, BlockFace.East, BlockFace.North, BlockFace.South};
 
@@ -42,7 +41,7 @@ namespace CMineNew.Map {
         }
     }
 
-    public static class BlockFaceVertices {
+    public static class BlockFaceVertices{
         private static Vector3[] _north = {
             new Vector3(1, 0, 0),
             new Vector3(0, 0, 0),
@@ -61,14 +60,14 @@ namespace CMineNew.Map {
             new Vector3(0, 0, 0),
             new Vector3(0, 0, 1),
             new Vector3(0, 1, 0),
-            new Vector3(0, 1, 1), new Vector3(1, 0, 0)
+            new Vector3(0, 1, 1), new Vector3(-1, 0, 0)
         };
 
         private static Vector3[] _east = {
             new Vector3(1, 0, 1),
             new Vector3(1, 0, 0),
             new Vector3(1, 1, 1),
-            new Vector3(1, 1, 0), new Vector3(-1, 0, 0)
+            new Vector3(1, 1, 0), new Vector3(1, 0, 0)
         };
 
         private static Vector3[] _up = {
@@ -127,7 +126,7 @@ namespace CMineNew.Map {
                 indicesDataOffset += 4;
             }
 
-            var vao =  new VertexArrayObject(vertices, indices);
+            var vao = new VertexArrayObject(vertices, indices);
             //vao.Bind();
             //var vboData = new VertexBufferObject();
             //vao.LinkBuffer(vboData);
@@ -152,8 +151,8 @@ namespace CMineNew.Map {
             return face switch {
                 BlockFace.Up => _up,
                 BlockFace.Down => _down,
-                BlockFace.East => _east,
                 BlockFace.West => _west,
+                BlockFace.East => _east,
                 BlockFace.North => _north,
                 BlockFace.South => _south,
                 _ => throw new ArgumentOutOfRangeException(nameof(face), face, null)
@@ -169,6 +168,21 @@ namespace CMineNew.Map {
             vertices[2] = new Vertex(positions[2] * mul, positions[4], new Vector2(0, 0));
             vertices[3] = new Vertex(positions[3] * mul, positions[4], new Vector2(1, 0));
             return new VertexArrayObject(vertices, new[] {0, 1, 3, 0, 3, 2});
+        }
+
+        public static Matrix4[] GenerateRotationMatrices() {
+            var array = new Matrix4[6];
+
+            var move2 = Matrix4.CreateTranslation(0.5f, -0.5f, -0.5f);
+            var move1 = Matrix4.CreateTranslation(-0.5f, 0.5f, 0.5f);
+
+            array[0] = move2 * Matrix4.CreateRotationX((float) -Math.PI / 2) * move1;
+            array[1] = move2 * Matrix4.CreateRotationX((float) Math.PI / 2) * move1;
+            array[2] = move2 * Matrix4.CreateRotationY((float) Math.PI * 3 / 2) * move1;
+            array[3] = move2 * Matrix4.CreateRotationY((float) Math.PI / 2) * move1;
+            array[4] = move2 * Matrix4.CreateRotationY((float) Math.PI) * move1;
+            array[5] = Matrix4.Identity;
+            return array;
         }
     }
 }

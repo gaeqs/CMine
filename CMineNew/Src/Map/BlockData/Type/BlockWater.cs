@@ -95,20 +95,19 @@ namespace CMineNew.Map.BlockData.Type{
                 _parent = _position;
                 _waterLevel = MaxWaterLevel;
             }
-            
+
             if (triggerWorldUpdates) {
                 _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
             }
-            
-            if(!addToRender) return;
+
+            if (!addToRender) return;
             UpdateWaterVertices(true, true, true, true, true);
         }
 
         public override void OnRemove(Block newBlock) {
             if (BlockModel.Id == newBlock.BlockModel?.Id) return;
             if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+
             UpdateWaterVertices(false, true, true, true, true);
 
             foreach (var child in _children) {
@@ -145,13 +144,10 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
-            var render = _chunk.Region.Render;
-
             if (relative == BlockFace.Up) {
                 if (to is BlockWater) {
                     if (_visibleFaces[(int) relative]) {
                         _visibleFaces[(int) relative] = false;
-                        render.RemoveData((int) relative, this);
                     }
 
                     _hasWaterOnTop = true;
@@ -160,25 +156,20 @@ namespace CMineNew.Map.BlockData.Type{
                 }
                 else if (!_visibleFaces[(int) relative]) {
                     _visibleFaces[(int) relative] = true;
-                    render.AddData((int) relative, this, _blockLight.Light, _blockLight.Sunlight);
                 }
             }
             else {
                 if (!(to is BlockWater)) {
                     _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
                 }
-                
-                
+
+
                 var newData = to == null ||
                               !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
                 _visibleFaces[(int) relative] = newData;
-                if (newData) {
-                    render.AddData((int) relative, this, _blockLight.Light, _blockLight.Sunlight);
-                }
-                else {
-                    render.RemoveData((int) relative, this);
-                }
             }
+
+            World.BlockRender.AddBlock(this);
         }
 
         public override Block Clone(Chunk chunk, Vector3i position) {
@@ -194,9 +185,15 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void RemoveFromRender() {
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+            World.BlockRender.RemoveBlock(this);
+        }
+
+        public bool IsFaceVisible(int face) {
+            return _visibleFaces[face];
+        }
+
+        public int GetVisibleFacesCount() {
+            return _visibleFaces.Count(b => b);
         }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {
@@ -216,8 +213,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public void UpdateWaterLevel() {
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.AddData(face, this, _blockLight.Light, _blockLight.Sunlight));
+            World.BlockRender.AddBlock(this);
         }
 
         private void UpdateWaterVertices(bool updateSelf, bool ln, bool rn, bool ls, bool rs) {
@@ -296,11 +292,11 @@ namespace CMineNew.Map.BlockData.Type{
                 waterC.UpdateWaterLevel();
             }
         }
-        
+
         public override bool CanLightPassThrough(BlockFace face) {
             return true;
         }
-        
+
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {
             return true;
         }
@@ -309,13 +305,7 @@ namespace CMineNew.Map.BlockData.Type{
         }
 
         public override void OnSelfLightChange() {
-            var render = _chunk.Region.Render;
-            foreach (var blockFace in BlockFaceMethods.All) {
-                var i = (int) blockFace;
-                if (_visibleFaces[i]) {
-                    render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
-                }
-            }
+            World.BlockRender.AddBlock(this);
         }
     }
 }

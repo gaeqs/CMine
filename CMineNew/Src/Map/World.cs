@@ -10,7 +10,6 @@ using CMineNew.Entities;
 using CMineNew.Entities.Controller;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
-using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.Generator;
 using CMineNew.Map.Generator.Unloaded;
@@ -29,6 +28,8 @@ namespace CMineNew.Map {
         private readonly string _folder;
 
         private readonly WorldRenderData _renderData;
+        private readonly WorldBlockRender _blockRender;
+        
         private readonly WorldThread _worldThread;
         private readonly WorldGenerator _worldGenerator;
         private readonly AsyncChunkGenerator _asyncChunkGenerator;
@@ -52,6 +53,7 @@ namespace CMineNew.Map {
             Background = Color4.Aqua;
 
             _renderData = new WorldRenderData();
+            _blockRender = new WorldBlockRender();
 
             _chunkRegions = new ConcurrentDictionary<Vector3i, ChunkRegion>();
             _regions2d = new ConcurrentDictionary<Vector2i, World2dRegion>();
@@ -96,6 +98,8 @@ namespace CMineNew.Map {
         public PhysicCamera Camera => _renderData.Camera;
 
         public WorldRenderData RenderData => _renderData;
+
+        public WorldBlockRender BlockRender => _blockRender;
 
         public WorldThread WorldThread => _worldThread;
 
@@ -344,16 +348,7 @@ namespace CMineNew.Map {
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.TextureMap.Texture);
 
-            var renders = (from region in _chunkRegions.Values.Where(region => !region.Deleted)
-                where _renderData.Camera.IsVisible(region)
-                select region.Render).ToList();
-            foreach (var model in BlockModelManager.Models.Values) {
-                var first = true;
-                foreach (var render in renders) {
-                    render.Draw(model.Id, first);
-                    first = false;
-                }
-            }
+            _blockRender.Draw();
 
 
             DrawSelectedBlock();
@@ -378,13 +373,7 @@ namespace CMineNew.Map {
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, CMine.TextureMap.Texture);
 
-            foreach (var model in BlockModelManager.Models.Values) {
-                var first = true;
-                foreach (var render in renders) {
-                    render.DrawAfterPostRender(model.Id, first);
-                    first = false;
-                }
-            }
+           _blockRender.DrawAfterPostRender();
 
 
             //Draws front data

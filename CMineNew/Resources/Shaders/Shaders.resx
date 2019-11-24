@@ -27,9 +27,17 @@
     <data name="block_vertex" type="System.Resources.ResXFileRef">
         <value>Block/vertex.vert;System.String</value>
     </data>
-
+    
     <data name="block_fragment" type="System.Resources.ResXFileRef">
         <value>Block/fragment.frag;System.String</value>
+    </data>
+
+    <data name="cross_block_vertex" type="System.Resources.ResXFileRef">
+        <value>CrossBlock/vertex.vert;System.String</value>
+    </data>
+
+    <data name="cross_block_fragment" type="System.Resources.ResXFileRef">
+        <value>CrossBlock/fragment.frag;System.String</value>
     </data>
 
     <data name="tall_grass_vertex" type="System.Resources.ResXFileRef">

@@ -63,10 +63,13 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 440 core
         ///
-        ///in vec3 fragPos, fragNormal;
-        ///in vec2 fragTexCoord;
-        ///flat in vec4 fragColorFilter;
-        ///in float fragLight;
+        ///in VertexData {
+        ///    vec3 fragPos;
+        ///    vec3 fragNormal;
+        ///    vec2 fragTexCoord;
+        ///    vec4 fragColorFilter;
+        ///    float fragLight;
+        ///} data;
         ///
         ///layout (location = 0) out vec2 gNormal;
         ///layout (location = 1) out vec3 gAlbedo;
@@ -75,11 +78,11 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D sampler;
         ///
         ///void main() {
-        ///    vec4 texture4 = texture(sampler, fragTexCoord);
+        ///    vec4 texture4 = texture(sampler, data.fragTexCoord);
         ///    if (texture4.w &lt; 0.1) discard;
         ///    vec3 texture = texture4.rgb;
         ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5)  [rest of string was truncated]&quot;;.
+        ///    if (texture.r == texture.g &amp;&amp; texture.r = [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_fragment {
             get {
@@ -139,16 +142,73 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 6) in float blockLight;
         ///layout (location = 7) in float sunlight;
         ///
-        ///out vec3 fragPos, fragNormal;
-        ///out vec2 fragTexCoord;
-        ///flat out vec4 fragColorFilter;
-        ///out float fragLight;
-        ///
-        ///layout (std140, binding  [rest of string was truncated]&quot;;.
+        ///out VertexData {
+        ///    vec3 fragPos;
+        ///    vec3 fragNormal;
+        ///    vec2 fragTexCoord;
+        ///    vec4 fragColorFilter;
+        ///    float fragLight;
+        ///} d [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string block_vertex {
             get {
                 return ResourceManager.GetString("block_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///in VertexData {
+        ///    vec3 fragPos;
+        ///    vec3 fragNormal;
+        ///    vec2 fragTexCoord;
+        ///    vec4 fragColorFilter;
+        ///    float fragLight;
+        ///} data;
+        ///
+        ///layout (location = 0) out vec2 gNormal;
+        ///layout (location = 1) out vec3 gAlbedo;
+        ///layout (location = 2) out vec3 gBrightness;
+        ///
+        ///uniform sampler2D sampler;
+        ///
+        ///void main() {
+        ///    vec4 texture4 = texture(sampler, data.fragTexCoord);
+        ///    if (texture4.w &lt; 0.1) discard;
+        ///    vec3 texture = texture4.rgb;
+        ///
+        ///    if (texture.r == texture.g &amp;&amp; texture.r = [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string cross_block_fragment {
+            get {
+                return ResourceManager.GetString("cross_block_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///layout (location = 0) in vec3 position;
+        ///layout (location = 1) in vec3 normal;
+        ///layout (location = 2) in vec2 texturePosition;
+        ///layout (location = 3) in vec3 worldPosition;
+        ///layout (location = 4) in vec4 textureArea;
+        ///layout (location = 5) in float blockColorFilter;
+        ///layout (location = 6) in float blockLight;
+        ///layout (location = 7) in float sunlight;
+        ///
+        ///out VertexData {
+        ///    vec3 fragPos;
+        ///    vec3 fragNormal;
+        ///    vec2 fragTexCoord;
+        ///    vec4 fragColorFilter;
+        ///    float fragLight;
+        ///} d [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string cross_block_vertex {
+            get {
+                return ResourceManager.GetString("cross_block_vertex", resourceCulture);
             }
         }
         
@@ -299,14 +359,10 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 440 core
         ///
-        ///in vec3 fragPos, fragNormal;
         ///in vec2 fragTexCoord;
         ///flat in vec4 fragColorFilter;
-        ///in float fragLight;
         ///
-        ///layout (location = 0) out vec2 gNormal;
-        ///layout (location = 1) out vec3 gAlbedo;
-        ///layout (location = 2) out vec3 gBrightness;
+        ///out vec4 outColor;
         ///
         ///uniform sampler2D sampler;
         ///
@@ -315,7 +371,12 @@ namespace CMineNew.Resources.Shaders {
         ///    if (texture4.w &lt; 0.1) discard;
         ///    vec3 texture = texture4.rgb;
         ///
-        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5)  [rest of string was truncated]&quot;;.
+        ///    if (texture.r == texture.g &amp;&amp; texture.r == texture.b &amp;&amp; fragColorFilter.a &gt; 0.5) {
+        ///        texture *= fragColorFilter.rgb;
+        ///    }
+        ///    
+        ///    outColor = vec4(texture, 1);
+        ///}.
         /// </summary>
         internal static string gui_block_element_fragment {
             get {
@@ -329,18 +390,20 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 0) in vec3 position;
         ///layout (location = 1) in vec3 normal;
         ///layout (location = 2) in vec2 texturePosition;
-        ///layout (location = 3) in vec3 worldPosition;
-        ///layout (location = 4) in vec4 textureArea;
-        ///layout (location = 5) in float blockColorFilter;
-        ///layout (location = 6) in float blockLight;
-        ///layout (location = 7) in float sunlight;
         ///
-        ///out vec3 fragPos, fragNormal;
         ///out vec2 fragTexCoord;
         ///flat out vec4 fragColorFilter;
-        ///out float fragLight;
         ///
-        ///layout (std140, binding  [rest of string was truncated]&quot;;.
+        ///uniform vec2 instancePosition;
+        ///uniform vec3 instanceSize;
+        ///uniform vec4[6] instanceTextureAreas;
+        ///uniform mat4 model, projection;
+        ///
+        ///uniform vec4 colorFilter;
+        ///
+        ///void main () {
+        ///    gl_Position = projection * (model * vec4(position * instanceSize - instanceSize / 2, 1) - vec4(0, 0, 2, 0));
+        ///    gl_Pos [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string gui_block_element_vertex {
             get {

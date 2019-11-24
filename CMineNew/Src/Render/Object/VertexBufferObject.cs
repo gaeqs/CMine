@@ -72,6 +72,13 @@ namespace CMineNew.Render.Object{
             BufferMemory += _size;
             GL.BufferData(target, length, IntPtr.Zero, usageHint);
         }
+        
+        public void SetData(BufferTarget target, uint length, BufferUsageHint usageHint) {
+            BufferMemory -= _size;
+            _size = (int) length;
+            BufferMemory += _size;
+            GL.BufferData(target, (int) length, IntPtr.Zero, usageHint);
+        }
 
         public void SetSubData(BufferTarget target, float[] data, int offset) {
             GL.BufferSubData(target, (IntPtr) offset, data.Length * sizeof(float), data);

@@ -19,15 +19,10 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void AddToRender() {
-            var render = _chunk.Region.Render;
-            render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
+            World.BlockRender.AddBlock(this);
         }
 
         public override void OnRemove(Block newBlock) {
-            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            render.RemoveData(0, this);
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
@@ -42,8 +37,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void RemoveFromRender() {
-            if (_chunk.Region.Deleted) return;
-            _chunk.Region.Render.RemoveData(0, this);
+            World.BlockRender.RemoveBlock(this);
         }
 
         public override bool CanLightPassThrough(BlockFace face) {
@@ -58,7 +52,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnSelfLightChange() {
-            _chunk.Region.Render.AddData(0, this, _blockLight.Light, _blockLight.Sunlight);
+            World.BlockRender.AddBlock(this);
         }
     }
 }

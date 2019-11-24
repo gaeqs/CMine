@@ -171,7 +171,6 @@
     <Compile Include="Src\Map\BlockData\Render\CubicBlockRender.cs" />
     <Compile Include="Src\Map\Chunk.cs" />
     <Compile Include="Src\Map\ChunkRegion.cs" />
-    <Compile Include="Src\Map\ChunkRegionRender.cs" />
     <Compile Include="Src\Map\Generator\Biomes\Biome.cs" />
     <Compile Include="Src\Map\Generator\Biomes\BiomeCollection.cs" />
     <Compile Include="Src\Map\Generator\Biomes\BiomeGrid.cs" />
@@ -200,6 +199,7 @@
     <Compile Include="Src\Map\Task\WorldTaskManager.cs" />
     <Compile Include="Src\Map\World.cs" />
     <Compile Include="Src\Map\World2dRegion.cs" />
+    <Compile Include="Src\Map\WorldBlockRender.cs" />
     <Compile Include="Src\Map\WorldGBuffer.cs" />
     <Compile Include="Src\Map\WorldRenderData.cs" />
     <Compile Include="Src\Map\WorldShaderData.cs" />
@@ -218,6 +218,7 @@
     <Compile Include="Src\Render\Mapper\GenericVboMapper.cs" />
     <Compile Include="Src\Render\Mapper\VboMapper.cs" />
     <Compile Include="Src\Render\Mapper\VboMapperTask.cs" />
+    <Compile Include="Src\Render\Mapper\WorldVboMapper.cs" />
     <Compile Include="Src\Render\Object\LineVertexArrayObject.cs" />
     <Compile Include="Src\Render\Object\Shader.cs" />
     <Compile Include="Src\Render\Object\ShaderManager.cs" />
@@ -266,6 +267,8 @@
     <Content Include="Resources\Shaders\BlockLines\vertex.vert" />
     <Content Include="Resources\Shaders\Block\fragment.frag" />
     <Content Include="Resources\Shaders\Block\vertex.vert" />
+    <Content Include="Resources\Shaders\CrossBlock\fragment.frag" />
+    <Content Include="Resources\Shaders\CrossBlock\vertex.vert" />
     <Content Include="Resources\Shaders\Gui\2dElement\fragment.frag" />
     <Content Include="Resources\Shaders\Gui\2dElement\vertex.vert" />
     <Content Include="Resources\Shaders\Gui\BlockElement\fragment.frag" />

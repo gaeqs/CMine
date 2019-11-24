@@ -61,6 +61,8 @@ namespace CMineNew.Map.BlockData {
             set => _position = value;
         }
 
+        public Vector3i ChunkPosition => _position - _chunk.WorldPosition;
+
         public virtual float BlockHeight => _staticData.BlockHeight;
 
         public virtual float BlockYOffset => _staticData.BlockYOffset;

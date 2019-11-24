@@ -26,7 +26,6 @@ namespace CMineNew.Map{
         private readonly Chunk[,,] _savedChunks;
         private readonly Chunk[,,] _chunks;
 
-        private ChunkRegionRender _render;
         private World2dRegion _world2dRegion;
         private bool _deleted;
 
@@ -37,7 +36,6 @@ namespace CMineNew.Map{
             _position = position;
             _chunks = new Chunk[RegionChunkLength, RegionChunkLength, RegionChunkLength];
             _savedChunks = new Chunk[RegionChunkLength, RegionChunkLength, RegionChunkLength];
-            _render = new ChunkRegionRender(this);
             _deleted = true;
 
             _world2dRegion = world.GetOrCreate2dRegion(new Vector2i(position.X, position.Z));
@@ -48,8 +46,6 @@ namespace CMineNew.Map{
         public Vector3i Position => _position;
 
         public Chunk[,,] Chunks => _chunks;
-
-        public ChunkRegionRender Render => _render;
 
         public bool Deleted => _deleted;
 
@@ -150,7 +146,6 @@ namespace CMineNew.Map{
         public void Delete() {
             lock (_deletionLock) {
                 _deleted = true;
-                _render.CleanUp();
             }
 
             ForEachRegionPosition((x, y, z) => _savedChunks[x, y, z] = null);

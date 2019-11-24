@@ -10,6 +10,13 @@ namespace CMineNew.Render.Object{
             _programs.Add(name, program);
             return program;
         }
+        
+        public static ShaderProgram GetOrCreateShader(string name, string vertex, string geometry, string fragment) {
+            if (_programs.TryGetValue(name, out var value)) return value;
+            var program = new ShaderProgram(vertex, geometry, fragment);
+            _programs.Add(name, program);
+            return program;
+        }
 
         public static void CleanUp() {
             foreach (var program in _programs) {

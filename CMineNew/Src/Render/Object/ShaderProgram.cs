@@ -36,7 +36,7 @@ namespace CMineNew.Render.Object{
             var vertex = new Shader(vertexData, ShaderType.VertexShader);
             if (vertex.Error) throw new ShaderProgramCreationException("Error while loading vertex shader.");
             var fragment = new Shader(fragmentData, ShaderType.FragmentShader);
-            if (fragment.Error) throw new ShaderProgramCreationException("Error while loading vertex shader.");
+            if (fragment.Error) throw new ShaderProgramCreationException("Error while loading fragment shader.");
             _uniforms = new Dictionary<string, int>();
             _id = GL.CreateProgram();
             if (_id == 0) throw new ShaderProgramCreationException("Program id is 0.");
@@ -44,6 +44,26 @@ namespace CMineNew.Render.Object{
             GL.AttachShader(_id, fragment.Id);
             GL.LinkProgram(_id);
             vertex.CleanUp();
+            fragment.CleanUp();
+        }
+        
+        public ShaderProgram(string vertexData, string geometryData, string fragmentData) {
+            _shaders = new Collection<Shader>();
+            var vertex = new Shader(vertexData, ShaderType.VertexShader);
+            if (vertex.Error) throw new ShaderProgramCreationException("Error while loading vertex shader.");
+            var geometry = new Shader(geometryData, ShaderType.GeometryShader);
+            if (geometry.Error) throw new ShaderProgramCreationException("Error while loading geometry shader.");
+            var fragment = new Shader(fragmentData, ShaderType.FragmentShader);
+            if (fragment.Error) throw new ShaderProgramCreationException("Error while loading fragment shader.");
+            _uniforms = new Dictionary<string, int>();
+            _id = GL.CreateProgram();
+            if (_id == 0) throw new ShaderProgramCreationException("Program id is 0.");
+            GL.AttachShader(_id, vertex.Id);
+            GL.AttachShader(_id, geometry.Id);
+            GL.AttachShader(_id, fragment.Id);
+            GL.LinkProgram(_id);
+            vertex.CleanUp();
+            geometry.CleanUp();
             fragment.CleanUp();
         }
 

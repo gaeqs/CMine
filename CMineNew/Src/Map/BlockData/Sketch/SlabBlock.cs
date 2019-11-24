@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Color;
 using CMineNew.Geometry;
@@ -30,7 +31,6 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override float BlockYOffset => base.BlockYOffset + (_upside ? 0.5f : 0);
 
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
-            var render = _chunk.Region.Render;
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = GetNeighbour((BlockFace) i);
                 var face = (BlockFace) i;
@@ -39,39 +39,17 @@ namespace CMineNew.Map.BlockData.Sketch{
 
                 _visibleFaces[i] = visibleBySlab || block == null ||
                                    !block.IsFaceOpaque(BlockFaceMethods.GetOpposite((BlockFace) i));
-                if (!addToRender || !_visibleFaces[i]) continue;
-                if (visibleBySlab) {
-                    render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
-                }
-                else {
-                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
-                        block?.BlockLight.Sunlight ?? 0);
-                }
             }
+
+            if (!addToRender) return;
+            World.BlockRender.AddBlock(this);
         }
-        
+
         public override void AddToRender() {
-            var render = _chunk.Region.Render;
-            for (var i = 0; i < _visibleFaces.Length; i++) {
-                if(!_visibleFaces[i]) continue;
-                var face = (BlockFace) i;
-                var visibleBySlab = face == BlockFace.Up && !_upside || face == BlockFace.Down && _upside;
-                var block = GetNeighbour((BlockFace) i);
-                if (visibleBySlab) {
-                    render.AddData(i, this, _blockLight.Light, _blockLight.Sunlight);
-                }
-                else {
-                    render.AddData(i, this, block?.BlockLight.Light ?? 0,
-                        block?.BlockLight.Sunlight ?? 0);
-                }
-            }
+            World.BlockRender.AddBlock(this);
         }
 
         public override void OnRemove(Block newBlock) {
-            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
@@ -80,12 +58,8 @@ namespace CMineNew.Map.BlockData.Sketch{
             var faceInt = (int) relative;
             var newVisible = !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
             _visibleFaces[faceInt] = newVisible;
-            if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light, to.BlockLight.Sunlight);
-            }
-            else {
-                _chunk.Region.Render.RemoveData(faceInt, this);
-            }
+
+            World.BlockRender.AddBlock(this);
         }
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
@@ -100,9 +74,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         public abstract Area2d GetTextureArea(BlockFace face);
 
         public override void RemoveFromRender() {
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+            World.BlockRender.RemoveBlock(this);
         }
 
         public override void Save(Stream stream, BinaryFormatter formatter) {
@@ -115,6 +87,14 @@ namespace CMineNew.Map.BlockData.Sketch{
             base.Load(stream, formatter, version, region2d);
             _visibleFaces = (bool[]) formatter.Deserialize(stream);
             _upside = (bool) formatter.Deserialize(stream);
+        }
+
+        public bool IsFaceVisible(int face) {
+            return _visibleFaces[face];
+        }
+
+        public int GetVisibleFacesCount() {
+            return _visibleFaces.Count(b => b);
         }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {
@@ -144,12 +124,11 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
             if (!_visibleFaces[(int) relative]) return;
             if (relative == BlockFace.Up && !_upside || relative == BlockFace.Down && _upside) return;
-            _chunk.Region.Render.AddData((int) relative, this, block.BlockLight.Light, block.BlockLight.Sunlight);
+            World.BlockRender.AddBlock(this);
         }
 
         public override void OnSelfLightChange() {
-            _chunk.Region.Render.AddData((int) (_upside ? BlockFace.Down : BlockFace.Up),
-                this, _blockLight.Light, _blockLight.Sunlight);
+            World.BlockRender.AddBlock(this);
         }
     }
 }

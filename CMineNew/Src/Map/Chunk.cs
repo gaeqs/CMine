@@ -11,7 +11,7 @@ using CMineNew.Map.Task;
 namespace CMineNew.Map {
     public class Chunk {
         public const int ChunkLength = 16;
-        public const int ChunkSize = ChunkLength * ChunkLength;
+        public const int ChunkArea = ChunkLength * ChunkLength;
         public const int ChunkVolume = ChunkLength * ChunkLength * ChunkLength;
         public const int WorldPositionShift = 4;
 
@@ -44,6 +44,8 @@ namespace CMineNew.Map {
             get => _position;
             set => _position = value;
         }
+
+        public Vector3i WorldPosition => _position << WorldPositionShift;
 
         public bool Modified {
             get => _modified;

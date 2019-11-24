@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
@@ -16,32 +17,22 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
-            var render = _chunk.Region.Render;
+            //Calculate visible faces
             for (var i = 0; i < _visibleFaces.Length; i++) {
                 var block = GetNeighbour((BlockFace) i);
                 var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
-                var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
-                if (!vis || !addToRender) continue;
-                var light = block?.BlockLight;
-                render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
+                _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
             }
+
+            if (!addToRender) return;
+            World.BlockRender.AddBlock(this);
         }
 
         public override void AddToRender() {
-            var render = _chunk.Region.Render;
-            for (var i = 0; i < _visibleFaces.Length; i++) {
-                if (!_visibleFaces[i]) continue;
-                var block = GetNeighbour((BlockFace) i);
-                var light = block?.BlockLight;
-                render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
-            }
+            World.BlockRender.AddBlock(this);
         }
 
         public override void OnRemove(Block newBlock) {
-            if (BlockModel.Id == newBlock.BlockModel?.Id) return;
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
         }
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
@@ -50,12 +41,8 @@ namespace CMineNew.Map.BlockData.Sketch{
             var newVisible = !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
             if (oldVisible == newVisible) return;
             _visibleFaces[faceInt] = newVisible;
-            if (newVisible) {
-                _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light, to.BlockLight.Sunlight);
-            }
-            else {
-                _chunk.Region.Render.RemoveData(faceInt, this);
-            }
+
+            World.BlockRender.AddBlock(this);
         }
 
         public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
@@ -69,9 +56,19 @@ namespace CMineNew.Map.BlockData.Sketch{
         public abstract Area2d GetTextureArea(BlockFace face);
 
         public override void RemoveFromRender() {
-            if (_chunk.Region.Deleted) return;
-            var render = _chunk.Region.Render;
-            ForEachVisibleFaceInt(face => render.RemoveData(face, this));
+            World.BlockRender.RemoveBlock(this);
+        }
+
+        public bool IsFaceVisible(BlockFace face) {
+            return _visibleFaces[(int) face];
+        }
+
+        public bool IsFaceVisible(int face) {
+            return _visibleFaces[face];
+        }
+
+        public int GetVisibleFacesCount() {
+            return _visibleFaces.Count(b => b);
         }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {
@@ -100,8 +97,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
             if (_visibleFaces[(int) relative]) {
-                _chunk.Region.Render.AddData((int) relative,
-                    this, block.BlockLight.Light, block.BlockLight.Sunlight);
+                World.BlockRender.AddBlock(this);
             }
         }
 

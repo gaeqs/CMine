@@ -15,7 +15,6 @@ layout (location = 2) out vec3 gBrightness;
 uniform sampler2D sampler;
 
 void main() {
-    if(data.fragTexCoord.x < 0) discard;
     vec4 texture4 = texture(sampler, data.fragTexCoord);
     if (texture4.w < 0.1) discard;
     vec3 texture = texture4.rgb;
