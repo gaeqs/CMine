@@ -9,7 +9,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             : base(staticData, chunk, position, textureFilter) {
         }
 
-        public override Area2d TextureArea => ((BlockStaticDataTexturedCross) _staticData).TextureArea;
+        public override int TextureIndex => ((BlockStaticDataTexturedCross) _staticData).TextureIndex;
 
         public override Block Clone(Chunk chunk, Vector3i position) {
             return new TexturedCrossBlock((BlockStaticDataTexturedCross) _staticData, _chunk, _position,

@@ -62,7 +62,8 @@ namespace CMineNew.Map{
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
             _shaderData.SetData(_camera.ViewProjection, _camera.Position,
-                sunlightDirection, min * min, max * max, waterShader, ticks);
+                sunlightDirection, min * min, max * max, waterShader, ticks,
+                CMine.TextureMap.SpriteSizeNormalized, CMine.TextureMap.TextureLength);
         }
     }
 }

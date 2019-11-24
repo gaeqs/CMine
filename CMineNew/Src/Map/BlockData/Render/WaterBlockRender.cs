@@ -1,3 +1,4 @@
+using CMineNew.Color;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
@@ -38,15 +39,19 @@ namespace CMineNew.Map.BlockData.Render{
             var mapper = _mappers[mapperIndex];
             var pos = block.Position;
             var filter = block.TextureFilter;
-            var area = BlockWater.TextureArea;
+            var index = BlockWater.TextureIndex;
             var levels = water.VertexWaterLevel;
             var t = water.HasWaterOnTop;
+
+            var waterLevel = new Rgba32I((byte) (t ? 8 : levels[0]), (byte) (t ? 8 : levels[1]),
+                (byte) (t ? 8 : levels[2]),
+                (byte) (t ? 8 : levels[3]));
+
             mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
-                    pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
-                    filter.R, filter.G, filter.B, filter.A, blockLight / Block.MaxBlockLightF,
-                    sunlight / Block.MaxBlockLightF,
-                    t ? 8 : levels[0], t ? 8 : levels[1], t ? 8 : levels[2], t ? 8 : levels[3]
+                    pos.X, pos.Y, pos.Z, index,
+                    filter.ValueF, blockLight / Block.MaxBlockLightF,
+                    sunlight / Block.MaxBlockLightF, waterLevel.ValueF
                 }, 0));
         }
 
@@ -116,11 +121,11 @@ namespace CMineNew.Map.BlockData.Render{
                 vbo.SetData(BufferTarget.ArrayBuffer, MaxFaces * InstanceFloatDataLength, BufferUsageHint.StreamDraw);
                 var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
                 builder.AddPointer(3, true);
-                builder.AddPointer(4, true);
-                builder.AddPointer(4, true);
                 builder.AddPointer(1, true);
                 builder.AddPointer(1, true);
-                builder.AddPointer(4, true);
+                builder.AddPointer(1, true);
+                builder.AddPointer(1, true);
+                builder.AddPointer(1, true);
                 VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
                 VertexArrayObject.Unbind();
 

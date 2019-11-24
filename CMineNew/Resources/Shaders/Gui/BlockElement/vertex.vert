@@ -9,21 +9,35 @@ flat out vec4 fragColorFilter;
 
 uniform vec2 instancePosition;
 uniform vec3 instanceSize;
-uniform vec4[6] instanceTextureAreas;
+uniform int[6] instanceTextureIndices;
 uniform mat4 model, projection;
 
 uniform vec4 colorFilter;
+
+layout (std140, binding = 0) uniform Uniforms {
+
+    mat4 viewProjection;
+    vec3 cameraPosition;
+    vec3 sunlightDirection;
+    float viewDistanceSquared;
+    float viewDistanceOffsetSquared;
+    bool waterShader;
+    int millis;
+    float normalizedSpriteSize;
+    int spriteTextureLength;
+
+};
 
 void main () {
     gl_Position = projection * (model * vec4(position * instanceSize - instanceSize / 2, 1) - vec4(0, 0, 2, 0));
     gl_Position /= gl_Position.w;
     gl_Position += vec4(instancePosition, 0, 0);
     
-    vec4 textureArea = instanceTextureAreas[ gl_VertexID / 4];
-    vec2 minT = textureArea.xy;
-    vec2 maxT = textureArea.zw;
+    int iIndex = instanceTextureIndices[gl_VertexID / 4];
+    int xIndex = iIndex / spriteTextureLength;
+    vec2 minT = vec2(xIndex * normalizedSpriteSize, (iIndex % spriteTextureLength) * normalizedSpriteSize);
+    vec2 maxT = minT + normalizedSpriteSize;
     vec2 size = maxT - minT;
-
     fragTexCoord = minT + texturePosition * size;
 
     fragColorFilter = colorFilter;

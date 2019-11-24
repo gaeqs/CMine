@@ -7,7 +7,7 @@ namespace CMineNew.Map{
         // View Distance Squared, View Distance Offset Squared, In Water.
         private static readonly UboObject[] Objects = {
             UboObject.Matrix4, UboObject.Vector3, UboObject.Vector3,
-            UboObject.Float, UboObject.Float, UboObject.Boolean, UboObject.Integer
+            UboObject.Float, UboObject.Float, UboObject.Boolean, UboObject.Integer, UboObject.Float, UboObject.Integer
         };
 
         private readonly UniformBufferObject _ubo;
@@ -19,7 +19,7 @@ namespace CMineNew.Map{
             _millis = 0;
         }
 
-        public void SetData(Matrix4 vp, Vector3 cp, Vector3 sd, float vds, float vdos, bool ws, long ticks) {
+        public void SetData(Matrix4 vp, Vector3 cp, Vector3 sd, float vds, float vdos, bool ws, long ticks, float normalizedSpriteSize, int spriteTextureLength) {
             _millis += (int) (ticks * 1000 / CMine.TicksPerSecond);
             _millis %= 1000000;
             _ubo.Orphan();
@@ -30,6 +30,8 @@ namespace CMineNew.Map{
             _ubo.Set(vdos, 4);
             _ubo.Set(ws, 5);
             _ubo.Set(_millis, 6);
+            _ubo.Set(normalizedSpriteSize, 7);
+            _ubo.Set(spriteTextureLength, 8);
         }
     }
 }

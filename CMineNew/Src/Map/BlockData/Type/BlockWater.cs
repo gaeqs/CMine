@@ -19,7 +19,7 @@ namespace CMineNew.Map.BlockData.Type{
         protected const int SouthLeft = 2;
         protected const int SouthRight = 3;
 
-        public static Area2d TextureArea = CMine.TextureMap.Areas["default:water"];
+        public static int TextureIndex = CMine.TextureMap.Indices["default:water"];
 
         private readonly bool[] _visibleFaces;
         protected int _waterLevel;

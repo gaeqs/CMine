@@ -9,8 +9,8 @@ namespace CMineNew.Map.BlockData.Static.Type {
                 false, 0, 1, 0) {
         }
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return new Area2d(0, 0, 0, 0);
+        public override int GetTextureIndex(BlockFace face) {
+            return 0;
         }
     }
 }

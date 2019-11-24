@@ -97,7 +97,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             return _upside ? face == BlockFace.Up : face == BlockFace.Down;
         }
 
-        public abstract Area2d GetTextureArea(BlockFace face);
+        public abstract int GetTextureIndex(BlockFace face);
 
         public override void RemoveFromRender() {
             if (_chunk.Region.Deleted) return;

@@ -5,19 +5,15 @@ using OpenTK;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockTorch : Block{
-        private Area2d _textureArea;
-
         public BlockTorch(Chunk chunk, Vector3i position)
             : base(BlockStaticDataTorch.Instance, chunk, position, new Rgba32I(0, 0, 0, 0)) {
-            _textureArea = CMine.TextureMap.Areas["default:torch"];
         }
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
-        public Area2d TextureArea => _textureArea;
 
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
-            if(!addToRender) return;
+            if (!addToRender) return;
             AddToRender();
         }
 

@@ -16,9 +16,10 @@ layout (std140, binding = 0) uniform Uniforms {
     float viewDistanceOffsetSquared;
     bool waterShader;
     int millis;
+    float normalizedSpriteSize;
+    int spriteTextureLength;
 
 };
-
 uniform sampler2D sampler;
 uniform samplerCube skyBox;
 

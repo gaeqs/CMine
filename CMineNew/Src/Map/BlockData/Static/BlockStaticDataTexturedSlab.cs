@@ -1,25 +1,23 @@
-using CMineNew.Geometry;
-
-namespace CMineNew.Map.BlockData.Static {
-    public class BlockStaticDataTexturedSlab : BlockStaticDataSlab {
-        private readonly Area2d _textureArea;
+namespace CMineNew.Map.BlockData.Static{
+    public class BlockStaticDataTexturedSlab : BlockStaticDataSlab{
+        private readonly int _textureIndex;
 
         public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, string texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = CMine.TextureMap.Areas[texture];
+            _textureIndex = CMine.TextureMap.Indices[texture];
         }
 
         public BlockStaticDataTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
-            sbyte blockLightPassReduction, sbyte sunlightPassReduction, Area2d texture)
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, int texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureArea = texture;
+            _textureIndex = texture;
         }
 
-        public Area2d TextureArea => _textureArea;
+        public int TextureIndex => _textureIndex;
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return _textureArea;
+        public override int GetTextureIndex(BlockFace face) {
+            return _textureIndex;
         }
     }
 }

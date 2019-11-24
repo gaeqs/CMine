@@ -11,7 +11,7 @@ namespace CMineNew.Map.BlockData.Sketch{
 
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
-        public abstract Area2d TextureArea { get; }
+        public abstract int TextureIndex { get; }
 
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             if (!addToRender) return;

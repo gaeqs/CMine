@@ -11,7 +11,7 @@ namespace CMineNew.Render.Gui {
         protected BlockSnapshot _snapshot;
         protected Vector2 _position;
         protected Vector3 _size;
-        protected readonly Area2d[] _textureAreas;
+        protected readonly int[] _textureIndices;
         protected AspectRatioMode _aspectRatioMode;
 
         protected Matrix4 _matrix;
@@ -24,7 +24,7 @@ namespace CMineNew.Render.Gui {
             _snapshot = snapshot;
             _aspectRatioMode = aspectRatioMode;
 
-            _textureAreas = new Area2d[6];
+            _textureIndices = new int[6];
             RefreshTextures();
             GenerateMatrix();
         }
@@ -69,12 +69,12 @@ namespace CMineNew.Render.Gui {
             shader.SetUVector("instancePosition", _position);
             shader.SetUVector("instanceSize", GetSizeWithAspectRatio(world.Camera.Frustum.AspectRatio));
             shader.SetUVector("colorFilter", _snapshot is IGrass grass ? grass.GrassColor.ToVector() : Vector4.Zero);
-            shader.SetUVector("instanceTextureAreas[0]", _textureAreas[0].ToVector());
-            shader.SetUVector("instanceTextureAreas[1]", _textureAreas[1].ToVector());
-            shader.SetUVector("instanceTextureAreas[2]", _textureAreas[2].ToVector());
-            shader.SetUVector("instanceTextureAreas[3]", _textureAreas[3].ToVector());
-            shader.SetUVector("instanceTextureAreas[4]", _textureAreas[4].ToVector());
-            shader.SetUVector("instanceTextureAreas[5]", _textureAreas[5].ToVector());
+            shader.SetUInt("instanceTextureIndices[0]", _textureIndices[0]);
+            shader.SetUInt("instanceTextureIndices[1]", _textureIndices[1]);
+            shader.SetUInt("instanceTextureIndices[2]", _textureIndices[2]);
+            shader.SetUInt("instanceTextureIndices[3]", _textureIndices[3]);
+            shader.SetUInt("instanceTextureIndices[4]", _textureIndices[4]);
+            shader.SetUInt("instanceTextureIndices[5]", _textureIndices[5]);
             shader.SetUMatrix("model", _matrix);
 
             vao.Draw();
@@ -83,7 +83,7 @@ namespace CMineNew.Render.Gui {
         private void RefreshTextures() {
             if(_snapshot == null) return;
             for (var i = 0; i < 6; i++) {
-                _textureAreas[i] = _snapshot.Data.GetTextureArea((BlockFace) i);
+                _textureIndices[i] = _snapshot.Data.GetTextureIndex((BlockFace) i);
             }
         }
 

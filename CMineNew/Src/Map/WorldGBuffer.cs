@@ -1,10 +1,8 @@
 using System;
-using CMineNew.Light;
 using CMineNew.Render;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map{

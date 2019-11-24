@@ -66,7 +66,7 @@ namespace CMineNew.Map.BlockData.Sketch{
             return true;
         }
 
-        public abstract Area2d GetTextureArea(BlockFace face);
+        public abstract int GetTextureIndex(BlockFace face);
 
         public override void RemoveFromRender() {
             if (_chunk.Region.Deleted) return;

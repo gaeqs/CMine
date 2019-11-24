@@ -85,11 +85,6 @@
     <Compile Include="Src\Inventory\Hotbar.cs" />
     <Compile Include="Src\Inventory\IPlayerInventory.cs" />
     <Compile Include="Src\Inventory\PlayerInventory.cs" />
-    <Compile Include="Src\Light\CameraFlashLight.cs" />
-    <Compile Include="Src\Light\DirectionalLight.cs" />
-    <Compile Include="Src\Light\FlashLight.cs" />
-    <Compile Include="Src\Light\PointLight.cs" />
-    <Compile Include="Src\Light\LightManager.cs" />
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
     <Compile Include="Src\Map\BlockData\BlockLight.cs" />

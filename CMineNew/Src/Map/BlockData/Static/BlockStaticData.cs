@@ -35,6 +35,6 @@ namespace CMineNew.Map.BlockData.Static{
 
         public sbyte SunlightPassReduction { get; }
 
-        public abstract Area2d GetTextureArea(BlockFace face);
+        public abstract int GetTextureIndex(BlockFace face);
     }
 }

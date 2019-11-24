@@ -1,10 +1,7 @@
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
-using CMineNew.Util;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -98,10 +95,10 @@ namespace CMineNew.Map.BlockData.Render{
             if (!(block is BlockTorch torch)) return;
             var pos = block.Position;
             var filter = block.TextureFilter;
-            var area = torch.TextureArea;
+            var index = torch.StaticData.GetTextureIndex(BlockFace.Up);
             _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
-                    pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
+                    pos.X, pos.Y, index,
                     filter.ValueF,
                     blockLight / Block.MaxBlockLightF,
                     sunlight / Block.MaxBlockLightF
@@ -147,7 +144,7 @@ namespace CMineNew.Map.BlockData.Render{
                 BufferUsageHint.StreamDraw);
             var builder = new AttributePointerBuilder(_vao, InstanceDataLength, 3);
             builder.AddPointer(3, true);
-            builder.AddPointer(4, true);
+            builder.AddPointer(1, true);
             builder.AddPointer(1, true);
             builder.AddPointer(1, true);
             builder.AddPointer(1, true);
@@ -156,22 +153,6 @@ namespace CMineNew.Map.BlockData.Render{
 
             _mapper.Vao = _vao;
             _mapper.Vbo = _dataBuffer;
-        }
-
-        private void OnResize(VertexArrayObject vao, VertexBufferObject oldBuffer, VertexBufferObject newBuffer) {
-            vao.LinkBuffer(newBuffer);
-            vao.UnlinkBuffer(oldBuffer);
-
-            vao.Bind();
-
-            newBuffer.Bind(BufferTarget.ArrayBuffer);
-            var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
-            builder.AddPointer(3, true);
-            builder.AddPointer(4, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 
         private void CheckVbo() {
