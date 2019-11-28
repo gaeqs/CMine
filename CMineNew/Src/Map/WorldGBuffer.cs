@@ -22,8 +22,10 @@ namespace CMineNew.Map{
             1.0f, -1.0f, 1.0f, 0.0f,
             1.0f, 1.0f, 1.0f, 1.0f
         };
-        
-        private const int KernelSize = 64;
+
+        //Low settings: Kernel 32 Scale 70
+        private const int KernelSize = 32;
+        private const int SsaoTextureScale = 100;
 
         private int _id, _ssaoId, _ssaoBlurId;
         private readonly ShaderProgram _postRenderShader, _postRenderWaterShader, _ssaoShader, _ssaoBlurShader;
@@ -124,10 +126,14 @@ namespace CMineNew.Map{
                 return;
             }
 
+            GL.Viewport(0, 0, _width * SsaoTextureScale / 100, _height * SsaoTextureScale / 100);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoId);
             GL.Clear(ClearBufferMask.ColorBufferBit);
             _ssaoShader.Use();
             _ssaoShader.SetUInt("kernelSize", KernelSize);
+            _ssaoShader.SetUFloat("radius", 0.2f);
+            _ssaoShader.SetUFloat("bias", 0.025f);
+
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _depthTexture);
             GL.ActiveTexture(TextureUnit.Texture1);
@@ -137,6 +143,8 @@ namespace CMineNew.Map{
             _ssaoShader.SetUMatrix("invertedProjection", invertedProjection);
             _quadVao.Bind();
             DrawQuad();
+
+            GL.Viewport(0, 0, _width, _height);
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoBlurId);
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -228,10 +236,12 @@ namespace CMineNew.Map{
 
             GL.GenTextures(1, out _ssaoColorTexture);
             GL.BindTexture(TextureTarget.Texture2D, _ssaoColorTexture);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, _width, _height, 0, PixelFormat.Red,
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8,
+                _width * SsaoTextureScale / 100, _height * SsaoTextureScale / 100, 0,
+                PixelFormat.Red,
                 PixelType.Float, IntPtr.Zero);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) All.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) All.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) All.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) All.Linear);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
                 TextureTarget.Texture2D, _ssaoColorTexture, 0);
 
@@ -252,7 +262,7 @@ namespace CMineNew.Map{
                 var scale = i / (float) KernelSize;
                 _ssaoKernel[i] = sample * Lerp(0.1f, 1.0f, scale * scale);
             }
-            
+
             _ssaoShader.Use();
             SendKernelSamplesToShader();
         }
@@ -260,7 +270,7 @@ namespace CMineNew.Map{
         private float Lerp(float a, float b, float f) {
             return a + f * (b - a);
         }
-        
+
         private void SendKernelSamplesToShader() {
             for (var i = 0; i < _ssaoKernel.Length; i++) {
                 _ssaoShader.SetUVector("samples[" + i + "]", _ssaoKernel[i]);

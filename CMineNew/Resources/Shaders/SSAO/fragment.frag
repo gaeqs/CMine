@@ -7,9 +7,8 @@ uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gNoise;
 uniform int kernelSize;
-
-const float radius = 0.5;
-const float bias = 0.025;
+uniform float radius;
+uniform float bias;
 
 layout (std140, binding = 0) uniform Uniforms {
 
