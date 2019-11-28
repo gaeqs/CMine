@@ -7,11 +7,14 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gBrightness;
+uniform sampler2D gSsao;
 uniform samplerCube skyBox;
 
 layout (std140, binding = 0) uniform Uniforms {
 
     mat4 viewProjection;
+    mat4 view;
+    mat4 projection;
     vec3 cameraPosition;
     vec3 sunlightDirection;
     float viewDistanceSquared;
@@ -20,7 +23,7 @@ layout (std140, binding = 0) uniform Uniforms {
     int millis;
     float normalizedSpriteSize;
     int spriteTextureLength;
-
+    vec2 windowsSize;
 };
 
 uniform float ambientStrength;
@@ -45,10 +48,10 @@ void main() {
         vec3 position = position4.xyz / position4.w;
 
         vec3 brightness = texture2D(gBrightness, fragTexCoords).rgb;
-
+        float ambientOcclusion = texture(gSsao, fragTexCoords).r;
         vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
 
-        FragColor = vec4(result, 1);
+        FragColor = vec4(result * ambientOcclusion, 1);
 
         vec3 distance = position - cameraPosition;
         float lengthSquared = dot(distance, distance);

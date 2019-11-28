@@ -10,13 +10,15 @@ flat out vec4 fragColorFilter;
 uniform vec2 instancePosition;
 uniform vec3 instanceSize;
 uniform int[6] instanceTextureIndices;
-uniform mat4 model, projection;
+uniform mat4 model, guiProjection;
 
 uniform vec4 colorFilter;
 
 layout (std140, binding = 0) uniform Uniforms {
 
     mat4 viewProjection;
+    mat4 view;
+    mat4 projection;
     vec3 cameraPosition;
     vec3 sunlightDirection;
     float viewDistanceSquared;
@@ -25,11 +27,12 @@ layout (std140, binding = 0) uniform Uniforms {
     int millis;
     float normalizedSpriteSize;
     int spriteTextureLength;
-
+    vec2 windowsSize;
 };
 
+
 void main () {
-    gl_Position = projection * (model * vec4(position * instanceSize - instanceSize / 2, 1) - vec4(0, 0, 2, 0));
+    gl_Position = guiProjection * (model * vec4(position * instanceSize - instanceSize / 2, 1) - vec4(0, 0, 2, 0));
     gl_Position /= gl_Position.w;
     gl_Position += vec4(instancePosition, 0, 0);
     

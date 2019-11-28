@@ -366,6 +366,8 @@ namespace CMineNew.Map {
             //Transfers depth buffer to main FBO.
             _renderData.TransferDepthBufferToMainFbo();
 
+            
+            
             //Draws GBuffer quad.
             _renderData.DrawGBuffer(_player.EyesOnWater);
 

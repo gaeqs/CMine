@@ -18,6 +18,7 @@ out float fragLight;
 layout (std140, binding = 0) uniform Uniforms {
 
     mat4 viewProjection;
+    mat4 projection;
     vec3 cameraPosition;
     vec3 sunlightDirection;
     float viewDistanceSquared;
@@ -26,7 +27,7 @@ layout (std140, binding = 0) uniform Uniforms {
     int millis;
     float normalizedSpriteSize;
     int spriteTextureLength;
-
+    vec2 windowsSize;
 };
 
 
@@ -36,7 +37,7 @@ void main () {
     vec4 modelPosition = model * vec4(position, 1);
     gl_Position = viewProjection * modelPosition;
     fragPos = modelPosition.xyz;
-    fragNormal = mat3(transpose(inverse(model))) * normal;
+    fragNormal = mat3(transpose(inverse(view * model))) * normal;
 
     vec2 minT = vec2(textureIndex * normalizedSpriteSize / spriteTextureLength, (int(textureIndex) % spriteTextureLength) * normalizedSpriteSize);
     vec2 maxT = minT + normalizedSpriteSize;
@@ -52,6 +53,6 @@ void main () {
     uint b = (color >> 8) & 0xFF;
     
     fragColorFilter = vec4(r, g, b, a) / 255.0;
-    
-    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, sunlightDirection)) * 0.2);
+
+    fragLight = max(blockLight, sunlight * 0.8 + sunlight *  max(0, dot(-fragNormal, mat3(view) * sunlightDirection)) * 0.2);
 }
