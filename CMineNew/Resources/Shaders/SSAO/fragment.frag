@@ -1,13 +1,13 @@
 #version 440 core
 
-in vec2 fragPos, fragTexCoords;
+in vec2 fragTexCoords;
 out float FragColor;
 
 uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gNoise;
+uniform int kernelSize;
 
-const int kernelSize = 64;
 const float radius = 0.5;
 const float bias = 0.025;
 
@@ -31,11 +31,8 @@ uniform mat4 invertedProjection;
 uniform vec3 samples[64];
 
 vec3 calculatePosition (vec2 texCoords) {
-    float depth = texture2D(gDepth, texCoords).r * 2 - 1;
-    vec2 projectedPositionXY = texCoords * 2.0 - 1.0;
-    vec4 projected = vec4(projectedPositionXY.x, -projectedPositionXY.y, depth, 1);
-    vec4 position4 = invertedProjection * projected;
-    return position4.xyz / position4.w;
+    vec4 unprojected = invertedProjection * vec4(texCoords * 2.0 - 1.0, texture2D(gDepth, texCoords).r * 2 - 1, 1);
+    return unprojected.xyz / unprojected.w;
 }
 
 void main() {
@@ -64,5 +61,5 @@ void main() {
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampleDepth));
         occlusion += (sampleDepth >= kernelSample.z + bias ? 1.0 : 0.0) * rangeCheck;
     }
-    FragColor = 1.0 - (occlusion / kernelSize);
+    FragColor = occlusion / kernelSize;
 }

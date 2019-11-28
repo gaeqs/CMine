@@ -282,6 +282,8 @@
     <Content Include="Resources\Shaders\SkyBox\vertex.vert" />
     <Content Include="Resources\Shaders\Slab\fragment.frag" />
     <Content Include="Resources\Shaders\Slab\vertex.vert" />
+    <Content Include="Resources\Shaders\SSAOBlur\fragment.frag" />
+    <Content Include="Resources\Shaders\SSAOBlur\vertex.vert" />
     <Content Include="Resources\Shaders\SSAO\fragment.frag" />
     <Content Include="Resources\Shaders\SSAO\vertex.vert" />
     <Content Include="Resources\Shaders\StaticText\fragment.frag" />

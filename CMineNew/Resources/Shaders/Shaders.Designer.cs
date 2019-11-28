@@ -508,6 +508,7 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///uniform sampler2D gBrightness;
+        ///uniform sampler2D gSsao;
         ///uniform samplerCube skyBox;
         ///
         ///
@@ -520,9 +521,7 @@ namespace CMineNew.Resources.Shaders {
         ///    vec3 sunlightDirection;
         ///    float viewDistanceSquared;
         ///    float viewDistanceOffsetSquared;
-        ///    bool waterShader;
-        ///    int millis;
-        ///    flo [rest of string was truncated]&quot;;.
+        ///    bool waterShader; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_fragment {
             get {
@@ -561,6 +560,7 @@ namespace CMineNew.Resources.Shaders {
         ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///uniform sampler2D gBrightness;
+        ///uniform sampler2D gSsao;
         ///uniform samplerCube skyBox;
         ///
         ///layout (std140, binding = 0) uniform Uniforms {
@@ -573,8 +573,7 @@ namespace CMineNew.Resources.Shaders {
         ///    float viewDistanceSquared;
         ///    float viewDistanceOffsetSquared;
         ///    bool waterShader;
-        ///    int millis;
-        ///    float [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post_render_water_fragment {
             get {
@@ -587,16 +586,12 @@ namespace CMineNew.Resources.Shaders {
         ///
         ///in vec3 fragTexCoord;
         ///
-        ///layout (location = 0) out vec2 gNormal;
-        ///layout (location = 1) out vec3 gAlbedo;
-        ///layout (location = 2) out vec3 gBrightness;
+        ///out vec4 fragColor;
         ///
         ///uniform samplerCube skyBox;
         ///
         ///void main() {
-        ///    gAlbedo = texture(skyBox, fragTexCoord).rgb;
-        ///    gNormal = vec2(2);
-        ///    gBrightness = vec3(1);
+        ///    fragColor = texture(skyBox, fragTexCoord);
         ///}.
         /// </summary>
         internal static string sky_box_fragment {
@@ -681,9 +676,57 @@ namespace CMineNew.Resources.Shaders {
         /// <summary>
         ///   Looks up a localized string similar to #version 440 core
         ///
-        ///in vec2 fragPos, fragTexCoords;
+        ///uniform sampler2D ssao;
+        ///
+        ///in vec2 fragTexCoords;
         ///out float FragColor;
         ///
+        ///
+        ///void main() {
+        ///    vec2 texelSize = 1.0 / vec2(textureSize(ssao, 0));
+        ///    float result = 0.0;
+        ///    for (int x = -2; x &lt; 2; ++x) {
+        ///        for (int y = -2; y &lt; 2; ++y) {
+        ///            vec2 offset = vec2(float(x), float(y)) * texelSize;
+        ///            result += texture(ssao, fragTexCoords + offset).r;
+        ///        }
+        ///    }
+        ///    FragColor = result / 16.0;
+        ///}.
+        /// </summary>
+        internal static string ssao_blur_fragment {
+            get {
+                return ResourceManager.GetString("ssao_blur_fragment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///layout (location = 0) in vec2 position;
+        ///layout (location = 1) in vec2 texturePosition;
+        ///
+        ///out vec2 fragTexCoords;
+        ///
+        ///void main () {
+        ///    gl_Position = vec4(position.xy, 0, 1);
+        ///    fragTexCoords = texturePosition;
+        ///}
+        ///.
+        /// </summary>
+        internal static string ssao_blur_vertex {
+            get {
+                return ResourceManager.GetString("ssao_blur_vertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 440 core
+        ///
+        ///in vec2 fragTexCoords;
+        ///out float FragColor;
+        ///
+        ///uniform sampler2D gDepth;
         ///uniform sampler2D gNormal;
         ///uniform sampler2D gNoise;
         ///
@@ -701,8 +744,7 @@ namespace CMineNew.Resources.Shaders {
         ///    float viewDistanceSquared;
         ///    float viewDistanceOffsetSquared;
         ///    bool waterShader;
-        ///    int millis;
-        ///    float nor [rest of string was truncated]&quot;;.
+        ///    int mill [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ssao_fragment {
             get {
@@ -716,11 +758,10 @@ namespace CMineNew.Resources.Shaders {
         ///layout (location = 0) in vec2 position;
         ///layout (location = 1) in vec2 texturePosition;
         ///
-        ///out vec2 fragPos, fragTexCoords;
+        ///out vec2 fragTexCoords;
         ///
         ///void main () {
         ///    gl_Position = vec4(position.xy, 0, 1);
-        ///    fragPos = position.xy;
         ///    fragTexCoords = texturePosition;
         ///}
         ///.

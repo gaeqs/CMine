@@ -87,7 +87,16 @@
     <data name="ssao_fragment" type="System.Resources.ResXFileRef">
         <value>SSAO/fragment.frag;System.String</value>
     </data>
-    
+
+    <data name="ssao_blur_vertex" type="System.Resources.ResXFileRef">
+        <value>SSAOBlur/vertex.vert;System.String</value>
+    </data>
+
+    <data name="ssao_blur_fragment" type="System.Resources.ResXFileRef">
+        <value>SSAOBlur/fragment.frag;System.String</value>
+    </data>
+
+
     <data name="directional_light_vertex" type="System.Resources.ResXFileRef">
         <value>Light/directional_light_vertex.vert;System.String</value>
     </data>

@@ -34,28 +34,29 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
     return ambientStrength * ambientColor * modelAmbientColor;
 }
 
+vec3 calculatePosition (vec2 texCoords) {
+    float depth = texture2D(gDepth, texCoords).r * 2 - 1;
+    vec2 projectedPositionXY = texCoords * 2.0 - 1.0;
+    vec4 projected = vec4(projectedPositionXY.x, projectedPositionXY.y, depth, 1);
+    vec4 position4 = invertedViewProjection * projected;
+    return position4.xyz / position4.w;
+}
+
 void main() {
     vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
     vec2 normalXY = texture2D(gNormal, fragTexCoords).rg;
-    if (normalXY.x == 2 && normalXY.y == 2) {
-        FragColor = vec4(modelAmbientColor, 1);
-    }
-    else {
-        vec3 normal = vec3(normalXY, sqrt(1 - dot(normalXY, normalXY)));
-        float depth = texture2D(gDepth, fragTexCoords).r * 2 - 1;
-        vec4 projected = vec4(fragPos, depth, 1);
-        vec4 position4 = invertedViewProjection * projected;
-        vec3 position = position4.xyz / position4.w;
+    vec3 normal = vec3(normalXY, sqrt(1 - dot(normalXY, normalXY)));
+    
+    vec3 position = calculatePosition(fragTexCoords);
 
-        vec3 brightness = texture2D(gBrightness, fragTexCoords).rgb;
-        float ambientOcclusion = texture(gSsao, fragTexCoords).r;
-        vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
+    vec3 brightness = texture2D(gBrightness, fragTexCoords).rgb;
+    float ambientOcclusion = 1 - texture(gSsao, fragTexCoords).r;
+    vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
 
-        FragColor = vec4(result * ambientOcclusion, 1);
+    FragColor = vec4(0.5 * result + 0.5 * result * ambientOcclusion, 1);
 
-        vec3 distance = position - cameraPosition;
-        float lengthSquared = dot(distance, distance);
-        float length = 1 - lengthSquared / 1000;
-        FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
-    }
+    vec3 distance = position - cameraPosition;
+    float lengthSquared = dot(distance, distance);
+    float length = 1 - lengthSquared / 1000;
+    FragColor *= vec4(0.3, 0.3, 0.7, 1) * length;
 }

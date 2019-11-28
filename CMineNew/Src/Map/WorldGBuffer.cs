@@ -4,6 +4,7 @@ using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace CMineNew.Map{
     public class WorldGBuffer{
@@ -21,14 +22,23 @@ namespace CMineNew.Map{
             1.0f, -1.0f, 1.0f, 0.0f,
             1.0f, 1.0f, 1.0f, 1.0f
         };
+        
+        private const int KernelSize = 64;
 
-        private int _id, _ssaoId;
-        private readonly ShaderProgram _postRenderShader, _postRenderWaterShader, _ssaoShader;
+        private int _id, _ssaoId, _ssaoBlurId;
+        private readonly ShaderProgram _postRenderShader, _postRenderWaterShader, _ssaoShader, _ssaoBlurShader;
 
         private VertexArrayObject _quadVao;
         private int _width, _height;
 
-        private int _depthTexture, _normalTexture, _albedoTexture, _brightnessTexture, _ssaoColor, _noiseTexture;
+        private int _depthTexture,
+            _normalTexture,
+            _albedoTexture,
+            _brightnessTexture,
+            _ssaoColorTexture,
+            _noiseTexture,
+            _blurTexture;
+
         private Vector3[] _ssaoKernel;
 
         public WorldGBuffer(INativeWindow window) {
@@ -37,13 +47,15 @@ namespace CMineNew.Map{
             _postRenderWaterShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_water_fragment);
             _postRenderWaterShader.SetupForPostRender();
             _ssaoShader = new ShaderProgram(Shaders.ssao_vertex, Shaders.ssao_fragment);
-            _postRenderWaterShader.SetupForSSAO();
+            _ssaoShader.SetupForSSAO();
+            _ssaoBlurShader = new ShaderProgram(Shaders.ssao_blur_vertex, Shaders.ssao_blur_fragment);
             _width = window.Width;
             _height = window.Height;
             _quadVao = GenerateQuadVao();
             GenerateTextures();
             GenerateFrameBuffer();
             ConfigureSSAO();
+            ConfigureSSAOBlur();
         }
 
         public VertexArrayObject QuadVao => _quadVao;
@@ -64,17 +76,19 @@ namespace CMineNew.Map{
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
-        public void Draw(Camera camera, Vector3 ambientColor, float ambientStrength, bool waterShader, SkyBox skyBox) {
+        public void BindDefaultFrameBuffer() {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
             GL.DepthMask(false);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        }
+
+        public void Draw(Camera camera, Vector3 ambientColor, float ambientStrength, bool waterShader, SkyBox skyBox) {
             _quadVao.Bind();
             UsePostRenderShader(waterShader);
             _postRenderShader.SetUMatrix("invertedViewProjection", camera.InvertedViewProjection);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
             _postRenderShader.SetUFloat("ambientStrength", ambientStrength);
-
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _albedoTexture);
@@ -85,7 +99,7 @@ namespace CMineNew.Map{
             GL.ActiveTexture(TextureUnit.Texture3);
             GL.BindTexture(TextureTarget.Texture2D, _brightnessTexture);
             GL.ActiveTexture(TextureUnit.Texture4);
-            GL.BindTexture(TextureTarget.Texture2D, _ssaoColor);
+            GL.BindTexture(TextureTarget.Texture2D, _blurTexture);
             GL.ActiveTexture(TextureUnit.Texture5);
             GL.BindTexture(TextureTarget.TextureCubeMap, skyBox.Id);
             DrawQuad();
@@ -102,26 +116,36 @@ namespace CMineNew.Map{
 
 
         public void DrawSSAO(Matrix4 invertedProjection) {
+            if (Keyboard.GetState()[Key.B]) {
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoBlurId);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+                return;
+            }
+
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoId);
             GL.Clear(ClearBufferMask.ColorBufferBit);
+            _ssaoShader.Use();
+            _ssaoShader.SetUInt("kernelSize", KernelSize);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _depthTexture);
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.BindTexture(TextureTarget.Texture2D, _normalTexture);
             GL.ActiveTexture(TextureUnit.Texture2);
             GL.BindTexture(TextureTarget.Texture2D, _noiseTexture);
-            _ssaoShader.Use();
             _ssaoShader.SetUMatrix("invertedProjection", invertedProjection);
-            SendKernelSamplesToShader();
             _quadVao.Bind();
             DrawQuad();
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        }
 
-        private void SendKernelSamplesToShader() {
-            for (var i = 0; i < _ssaoKernel.Length; i++) {
-                _ssaoShader.SetUVector("samples[" + i + "]", _ssaoKernel[i]);
-            }
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoBlurId);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            _ssaoBlurShader.Use();
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, _ssaoColorTexture);
+            DrawQuad();
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
         #region constructor methods
@@ -154,7 +178,8 @@ namespace CMineNew.Map{
         private void Resize() {
             ConfigureTexture(_width, _height, _depthTexture, PixelInternalFormat.DepthComponent,
                 PixelFormat.DepthComponent, PixelType.Float);
-            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rg16, PixelFormat.Rg, PixelType.Int);
+            ConfigureTexture(_width, _height, _normalTexture, PixelInternalFormat.Rg16f, PixelFormat.Rg,
+                PixelType.Float);
             ConfigureTexture(_width, _height, _albedoTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb,
                 PixelType.Float);
             ConfigureTexture(_width, _height, _brightnessTexture, PixelInternalFormat.Rgb16f, PixelFormat.Rgb,
@@ -201,14 +226,14 @@ namespace CMineNew.Map{
             GL.GenFramebuffers(1, out _ssaoId);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoId);
 
-            GL.GenTextures(1, out _ssaoColor);
-            GL.BindTexture(TextureTarget.Texture2D, _ssaoColor);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R16f, _width, _height, 0, PixelFormat.Red,
+            GL.GenTextures(1, out _ssaoColorTexture);
+            GL.BindTexture(TextureTarget.Texture2D, _ssaoColorTexture);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, _width, _height, 0, PixelFormat.Red,
                 PixelType.Float, IntPtr.Zero);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) All.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) All.Nearest);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
-                TextureTarget.Texture2D, _ssaoColor, 0);
+                TextureTarget.Texture2D, _ssaoColorTexture, 0);
 
             var attachment = DrawBuffersEnum.ColorAttachment0;
             GL.DrawBuffers(1, ref attachment);
@@ -219,19 +244,29 @@ namespace CMineNew.Map{
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            _ssaoKernel = new Vector3[64];
+            _ssaoKernel = new Vector3[KernelSize];
             for (var i = 0; i < _ssaoKernel.Length; i++) {
                 var sample = new Vector3((float) random.NextDouble() * 2.0f - 1,
                                  (float) random.NextDouble() * 2.0f - 1,
                                  (float) random.NextDouble()).Normalized() * (float) random.NextDouble();
-                var scale = i / 64.0f;
+                var scale = i / (float) KernelSize;
                 _ssaoKernel[i] = sample * Lerp(0.1f, 1.0f, scale * scale);
             }
+            
+            _ssaoShader.Use();
+            SendKernelSamplesToShader();
         }
 
         private float Lerp(float a, float b, float f) {
             return a + f * (b - a);
         }
+        
+        private void SendKernelSamplesToShader() {
+            for (var i = 0; i < _ssaoKernel.Length; i++) {
+                _ssaoShader.SetUVector("samples[" + i + "]", _ssaoKernel[i]);
+            }
+        }
+
 
         private void GenerateNoiseTexture(Random random) {
             var noise = new Vector3[16];
@@ -248,6 +283,26 @@ namespace CMineNew.Map{
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) All.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) All.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) All.Repeat);
+        }
+
+        public void ConfigureSSAOBlur() {
+            GL.GenFramebuffers(1, out _ssaoBlurId);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoBlurId);
+            GL.GenTextures(1, out _blurTexture);
+            GL.BindTexture(TextureTarget.Texture2D, _blurTexture);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, _width, _height, 0, PixelFormat.Red,
+                PixelType.Float, IntPtr.Zero);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) All.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) All.Nearest);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
+                TextureTarget.Texture2D, _blurTexture, 0);
+
+            var attachment = DrawBuffersEnum.ColorAttachment0;
+            GL.DrawBuffers(1, ref attachment);
+            var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+            if (status != FramebufferErrorCode.FramebufferComplete) {
+                throw new System.Exception("SSAO blur Framebuffer thrown error " + status + ".");
+            }
         }
 
         #endregion

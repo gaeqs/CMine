@@ -48,8 +48,15 @@ namespace CMineNew.Map{
             Pointer.Draw(_camera);
         }
 
-        public void DrawGBuffer(bool waterShader) {
+        public void DrawSSAO() {
             _gBuffer.DrawSSAO(_camera.Frustum.Matrix.Inverted());
+        }
+
+        public void BindDefaultFrameBuffer() {
+            _gBuffer.BindDefaultFrameBuffer();
+        }
+        
+        public void DrawGBuffer(bool waterShader) {
             _gBuffer.Draw(_camera, Vector3.One, 0.000f, waterShader, _skyBox);
         }
 

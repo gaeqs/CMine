@@ -357,18 +357,15 @@ namespace CMineNew.Map {
 
 
             DrawSelectedBlock();
-
-            //Draws background
-            GL.DepthFunc(DepthFunction.Lequal);
-            _renderData.DrawSkyBox();
-            GL.DepthFunc(DepthFunction.Less);
+            
+            _renderData.DrawSSAO();            
 
             //Transfers depth buffer to main FBO.
             _renderData.TransferDepthBufferToMainFbo();
 
-            
-            
             //Draws GBuffer quad.
+            //Draws background
+            _renderData.BindDefaultFrameBuffer();
             _renderData.DrawGBuffer(_player.EyesOnWater);
 
             //Draws objects in main FBO.
