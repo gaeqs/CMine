@@ -25,7 +25,9 @@ namespace CMineNew.Map{
 
         //Low settings: Kernel 32 Scale 70
         private const int KernelSize = 32;
-        private const int SsaoTextureScale = 100;
+        private const int SsaoTextureScale = 75;
+        private const float Radius = 0.5f;
+        private const float Bias = 0.025f;
 
         private int _id, _ssaoId, _ssaoBlurId;
         private readonly ShaderProgram _postRenderShader, _postRenderWaterShader, _ssaoShader, _ssaoBlurShader;
@@ -131,8 +133,8 @@ namespace CMineNew.Map{
             GL.Clear(ClearBufferMask.ColorBufferBit);
             _ssaoShader.Use();
             _ssaoShader.SetUInt("kernelSize", KernelSize);
-            _ssaoShader.SetUFloat("radius", 0.2f);
-            _ssaoShader.SetUFloat("bias", 0.025f);
+            _ssaoShader.SetUFloat("radius", Radius);
+            _ssaoShader.SetUFloat("bias", Bias);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, _depthTexture);
