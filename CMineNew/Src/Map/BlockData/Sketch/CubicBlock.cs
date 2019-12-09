@@ -6,21 +6,48 @@ using OpenTK;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{
-        private readonly bool[] _visibleFaces;
+        private const int Faces = 6;
+
+        private byte _visibleFaces;
 
         public CubicBlock(BlockStaticDataCubic staticData, Chunk chunk, Vector3i position, Rgba32I textureFilter)
             : base(staticData, chunk, position, textureFilter) {
-            _visibleFaces = new bool[6];
+            _visibleFaces = 0;
         }
 
         public override Vector3 CollisionBoxPosition => _position.ToFloat();
 
+        public bool IsFaceVisible(BlockFace face) {
+            return IsFaceVisible((int) face);
+        }
+
+        public bool IsFaceVisible(int face) {
+            var value = _visibleFaces;
+            value >>= face;
+            value &= 0x1;
+            return value != 0;
+        }
+
+        private bool SetFaceVisible(BlockFace face, bool visible) {
+            return SetFaceVisible((int) face, visible);
+        }
+
+        private bool SetFaceVisible(int face, bool visible) {
+            byte del = (byte) ~(0x1 << face);
+            _visibleFaces &= del;
+            var value = (byte) (visible ? 1 : 0);
+            value <<= face;
+            _visibleFaces |= value;
+            return visible;
+        }
+
+
         public override void OnPlace(Block oldBlock, bool triggerWorldUpdates, bool addToRender) {
             var render = _chunk.Region.Render;
-            for (var i = 0; i < _visibleFaces.Length; i++) {
+            for (var i = 0; i < Faces; i++) {
                 var block = GetNeighbour((BlockFace) i);
                 var oppositeFace = BlockFaceMethods.GetOpposite((BlockFace) i);
-                var vis = _visibleFaces[i] = block == null || !block.IsFaceOpaque(oppositeFace);
+                var vis = SetFaceVisible(i, block == null || !block.IsFaceOpaque(oppositeFace));
                 if (!vis || !addToRender) continue;
                 var light = block?.BlockLight;
                 render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
@@ -29,8 +56,8 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void AddToRender() {
             var render = _chunk.Region.Render;
-            for (var i = 0; i < _visibleFaces.Length; i++) {
-                if (!_visibleFaces[i]) continue;
+            for (var i = 0; i < Faces; i++) {
+                if (!IsFaceVisible(i)) continue;
                 var block = GetNeighbour((BlockFace) i);
                 var light = block?.BlockLight;
                 render.AddData(i, this, light?.Light ?? 0, light?.Sunlight ?? 0);
@@ -46,10 +73,10 @@ namespace CMineNew.Map.BlockData.Sketch{
 
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
             var faceInt = (int) relative;
-            var oldVisible = _visibleFaces[faceInt];
+            var oldVisible = IsFaceVisible(faceInt);
             var newVisible = !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
             if (oldVisible == newVisible) return;
-            _visibleFaces[faceInt] = newVisible;
+            SetFaceVisible(faceInt, newVisible);
             if (newVisible) {
                 _chunk.Region.Render.AddData(faceInt, this, to.BlockLight.Light, to.BlockLight.Sunlight);
             }
@@ -75,16 +102,16 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public void ForEachVisibleFace(Action<BlockFace> action) {
-            for (var i = 0; i < _visibleFaces.Length; i++) {
-                if (_visibleFaces[i]) {
+            for (var i = 0; i < Faces; i++) {
+                if (IsFaceVisible(i)) {
                     action.Invoke((BlockFace) i);
                 }
             }
         }
 
         public void ForEachVisibleFaceInt(Action<int> action) {
-            for (var i = 0; i < _visibleFaces.Length; i++) {
-                if (_visibleFaces[i]) {
+            for (var i = 0; i < Faces; i++) {
+                if (IsFaceVisible(i)) {
                     action.Invoke(i);
                 }
             }
@@ -99,7 +126,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override void OnNeighbourLightChange(BlockFace relative, Block block) {
-            if (_visibleFaces[(int) relative]) {
+            if (IsFaceVisible(relative)) {
                 _chunk.Region.Render.AddData((int) relative,
                     this, block.BlockLight.Light, block.BlockLight.Sunlight);
             }

@@ -32,25 +32,11 @@ namespace CMineNew.Map{
             _deleted = false;
             GetOrCreateRender(block.BlockModel)?.RemoveData(mapper, block);
         }
-
-        public void Draw() {
-            if (_deleted) return;
-            foreach (var render in _renders.Values) {
-                render.Draw(true);
-            }
-        }
-
+        
         public void Draw(string renderName, bool first) {
             if (_deleted) return;
             if (!_renders.TryGetValue(renderName, out var render)) return;
             render.Draw(first);
-        }
-
-        public void DrawAfterPostRender() {
-            if (_deleted) return;
-            foreach (var render in _renders.Values) {
-                render.DrawAfterPostRender(true);
-            }
         }
         
         public void DrawAfterPostRender(string renderName, bool first) {

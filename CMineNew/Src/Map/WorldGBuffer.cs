@@ -25,7 +25,7 @@ namespace CMineNew.Map{
 
         //Low settings: Kernel 32 Scale 70
         private const int KernelSize = 32;
-        private const int SsaoTextureScale = 75;
+        private const int SsaoTextureScale = 100;
         private const float Radius = 0.5f;
         private const float Bias = 0.025f;
 

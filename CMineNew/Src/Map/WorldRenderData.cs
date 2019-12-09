@@ -55,7 +55,7 @@ namespace CMineNew.Map{
         public void BindDefaultFrameBuffer() {
             _gBuffer.BindDefaultFrameBuffer();
         }
-        
+
         public void DrawGBuffer(bool waterShader) {
             _gBuffer.Draw(_camera, Vector3.One, 0.000f, waterShader, _skyBox);
         }
@@ -63,6 +63,7 @@ namespace CMineNew.Map{
         public void CameraTick(Player player, long delay) {
             _camera.ToPosition = player.RenderPosition + new Vector3(0, player.EyesHeight, 0);
             _camera.ToRotation = player.HeadRotation;
+            _camera.OnGround = player.OnGround;
             _camera.Tick(delay);
         }
 

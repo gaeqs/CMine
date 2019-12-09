@@ -26,7 +26,7 @@ namespace CMineNew.Map.BlockData.Type{
         protected bool _hasWaterOnTop;
 
         private Vector3i _parent;
-        private List<Vector3i> _children;
+        private readonly List<Vector3i> _children;
         private bool _removing;
 
 
@@ -85,8 +85,7 @@ namespace CMineNew.Map.BlockData.Type{
 
             if (_neighbours.Sum(target => {
                 target.TryGetTarget(out var b);
-                return b is BlockWater water && water.Parent == water.Position ? 1 : 0;
-            }) > 1) {
+                return b is BlockWater water && water.Parent == water.Position ? 1 : 0; }) > 1) {
                 var parentBlock = World.GetBlock(_parent);
                 if (parentBlock is BlockWater parentWater) {
                     parentWater.Children.Remove(_position);
