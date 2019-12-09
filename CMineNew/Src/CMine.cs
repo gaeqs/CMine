@@ -29,7 +29,7 @@ namespace CMineNew{
 
         public static void Load() {
             Window = new Window(1920, 1080,
-                GameWindowFlags.Fullscreen, false, (window, args) => {
+                GameWindowFlags.Fullscreen, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     TextureMap = new TextureMap();
                     TextureManager = new TextureManager();
