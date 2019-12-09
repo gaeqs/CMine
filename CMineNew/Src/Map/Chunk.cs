@@ -8,8 +8,8 @@ using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Type;
 using CMineNew.Map.Task;
 
-namespace CMineNew.Map {
-    public class Chunk {
+namespace CMineNew.Map{
+    public class Chunk{
         public const int ChunkLength = 16;
         public const int ChunkSize = ChunkLength * ChunkLength;
         public const int ChunkVolume = ChunkLength * ChunkLength * ChunkLength;
@@ -23,7 +23,6 @@ namespace CMineNew.Map {
         private readonly Block[,,] _blocks;
         private readonly WorldTaskManager _taskManager;
 
-        private byte[] _saveBuffer;
         private bool _modified, _natural;
 
         public Chunk(ChunkRegion region, Vector3i position) {
@@ -31,7 +30,6 @@ namespace CMineNew.Map {
             _position = position;
             _blocks = new Block[ChunkLength, ChunkLength, ChunkLength];
             _taskManager = new WorldTaskManager();
-            _saveBuffer = null;
             _modified = true;
             _natural = false;
         }
@@ -231,15 +229,13 @@ namespace CMineNew.Map {
         }
 
         public void Save(Stream stream, BinaryFormatter formatter) {
-            if (_modified) {
-                GenerateSaveBuffer(formatter);
-                _modified = false;
-            }
-
-            stream.Write(_saveBuffer, 0, _saveBuffer.Length);
+            if (!_modified) return;
+            _modified = false;
+            var bytes = GenerateSaveBuffer(formatter).ToArray();
+            stream.Write(bytes, 0, bytes.Length);
         }
 
-        private void GenerateSaveBuffer(BinaryFormatter formatter) {
+        private MemoryStream GenerateSaveBuffer(BinaryFormatter formatter) {
             var buffer = new MemoryStream();
             ForEachChunkPosition((x, y, z, block) => {
                 var empty = block == null;
@@ -248,7 +244,7 @@ namespace CMineNew.Map {
                 formatter.Serialize(buffer, block.Id);
                 block.Save(buffer, formatter);
             });
-            _saveBuffer = buffer.ToArray();
+            return buffer;
         }
 
         public void Load(Stream stream, BinaryFormatter formatter, uint version, World2dRegion region2d) {
@@ -269,7 +265,6 @@ namespace CMineNew.Map {
 
                 block.Load(stream, formatter, version, region2d);
             });
-            GenerateSaveBuffer(formatter);
             _modified = false;
         }
 
