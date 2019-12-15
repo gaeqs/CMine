@@ -2,8 +2,8 @@ using CMineNew.Color;
 using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
 
-namespace CMineNew.Map.BlockData.Sketch {
-    public class TexturedSlabBlock : SlabBlock {
+namespace CMineNew.Map.BlockData.Sketch{
+    public class TexturedSlabBlock : SlabBlock{
         public TexturedSlabBlock(BlockStaticDataTexturedSlab staticData, Chunk chunk, Vector3i position,
             Rgba32I textureFilter, bool upside)
             : base(staticData, chunk, position, textureFilter, upside) {
@@ -14,8 +14,8 @@ namespace CMineNew.Map.BlockData.Sketch {
                 _upside);
         }
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return _staticData.GetTextureArea(face);
+        public override int GetTextureIndex(BlockFace face) {
+            return _staticData.GetTextureIndex(face);
             ;
         }
     }

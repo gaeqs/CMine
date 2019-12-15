@@ -14,8 +14,8 @@ namespace CMineNew.Map.BlockData.Static.Type{
                 0, 2, 2) {
         }
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return BlockWater.TextureArea;
+        public override int GetTextureIndex(BlockFace face) {
+            return BlockWater.TextureIndex;
         }
     }
 }

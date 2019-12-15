@@ -85,11 +85,6 @@
     <Compile Include="Src\Inventory\Hotbar.cs" />
     <Compile Include="Src\Inventory\IPlayerInventory.cs" />
     <Compile Include="Src\Inventory\PlayerInventory.cs" />
-    <Compile Include="Src\Light\CameraFlashLight.cs" />
-    <Compile Include="Src\Light\DirectionalLight.cs" />
-    <Compile Include="Src\Light\FlashLight.cs" />
-    <Compile Include="Src\Light\PointLight.cs" />
-    <Compile Include="Src\Light\LightManager.cs" />
     <Compile Include="Src\Loader\ImageLoader.cs" />
     <Compile Include="Src\Map\AsyncChunkGenerator.cs" />
     <Compile Include="Src\Map\BlockData\BlockLight.cs" />
@@ -287,6 +282,10 @@
     <Content Include="Resources\Shaders\SkyBox\vertex.vert" />
     <Content Include="Resources\Shaders\Slab\fragment.frag" />
     <Content Include="Resources\Shaders\Slab\vertex.vert" />
+    <Content Include="Resources\Shaders\SSAOBlur\fragment.frag" />
+    <Content Include="Resources\Shaders\SSAOBlur\vertex.vert" />
+    <Content Include="Resources\Shaders\SSAO\fragment.frag" />
+    <Content Include="Resources\Shaders\SSAO\vertex.vert" />
     <Content Include="Resources\Shaders\StaticText\fragment.frag" />
     <Content Include="Resources\Shaders\StaticText\vertex.vert" />
     <Content Include="Resources\Shaders\TallGrass\fragment.frag" />

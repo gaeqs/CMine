@@ -2,28 +2,28 @@ using CMineNew.Geometry;
 
 namespace CMineNew.Map.BlockData.Static{
     public class BlockStaticDataMultiTexturedSlab : BlockStaticDataSlab{
-        private readonly Area2d[] _textureAreas;
+        private readonly int[] _textureIndices;
 
         public BlockStaticDataMultiTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction, string[] texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureAreas = new Area2d[texture.Length];
-            var areas = CMine.TextureMap.Areas;
+            _textureIndices = new int[texture.Length];
+            var indices = CMine.TextureMap.Indices;
             for (var i = 0; i < texture.Length; i++) {
-                _textureAreas[i] = areas[texture[i]];
+                _textureIndices[i] = indices[texture[i]];
             }
         }
 
         public BlockStaticDataMultiTexturedSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
-            sbyte blockLightPassReduction, sbyte sunlightPassReduction, Area2d[] texture)
+            sbyte blockLightPassReduction, sbyte sunlightPassReduction, int[] texture)
             : base(id, passable, lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
-            _textureAreas = texture;
+            _textureIndices = texture;
         }
 
-        public Area2d[] TextureAreas => _textureAreas;
+        public int[] TextureIndices => _textureIndices;
         
-        public override Area2d GetTextureArea(BlockFace face) {
-            return _textureAreas[(int) face];
+        public override int GetTextureIndex(BlockFace face) {
+            return _textureIndices[(int) face];
         }
     }
 }

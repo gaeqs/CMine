@@ -7,19 +7,24 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gBrightness;
+uniform sampler2D gSsao;
 uniform samplerCube skyBox;
 
 
 layout (std140, binding = 0) uniform Uniforms {
 
     mat4 viewProjection;
+    mat4 view;
+    mat4 projection;
     vec3 cameraPosition;
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
     bool waterShader;
     int millis;
-
+    float normalizedSpriteSize;
+    int spriteTextureLength;
+    vec2 windowsSize;
 };
 
 uniform float ambientStrength;
@@ -30,32 +35,31 @@ vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
     return ambientStrength * ambientColor * modelAmbientColor;
 }
 
+vec3 calculatePosition (vec2 texCoords) {
+    float depth = texture2D(gDepth, texCoords).r * 2 - 1;
+    vec2 projectedPositionXY = texCoords * 2.0 - 1.0;
+    vec4 projected = vec4(projectedPositionXY.x, projectedPositionXY.y, depth, 1);
+    vec4 position4 = invertedViewProjection * projected;
+    return position4.xyz / position4.w;
+}
+
 void main() {
-    vec3 modelAmbientColor = texture2D(gAlbedo, fragTexCoords).rgb;
+    vec3 albedo = texture2D(gAlbedo, fragTexCoords).rgb;
     vec2 normalXY = texture2D(gNormal, fragTexCoords).rg;
+
+    vec3 normal = vec3(normalXY, sqrt(1 - dot(normalXY, normalXY)));
+    vec3 position = calculatePosition(fragTexCoords);
+    float ambientOcclusion = 1 - texture(gSsao, fragTexCoords).r;
+    vec3 brightness = clamp(texture2D(gBrightness, fragTexCoords).rgb, 0, 1);
+
+    vec3 result = calculateGlobalAmbient(albedo) + albedo * brightness;
     
-    if (normalXY.x == 2 && normalXY.y == 2) {
-        FragColor = vec4(modelAmbientColor, 1);
-    }
-    else {
-        vec3 normal = vec3(normalXY, sqrt(1 - dot(normalXY, normalXY)));
-        float depth = texture2D(gDepth, fragTexCoords).r * 2 - 1;
-        vec4 projected = vec4(fragPos, depth, 1);
-        vec4 position4 = invertedViewProjection * projected;
-        vec3 position = position4.xyz / position4.w;
+    FragColor = vec4(0.5 * result + 0.5 * result * ambientOcclusion, 1);
 
-        vec3 brightness = clamp(texture2D(gBrightness, fragTexCoords).rgb, 0, 1);
+    vec3 distance = position - cameraPosition;
+    float lengthSquared = dot(distance, distance);
 
-        vec3 result = calculateGlobalAmbient(modelAmbientColor) + modelAmbientColor * brightness;
-
-        FragColor = vec4(result, 1);
-
-        vec3 distance = position - cameraPosition;
-        float lengthSquared = dot(distance, distance);
-
-        vec4 color = texture(skyBox, distance);
-        float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
-        FragColor = mix(FragColor, color, a);
-    }
-
+    vec4 color = texture(skyBox, distance);
+    float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
+    FragColor = mix(FragColor, color, a);
 }

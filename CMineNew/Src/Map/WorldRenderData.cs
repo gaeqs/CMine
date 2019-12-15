@@ -1,8 +1,8 @@
 using CMineNew.Entities;
+using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Render;
 using CMineNew.Render.Gui;
-using CMineNew.Render.Object;
 using CMineNew.Resources.Textures;
 using OpenTK;
 
@@ -48,6 +48,14 @@ namespace CMineNew.Map{
             Pointer.Draw(_camera);
         }
 
+        public void DrawSSAO() {
+            _gBuffer.DrawSSAO(_camera.Frustum.Matrix.Inverted());
+        }
+
+        public void BindDefaultFrameBuffer() {
+            _gBuffer.BindDefaultFrameBuffer();
+        }
+
         public void DrawGBuffer(bool waterShader) {
             _gBuffer.Draw(_camera, Vector3.One, 0.000f, waterShader, _skyBox);
         }
@@ -55,14 +63,17 @@ namespace CMineNew.Map{
         public void CameraTick(Player player, long delay) {
             _camera.ToPosition = player.RenderPosition + new Vector3(0, player.EyesHeight, 0);
             _camera.ToRotation = player.HeadRotation;
+            _camera.OnGround = player.OnGround;
             _camera.Tick(delay);
         }
 
         public void SetShaderData(Vector3 sunlightDirection, bool waterShader, long ticks) {
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
-            _shaderData.SetData(_camera.ViewProjection, _camera.Position,
-                sunlightDirection, min * min, max * max, waterShader, ticks);
+            _shaderData.SetData(_camera.Matrix, _camera.Frustum.Matrix, _camera.Position,
+                sunlightDirection, min * min, max * max, waterShader, ticks,
+                CMine.TextureMap.SpriteSizeNormalized, CMine.TextureMap.TextureLength,
+                new Vector2i(CMine.Window.Width, CMine.Window.Height));
         }
     }
 }

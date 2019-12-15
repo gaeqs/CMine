@@ -66,7 +66,7 @@ namespace CMineNew.Render.Gui {
 
             _blockElementsShader.Use();
             _blockElementVertexArrayObject.Bind();
-            _blockElementsShader.SetUMatrix("projection",
+            _blockElementsShader.SetUMatrix("guiProjection",
                 Matrix4.CreatePerspectiveOffCenter(-aspect, aspect, -1, 1, 1, 5));
             
             GL.Enable(EnableCap.DepthTest);

@@ -19,14 +19,14 @@ namespace CMineNew.Map.BlockData.Type{
         protected const int SouthLeft = 2;
         protected const int SouthRight = 3;
 
-        public static Area2d TextureArea = CMine.TextureMap.Areas["default:water"];
+        public static int TextureIndex = CMine.TextureMap.Indices["default:water"];
 
         private readonly bool[] _visibleFaces;
         protected int _waterLevel;
         protected bool _hasWaterOnTop;
 
         private Vector3i _parent;
-        private List<Vector3i> _children;
+        private readonly List<Vector3i> _children;
         private bool _removing;
 
 
@@ -85,8 +85,7 @@ namespace CMineNew.Map.BlockData.Type{
 
             if (_neighbours.Sum(target => {
                 target.TryGetTarget(out var b);
-                return b is BlockWater water && water.Parent == water.Position ? 1 : 0;
-            }) > 1) {
+                return b is BlockWater water && water.Parent == water.Position ? 1 : 0; }) > 1) {
                 var parentBlock = World.GetBlock(_parent);
                 if (parentBlock is BlockWater parentWater) {
                     parentWater.Children.Remove(_position);

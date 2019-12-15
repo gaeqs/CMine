@@ -13,8 +13,8 @@ namespace CMineNew.Map.BlockData.Static.Type{
                 Block.MaxBlockLight, 1, 0) {
         }
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return CMine.TextureMap.Areas["default:torch"];
+        public override int GetTextureIndex(BlockFace face) {
+            return CMine.TextureMap.Indices["default:torch"];
         }
     }
 }

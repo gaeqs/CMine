@@ -137,13 +137,15 @@ namespace CMineNew.Render.Object{
             SetUInt("gDepth", 1);
             SetUInt("gNormal", 2);
             SetUInt("gBrightness", 3);
-            SetUInt("skyBox", 4);
+            SetUInt("gSsao", 4);
+            SetUInt("skyBox", 5);
         }
 
-        public void SetupForLight() {
+        public void SetupForSSAO() {
             Use();
             SetUInt("gDepth", 0);
             SetUInt("gNormal", 1);
+            SetUInt("gNoise", 2);
         }
         
         public void SetupForWater() {

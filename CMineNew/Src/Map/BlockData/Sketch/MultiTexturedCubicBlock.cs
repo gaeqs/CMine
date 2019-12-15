@@ -14,8 +14,8 @@ namespace CMineNew.Map.BlockData.Sketch{
                 _textureFilter);
         }
 
-        public override Area2d GetTextureArea(BlockFace face) {
-            return _staticData.GetTextureArea(face);
+        public override int GetTextureIndex(BlockFace face) {
+            return _staticData.GetTextureIndex(face);
         }
     }
 }

@@ -45,10 +45,10 @@ namespace CMineNew.Map.BlockData.Render{
             if (!(block is CrossBlock crossBlock)) return;
             var pos = block.Position;
             var filter = block.TextureFilter;
-            var area = crossBlock.TextureArea;
+            var index = crossBlock.TextureIndex;
             _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
                 new[] {
-                    pos.X, pos.Y, pos.Z, area.MinX, area.MinY, area.MaxX, area.MaxY,
+                    pos.X, pos.Y, pos.Z, index,
                     filter.ValueF,
                     blockLight / Block.MaxBlockLightF,
                     sunlight / Block.MaxBlockLightF
@@ -91,7 +91,7 @@ namespace CMineNew.Map.BlockData.Render{
                 BufferUsageHint.StreamDraw);
             var builder = new AttributePointerBuilder(_vao, InstanceDataLength, 3);
             builder.AddPointer(3, true);
-            builder.AddPointer(4, true);
+            builder.AddPointer(1, true);
             builder.AddPointer(1, true);
             builder.AddPointer(1, true);
             builder.AddPointer(1, true);
@@ -100,22 +100,6 @@ namespace CMineNew.Map.BlockData.Render{
 
             _mapper.Vao = _vao;
             _mapper.Vbo = _dataBuffer;
-        }
-
-        private void OnResize(VertexArrayObject vao, VertexBufferObject oldBuffer, VertexBufferObject newBuffer) {
-            vao.LinkBuffer(newBuffer);
-            vao.UnlinkBuffer(oldBuffer);
-
-            vao.Bind();
-
-            newBuffer.Bind(BufferTarget.ArrayBuffer);
-            var builder = new AttributePointerBuilder(vao, InstanceDataLength, 3);
-            builder.AddPointer(3, true);
-            builder.AddPointer(4, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            builder.AddPointer(1, true);
-            VertexBufferObject.Unbind(BufferTarget.ArrayBuffer);
         }
 
         private void CheckVbo() {

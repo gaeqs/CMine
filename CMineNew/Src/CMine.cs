@@ -5,15 +5,14 @@ using CMineNew.Color;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
-using CMineNew.RayTrace;
 using CMineNew.Render;
 using CMineNew.Render.Gui;
 using CMineNew.Test;
 using CMineNew.Text;
 using OpenTK;
 
-namespace CMineNew {
-    public class CMine {
+namespace CMineNew{
+    public class CMine{
         public const int TicksPerSecond = 10000000;
         public const float TicksPerSecondF = 10000000f;
 
@@ -29,8 +28,8 @@ namespace CMineNew {
         public static TextureMap TextureMap;
 
         public static void Load() {
-            Window = new Window(1920, 1080,
-                GameWindowFlags.Fullscreen, true, (window, args) => {
+            Window = new Window(1920 * 2 / 3, 1080 * 2 / 3,
+                GameWindowFlags.Default, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     TextureMap = new TextureMap();
                     TextureManager = new TextureManager();

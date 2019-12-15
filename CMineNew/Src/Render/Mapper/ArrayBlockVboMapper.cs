@@ -109,7 +109,6 @@ namespace CMineNew.Render.Mapper{
             _vbo.Bind(_bufferTarget);
             _vbo.Orphan(_bufferTarget, BufferUsageHint.StreamDraw);
             _vbo.SetSubData(_bufferTarget, _array, (_elementSize * _amount) << 2, 0);
-            VertexBufferObject.Unbind(_bufferTarget);
         }
 
         public bool ContainsKey(Block key) {

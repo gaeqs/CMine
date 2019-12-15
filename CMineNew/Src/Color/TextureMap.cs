@@ -6,14 +6,19 @@ using System.IO;
 using CMineNew.Geometry;
 using CMineNew.Loader;
 using CMineNew.Resources.Textures;
+using OpenTK;
 
-namespace CMineNew.Color {
-    public class TextureMap {
+namespace CMineNew.Color{
+    public class TextureMap{
+        public const int SpriteSize = 16;
+        private float _spriteSizeNormalized;
+        private int _textureLength;
+
         private int _texture;
-        private Dictionary<string, Area2d> _areas;
+        private readonly Dictionary<string, int> _indices;
 
         public TextureMap() {
-            _areas = new Dictionary<string, Area2d>();
+            _indices = new Dictionary<string, int>();
             var bitmaps = new Dictionary<string, Bitmap>();
 
             bitmaps.Add("default:stone", ToBitmap(Textures.stone));
@@ -33,11 +38,15 @@ namespace CMineNew.Color {
             CreateTextureMap(bitmaps);
         }
 
+        public float SpriteSizeNormalized => _spriteSizeNormalized;
+        public int TextureLength => _textureLength;
 
         private void CreateTextureMap(Dictionary<string, Bitmap> bitmaps) {
-            var count = (int) Math.Ceiling(Math.Sqrt(bitmaps.Count));
+            _textureLength = (int) Math.Ceiling(Math.Sqrt(bitmaps.Count));
 
-            var map = new Bitmap(count * 16, count * 16);
+            _spriteSizeNormalized = 1f /  _textureLength;
+            
+            var map = new Bitmap(_textureLength * SpriteSize, _textureLength * SpriteSize);
             var graphics = Graphics.FromImage(map);
             graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
@@ -46,12 +55,11 @@ namespace CMineNew.Color {
             var y = 0;
             foreach (var bitmap in bitmaps) {
                 graphics.DrawImage(bitmap.Value,
-                    new Rectangle(x * 16, y * 16, 16, 16),
-                    new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
-                _areas.Add(bitmap.Key, new Area2d(x / (float) count, y / (float) count,
-                    (x + 1) / (float) count, (y + 1) / (float) count));
+                    new Rectangle(x * SpriteSize, y * SpriteSize, SpriteSize, SpriteSize),
+                    new Rectangle(0, 0, SpriteSize, SpriteSize), GraphicsUnit.Pixel);
+                _indices.Add(bitmap.Key, x * _textureLength + y);
                 y++;
-                if (y != count) continue;
+                if (y != _textureLength) continue;
                 y = 0;
                 x++;
             }
@@ -64,7 +72,7 @@ namespace CMineNew.Color {
 
         public int Texture => _texture;
 
-        public Dictionary<string, Area2d> Areas => _areas;
+        public Dictionary<string, int> Indices => _indices;
 
         private static Bitmap ToBitmap(byte[] bytes) {
             return (Bitmap) Image.FromStream(new MemoryStream(bytes));

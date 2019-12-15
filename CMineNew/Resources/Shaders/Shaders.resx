@@ -79,7 +79,24 @@
     <data name="post_render_water_fragment" type="System.Resources.ResXFileRef">
         <value>PostRender/water_fragment.frag;System.String</value>
     </data>
+
+    <data name="ssao_vertex" type="System.Resources.ResXFileRef">
+        <value>SSAO/vertex.vert;System.String</value>
+    </data>
     
+    <data name="ssao_fragment" type="System.Resources.ResXFileRef">
+        <value>SSAO/fragment.frag;System.String</value>
+    </data>
+
+    <data name="ssao_blur_vertex" type="System.Resources.ResXFileRef">
+        <value>SSAOBlur/vertex.vert;System.String</value>
+    </data>
+
+    <data name="ssao_blur_fragment" type="System.Resources.ResXFileRef">
+        <value>SSAOBlur/fragment.frag;System.String</value>
+    </data>
+
+
     <data name="directional_light_vertex" type="System.Resources.ResXFileRef">
         <value>Light/directional_light_vertex.vert;System.String</value>
     </data>
@@ -130,7 +147,7 @@
 
     <data name="loop_delay_viewer_vertex" type="System.Resources.ResXFileRef">
     <value>LoopDelayViewer/vertex.vert;System.String</value>
-</data>
+    </data>
 
     <data name="loop_delay_viewer_fragment" type="System.Resources.ResXFileRef">
         <value>LoopDelayViewer/fragment.frag;System.String</value>

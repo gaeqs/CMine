@@ -1,25 +1,33 @@
+using System;
 using OpenTK;
 
 namespace CMineNew.Render{
     public class PhysicCamera : Camera{
-
         public const float DefaultMovementAmplification = 30;
         public const float DefaultRotationAmplification = 40;
-        
+
+        private Vector3 _restPosition;
         private Vector3 _toPosition;
         private Vector2 _toRotation;
         private float _movementAmplification, _rotationAmplification;
+
+        private float _cameraVelocity;
+        private bool _onGround;
+        private float _bobbingTimer;
 
         public PhysicCamera(Vector3 position, Vector2 rotation, Vector3 up, float fov)
             : base(position, rotation, up, fov) {
             _toPosition = position;
             _movementAmplification = DefaultMovementAmplification;
             _rotationAmplification = DefaultRotationAmplification;
+            _cameraVelocity = 0;
+            _onGround = true;
+            ResetBobbingTimer();
         }
 
         public override Vector3 Position {
             set {
-                base.Position = value;
+                _restPosition = value;
                 _toPosition = value;
             }
         }
@@ -29,6 +37,11 @@ namespace CMineNew.Render{
                 base.Rotation = value;
                 _toRotation = _rotation;
             }
+        }
+
+        public Vector3 RestPosition {
+            get => _restPosition;
+            set => _restPosition = value;
         }
 
         public Vector3 ToPosition {
@@ -51,14 +64,24 @@ namespace CMineNew.Render{
             set => _rotationAmplification = value;
         }
 
+
+        public float CameraVelocity => _cameraVelocity;
+
+        public bool OnGround {
+            get => _onGround;
+            set => _onGround = value;
+        }
+
         public void Tick(long delay) {
+            _cameraVelocity = Math.Max(Math.Min(((_toPosition - _restPosition)
+                                                 * new Vector3(1, 0, 1) * _movementAmplification).Length - 0.002f, 10), 0);
             var h = delay / CMine.TicksPerSecondF;
-            if (_toPosition != _position) {
-                var velocity = (_toPosition - _position) * _movementAmplification;
-                var oldPos = _position;
-                _position += velocity * h;
-                if (Vector3.Dot(_toPosition - oldPos, _toPosition - _position) < 0) {
-                    _position = _toPosition;
+            if (_toPosition != _restPosition) {
+                var velocity = (_toPosition - _restPosition) * _movementAmplification;
+                var oldPos = _restPosition;
+                _restPosition += velocity * h;
+                if (Vector3.Dot(_toPosition - oldPos, _toPosition - _restPosition) < 0) {
+                    _restPosition = _toPosition;
                 }
 
                 _requiresRecalculation = true;
@@ -75,6 +98,30 @@ namespace CMineNew.Render{
 
                 _requiresRecalculation = true;
             }
+
+            UpdateBobbing(h);
+        }
+
+        private void UpdateBobbing(float delta) {
+            const float bobbingSpeed = 1.8f;
+            const float bobbingAmplitude = 0.05f;
+            
+            _bobbingTimer += bobbingSpeed * _cameraVelocity * delta * (_onGround ? 1 : 0);
+            var deltaMovement = new Vector3(
+                0,
+                (float) Math.Abs(Math.Sin(_bobbingTimer) * bobbingAmplitude),
+                (float) Math.Cos(_bobbingTimer) * bobbingAmplitude);
+
+            var matrix = Matrix3.CreateRotationY(_rotation.Y);
+            _position = _restPosition + matrix * deltaMovement;
+
+
+            if (_bobbingTimer > Math.PI * 2)
+                _bobbingTimer -= (float) Math.PI * 2;
+        }
+
+        private void ResetBobbingTimer() {
+            _bobbingTimer = (float) Math.PI / 2;
         }
     }
 }
