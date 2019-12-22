@@ -35,3 +35,15 @@ C:\Users\gaeqs\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.GenerateRe
 C:\Users\gaeqs\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.CopyComplete
 C:\Users\gaeqs\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.exe
 C:\Users\gaeqs\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.pdb
+C:\Users\Lara\RiderProjects\CMine\CMineNew\bin\Debug\CMineNew.exe
+C:\Users\Lara\RiderProjects\CMine\CMineNew\bin\Debug\CMineNew.pdb
+C:\Users\Lara\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.dll
+C:\Users\Lara\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.pdb
+C:\Users\Lara\RiderProjects\CMine\CMineNew\bin\Debug\OpenTK.xml
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csprojAssemblyReference.cache
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.Resources.Shaders.Shaders.resources
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.Resources.Textures.Textures.resources
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.GenerateResource.cache
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.csproj.CopyComplete
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.exe
+C:\Users\Lara\RiderProjects\CMine\CMineNew\obj\Debug\CMineNew.pdb

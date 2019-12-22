@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using CMineNew.Collision;
+using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -19,6 +22,35 @@ namespace CMineNew.Render.Object{
         private VertexBufferObject _verticesVbo;
 
         public LineVertexArrayObject(Vector3[] vertices, int[] indices) {
+            GL.GenVertexArrays(1, out _id);
+            _buffers = new Collection<VertexBufferObject>();
+            _attributes = new Collection<int>();
+            _indicesAmount = indices.Length;
+            Bind();
+            GenerateDrawVbo(vertices);
+            if (indices.Length > 0) {
+                GenerateEbo(indices);
+            }
+
+            Unbind();
+        }
+
+        public LineVertexArrayObject(IReadOnlyList<Aabb> collisionBoxes) {
+            var vertices = new Vector3[collisionBoxes.Count << 3];
+            var indices = new int[collisionBoxes.Count * 24];
+            
+            for (var i = 0; i < collisionBoxes.Count; i++) {
+                var boxVertices = collisionBoxes[i].GetVertices();
+                var boxIndices = ModelLinesUtil.CalculateLinesIndices(boxVertices);
+
+                for (var n = 0; n < 8; n++) {
+                    vertices[(i << 3) + n] = boxVertices[n];
+                }
+                for (var n = 0; n < 24; n++) {
+                    indices[i * 24 + n] = boxIndices[n] + (i << 3);
+                }
+            }
+
             GL.GenVertexArrays(1, out _id);
             _buffers = new Collection<VertexBufferObject>();
             _attributes = new Collection<int>();

@@ -10,21 +10,10 @@ namespace CMineNew.Map.BlockData.Model{
     public class CrossBlockModel : BlockModel{
         public const string Key = "default:cross";
 
-        public static readonly Vector3[] Vertices = {
-            new Vector3(0.1f, 0, 0.1f),
-            new Vector3(0.1f, 0, 0.9f),
-            new Vector3(0.1f, 0.7f, 0.1f),
-            new Vector3(0.1f, 0.7f, 0.9f),
-            new Vector3(0.9f, 0, 0.1f),
-            new Vector3(0.9f, 0, 0.9f),
-            new Vector3(0.9f, 0.7f, 0.1f),
-            new Vector3(0.9f, 0.7f, 0.9f),
-        };
-
         private readonly LineVertexArrayObject _lineVao;
 
         public CrossBlockModel() : base(Key, new Aabb(0.1f, 0, 0.1f, 0.8f, 0.7f, 0.8f)) {
-            _lineVao = new LineVertexArrayObject(Vertices, ModelLinesUtil.CalculateLinesIndices(Vertices));
+            _lineVao = new LineVertexArrayObject(new[] {BlockCollision});
         }
 
         public override BlockRender CreateBlockRender(ChunkRegion chunkRegion) {

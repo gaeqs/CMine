@@ -68,6 +68,20 @@ namespace CMineNew.Collision{
         /// </summary>
         public Vector3 Max => new Vector3(_x + _width, _y + _height, _z + _depth);
 
+        public Vector3[] GetVertices() {
+            var vertices = new Vector3[8];
+            for (var ix = 0; ix < 2; ix++) {
+                for (var iy = 0; iy < 2; iy++) {
+                    for (var iz = 0; iz < 2; iz++) {
+                        vertices[(ix << 2) + (iy << 1) + iz] =
+                            new Vector3(_x + _width * ix, _y + _height * iy, _z + _depth * iz);
+                    }
+                }
+            }
+
+            return vertices;
+        }
+
         /// <summary>
         /// Checks whether a point is inside of the box.
         /// Being at the edge of the box is considered to be inside.
@@ -124,7 +138,7 @@ namespace CMineNew.Collision{
                 data = null;
                 return false;
             }
-            
+
             //Using the separating axis theorem: if all axis checks are greater than 0, then the minimum distance
             //to resolve the collision is the minimum axis check.
 

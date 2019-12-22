@@ -28,8 +28,8 @@ namespace CMineNew{
         public static TextureMap TextureMap;
 
         public static void Load() {
-            Window = new Window(1920 * 2 / 3, 1080 * 2 / 3,
-                GameWindowFlags.Default, true, (window, args) => {
+            Window = new Window(1920, 1080,
+                GameWindowFlags.Fullscreen, true, (window, args) => {
                     Directory.CreateDirectory(MainFolder);
                     TextureMap = new TextureMap();
                     TextureManager = new TextureManager();
@@ -47,10 +47,6 @@ namespace CMineNew{
                     Window.Room = world;
                 });
             Window.Run();
-        }
-
-        public static int Sum(int a, int b) {
-            return a + b;
         }
     }
 }
