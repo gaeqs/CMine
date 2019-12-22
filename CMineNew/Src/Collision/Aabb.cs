@@ -100,6 +100,7 @@ namespace CMineNew.Collision{
                    tz <= point.Z && tz + _depth >= point.Z;
         }
 
+        
         /// <summary>
         /// Checks whether two axis-aligned bounding boxes collides.
         /// The algorithm used is a simplified implementation of the separating axis theorem: http://www.dyn4j.org/2010/01/sat/.

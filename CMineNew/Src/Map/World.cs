@@ -410,6 +410,10 @@ namespace CMineNew.Map {
                     _player.Position = new Vector3(20, 100, 20);
                     _player.Velocity = Vector3.Zero;
                     break;
+                case Key.P:
+                    _player.Position = new Vector3(125507, 100, 20);
+                    _player.Velocity = Vector3.Zero;
+                    break;
                 case Key.K:
                     var pos = new Vector3i(_player.Position);
                     for (var x = -7; x < 7; x++) {
