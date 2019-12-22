@@ -181,24 +181,45 @@ namespace CMineNew.Collision{
         /// <param name="boxPosition">The world position of this box.</param>
         /// <param name="min">The minimum segment position.</param>
         /// <param name="max">The maximum segment position.</param>
+        /// <param name="collision">The collision point. (Starting from min)</param>
+        /// <param name="face">The collision face.</param>
         /// <returns>Whether the segment collides the box.</returns>
-        public bool CollidesSegment(Vector3 boxPosition, Vector3 min, Vector3 max) {
+        public bool CollidesSegment(Vector3 boxPosition, Vector3 min, Vector3 max, out Vector3 collision,
+            out BlockFace face) {
             float low = 0;
             float high = 1;
 
             var boxMin = Min + boxPosition;
             var boxMax = Max + boxPosition;
 
+            face = BlockFace.Up;
             //Test all three dimensions.
             for (var i = 0; i < 3; i++) {
-                if (!ClipLine(i, ref boxMin, ref boxMax, ref min, ref max, ref low, ref high)) return false;
+                if (ClipLine(i, ref boxMin, ref boxMax, ref min, ref max, ref low, ref high, out var higher)) {
+                    if (higher) {
+                        var positive = max[i] - min[i] >= 0;
+                        face = i switch {
+                            0 => (positive ? BlockFace.West : BlockFace.East),
+                            1 => (positive ? BlockFace.Down : BlockFace.Up),
+                            2 => (positive ? BlockFace.North : BlockFace.South),
+                            _ => BlockFace.Up
+                        };
+                    }
+
+                    continue;
+                }
+
+                collision = max;
+                return false;
             }
+
+            collision = min + low * (max - min);
 
             return true;
         }
 
         private bool ClipLine(int dimension, ref Vector3 boxMin, ref Vector3 boxMax, ref Vector3 min, ref Vector3 max,
-            ref float low, ref float high) {
+            ref float low, ref float high, out bool higher) {
             var maxMin = max[dimension] - min[dimension];
             var dimLow = (boxMin[dimension] - min[dimension]) / maxMin;
             var dimHigh = (boxMax[dimension] - min[dimension]) / maxMin;
@@ -209,6 +230,7 @@ namespace CMineNew.Collision{
                 dimHigh = aux;
             }
 
+            higher = dimLow >= low;
             if (dimHigh < low) return false;
             if (dimLow > high) return false;
             low = Math.Max(dimLow, low);

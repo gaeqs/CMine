@@ -78,7 +78,6 @@ namespace CMineNew.Entities{
             
             //Empty inventory
             _inventory = new PlayerInventory();
-            _inventory.Hotbar[2, 0] = new BlockSnapshotBricks();
         }
 
         /// <summary>

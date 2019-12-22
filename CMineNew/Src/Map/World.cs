@@ -71,9 +71,9 @@ namespace CMineNew.Map {
             _player = new Player(Guid.NewGuid(), this, new Vector3(20, 100, 20), null);
             _player.Controller = new LocalPlayerController(_player, _renderData.Camera);
             _player.Inventory.Hotbar[0, 0] = new BlockSnapshotBricks();
-            _player.Inventory.Hotbar[1, 0] = new BlockSnapshotSand();
-            _player.Inventory.Hotbar[2, 0] = new BlockSnapshotOakLeaves(new Rgba32I(0, 255, 0, 1));
-            _player.Inventory.Hotbar[3, 0] = new BlockSnapshotStone();
+            _player.Inventory.Hotbar[1, 0] = new BlockSnapshotOakLeaves(new Rgba32I(0, 255, 0, 1));
+            _player.Inventory.Hotbar[2, 0] = new BlockSnapshotBricksSlab(false);
+            _player.Inventory.Hotbar[3, 0] = new BlockSnapshotBricksSlab(true);
             _player.Inventory.Hotbar[4, 0] = new BlockSnapshotTorch();
             _entities.Add(_player);
 

@@ -85,7 +85,8 @@ namespace CMineNew.Map.BlockData.Type{
 
             if (_neighbours.Sum(target => {
                 target.TryGetTarget(out var b);
-                return b is BlockWater water && water.Parent == water.Position ? 1 : 0; }) > 1) {
+                return b is BlockWater water && water.Parent == water.Position ? 1 : 0;
+            }) > 1) {
                 var parentBlock = World.GetBlock(_parent);
                 if (parentBlock is BlockWater parentWater) {
                     parentWater.Children.Remove(_position);
@@ -94,12 +95,12 @@ namespace CMineNew.Map.BlockData.Type{
                 _parent = _position;
                 _waterLevel = MaxWaterLevel;
             }
-            
+
             if (triggerWorldUpdates) {
                 _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
             }
-            
-            if(!addToRender) return;
+
+            if (!addToRender) return;
             UpdateWaterVertices(true, true, true, true, true);
         }
 
@@ -166,8 +167,8 @@ namespace CMineNew.Map.BlockData.Type{
                 if (!(to is BlockWater)) {
                     _chunk.TaskManager.AddTask(new WorldTaskExpandWater(World, _position));
                 }
-                
-                
+
+
                 var newData = to == null ||
                               !(to is BlockWater) && !to.IsFaceOpaque(BlockFaceMethods.GetOpposite(relative));
                 _visibleFaces[(int) relative] = newData;
@@ -184,7 +185,10 @@ namespace CMineNew.Map.BlockData.Type{
             return new BlockWater(chunk, position, _waterLevel);
         }
 
-        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
+        public override bool Collides(BlockFace fromFace, Vector3 current, Vector3 origin, Vector3 direction,
+            out BlockFace face, out Vector3 collision) {
+            face = fromFace;
+            collision = current;
             return true;
         }
 
@@ -295,11 +299,11 @@ namespace CMineNew.Map.BlockData.Type{
                 waterC.UpdateWaterLevel();
             }
         }
-        
+
         public override bool CanLightPassThrough(BlockFace face) {
             return true;
         }
-        
+
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {
             return true;
         }

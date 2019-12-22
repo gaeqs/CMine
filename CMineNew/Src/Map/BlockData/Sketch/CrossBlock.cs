@@ -33,8 +33,10 @@ namespace CMineNew.Map.BlockData.Sketch{
         public override void OnNeighbourBlockChange(Block from, Block to, BlockFace relative) {
         }
 
-        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
-            return BlockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2);
+        public override bool Collides(BlockFace fromFace, Vector3 current, Vector3 origin, Vector3 direction, 
+            out BlockFace face, out Vector3 collision) {
+            return BlockModel.BlockCollision.CollidesSegment(_position.ToFloat(), current, current + direction * 2,
+                out collision, out face);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {

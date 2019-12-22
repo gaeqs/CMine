@@ -113,6 +113,7 @@ namespace CMineNew.Entities.Controller {
                 if (_player.BlockRayTracer.Result == null) return;
                 var result = _player.BlockRayTracer.Result;
                 var position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
+                Console.WriteLine(_player.BlockRayTracer.Face);
                 if (!matInstance.CanBePlaced(position, _player.World)) return;
                 if (!matInstance.Passable && _player.CollisionBox.Collides(matInstance.BlockModel.BlockCollision,
                         _player.Position,
@@ -132,10 +133,8 @@ namespace CMineNew.Entities.Controller {
                 position = result.Position + BlockFaceMethods.GetRelative(_player.BlockRayTracer.Face);
                 var relativeBlock = _player.World.GetBlock(position);
 
-                Console.Write(clickedBlock?.BlockLight?.LinearSunlight
-                              + "(" + clickedBlock?.SunlightData.GetLightFor(clickedBlock.Position.Y) + ") | ");
-                Console.WriteLine(relativeBlock?.BlockLight?.LinearSunlight + " (" +
-                                  relativeBlock?.SunlightData.GetLightFor(relativeBlock.Position.Y) + ")");
+                Console.WriteLine(clickedBlock?.BlockLight?.Light);
+                Console.WriteLine(relativeBlock?.BlockLight?.Light);
                 
                 if (_player.BlockRayTracer.Result == null) return;
                 if (!BlockManager.TryGet(result.Id, out var snapshot)) return;

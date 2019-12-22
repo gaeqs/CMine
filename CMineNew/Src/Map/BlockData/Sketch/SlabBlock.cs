@@ -115,9 +115,12 @@ namespace CMineNew.Map.BlockData.Sketch{
             }
         }
 
-        public override bool Collides(Vector3 current, Vector3 origin, Vector3 direction) {
+        public override bool Collides(BlockFace fromFace, Vector3 current, Vector3 origin, Vector3 direction,
+            out BlockFace face, out Vector3 collision) {
             var position = _upside ? _position.ToFloat() + new Vector3(0, 0.5f, 0) : _position.ToFloat();
-            return BlockModel.BlockCollision.CollidesSegment(position, current, current + direction * 2);
+
+            return BlockModel.BlockCollision.CollidesSegment(position, current, current + direction * 2, 
+                out collision, out face);
         }
 
         public override bool IsFaceOpaque(BlockFace face) {
@@ -161,7 +164,7 @@ namespace CMineNew.Map.BlockData.Sketch{
         }
 
         public override bool CanLightPassThrough(BlockFace face) {
-            return _blockLightSource != null || !IsFaceOpaque(face);
+            return !IsFaceOpaque(face);
         }
 
         public override bool CanLightBePassedFrom(BlockFace face, Block from) {

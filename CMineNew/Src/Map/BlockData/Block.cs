@@ -10,8 +10,8 @@ using CMineNew.Map.BlockData.Type;
 using CMineNew.Util;
 using OpenTK;
 
-namespace CMineNew.Map.BlockData {
-    public abstract class Block {
+namespace CMineNew.Map.BlockData{
+    public abstract class Block{
         public const sbyte MaxBlockLight = 15;
         public const float MaxBlockLightF = MaxBlockLight;
 
@@ -326,7 +326,8 @@ namespace CMineNew.Map.BlockData {
 
         public abstract Block Clone(Chunk chunk, Vector3i position);
 
-        public abstract bool Collides(Vector3 current, Vector3 origin, Vector3 direction);
+        public abstract bool Collides(BlockFace fromFace, Vector3 current, Vector3 origin, Vector3 direction,
+            out BlockFace face, out Vector3 collision);
 
         public abstract bool IsFaceOpaque(BlockFace face);
 

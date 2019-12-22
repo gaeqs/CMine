@@ -5,7 +5,7 @@ namespace CMineNew.Map.BlockData.Static{
 
         public BlockStaticDataSlab(string id, bool passable, bool lightSource, sbyte lightSourceLight,
             sbyte blockLightPassReduction, sbyte sunlightPassReduction ) : 
-            base(id, BlockModelManager.GetModelOrNull(CubicBlockModel.Key), passable, 0.5f, 0, 
+            base(id, BlockModelManager.GetModelOrNull(SlabBlockModel.Key), passable, 0.5f, 0, 
                 lightSource, lightSourceLight, blockLightPassReduction, sunlightPassReduction) {
         }
     }

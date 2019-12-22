@@ -79,7 +79,7 @@ namespace CMineNew.RayTrace{
         public void Step() {
             var block = _world.GetBlock(_currentBlock);
             if (block != null && !_bypassBlocks.Contains(block.Id)) {
-                if (block.Collides(_current, _origin, _direction)) {
+                if (block.Collides(_face, _current, _origin, _direction, out _face, out _current)) {
                     _result = block;
                     _finished = true;
                     return;
