@@ -416,7 +416,7 @@ namespace CMineNew.Map {
                     break;
                 case Key.K:
                     var pos = new Vector3i(_player.Position);
-                    for (var x = -7; x < 7; x++) {
+                    for (var x = -14; x < 14; x++) {
                         for (var z = -7; z < 7; z++) {
                             var bPos = pos;
                             bPos.Add(x, -1, z);

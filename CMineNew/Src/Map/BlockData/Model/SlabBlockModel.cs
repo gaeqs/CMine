@@ -12,8 +12,6 @@ namespace CMineNew.Map.BlockData.Model{
     public class SlabBlockModel : BlockModel{
         public const string Key = "default:slab";
 
-        private readonly LineVertexArrayObject _lineVao;
-
         public SlabBlockModel() : base(Key, new Aabb(0, 0, 0, 1, 0.5f, 1)) {
         }
 
