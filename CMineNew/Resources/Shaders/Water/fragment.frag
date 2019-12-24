@@ -1,6 +1,7 @@
 #version 440 core
 
-in vec3 fragPos;
+in vec3 cameraDistance;
+in float cameraDistanceSquared;
 in vec2 fragTexCoords;
 in vec4 fragColorFilter;
 in float fragLight;
@@ -12,7 +13,11 @@ layout (std140, binding = 0) uniform Uniforms {
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
+
     vec3 cameraPosition;
+    ivec3 floorCameraPosition;
+    vec3 decimalCameraPosition;
+
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
@@ -35,10 +40,8 @@ void main() {
     float light = fragLight * 0.8 + 0.2;
     FragColor = ambient * light;
     
-    vec3 distance = fragPos - cameraPosition;
-    float lengthSquared = dot(distance, distance);
 
-    vec4 color = texture(skyBox, distance);
-    float a = clamp(1 - (viewDistanceOffsetSquared - lengthSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
+    vec4 color = texture(skyBox, cameraDistance);
+    float a = clamp(1 - (viewDistanceOffsetSquared - cameraDistanceSquared) / (viewDistanceOffsetSquared - viewDistanceSquared), 0, 1);
     FragColor = mix(FragColor, color, a);
 }

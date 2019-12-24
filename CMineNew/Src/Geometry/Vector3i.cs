@@ -269,6 +269,10 @@ namespace CMineNew.Geometry {
         public Vector3 ToFloat() {
             return new Vector3(_x, _y, _z);
         }
+        
+        public Vector3d ToDouble() {
+            return new Vector3d(_x, _y, _z);
+        }
 
         public Vector2i ToVector2i(bool useZ = false) {
             return new Vector2i(_x, useZ ? _z : _y);

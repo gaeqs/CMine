@@ -19,7 +19,11 @@ layout (std140, binding = 0) uniform Uniforms {
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
+
     vec3 cameraPosition;
+    ivec3 floorCameraPosition;
+    vec3 decimalCameraPosition;
+
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;

@@ -14,7 +14,7 @@ namespace CMineNew.Map{
         private readonly WorldShaderData _shaderData;
 
         public WorldRenderData() {
-            _camera = new PhysicCamera(new Vector3(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
+            _camera = new PhysicCamera(new Vector3d(0), new Vector2(0, 0), new Vector3(0, 1, 0), 110);
             _gBuffer = new WorldGBuffer(CMine.Window);
             _skyBox = new SkyBox(Textures.sky_box_right, Textures.sky_box_left, Textures.sky_box_top,
                 Textures.sky_box_bottom, Textures.sky_box_front, Textures.sky_box_back);
@@ -61,7 +61,8 @@ namespace CMineNew.Map{
         }
 
         public void CameraTick(Player player, long delay) {
-            _camera.ToPosition = player.RenderPosition + new Vector3(0, player.EyesHeight, 0);
+            var v = player.RenderPosition + new Vector3(0, player.EyesHeight, 0);
+            _camera.ToPosition = new Vector3d(v.X, v.Y, v.Z);
             _camera.ToRotation = player.HeadRotation;
             _camera.OnGround = player.OnGround;
             _camera.Tick(delay);
@@ -70,7 +71,7 @@ namespace CMineNew.Map{
         public void SetShaderData(Vector3 sunlightDirection, bool waterShader, long ticks) {
             const int min = (CMine.ChunkRadius - 2) << 4;
             const int max = (CMine.ChunkRadius - 1) << 4;
-            _shaderData.SetData(_camera.Matrix, _camera.Frustum.Matrix, _camera.Position,
+            _shaderData.SetData(_camera,
                 sunlightDirection, min * min, max * max, waterShader, ticks,
                 CMine.TextureMap.SpriteSizeNormalized, CMine.TextureMap.TextureLength,
                 new Vector2i(CMine.Window.Width, CMine.Window.Height));

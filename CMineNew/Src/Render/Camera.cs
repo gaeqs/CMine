@@ -6,14 +6,15 @@ namespace CMineNew.Render{
     public class Camera{
         public const float ExtremePitch = (float) Math.PI / 2 - 0.001f;
 
-        protected Vector3 _position, _lookAt, _up;
+        protected Vector3d _position;
+        protected Vector3 _lookAt, _up;
         protected Vector2 _rotation;
         protected Vector3 _n, _v, _u;
         protected Matrix4 _matrix, _invertedMatrix, _viewProjection, _invertedViewProjection;
         protected Frustum _frustum;
         protected bool _requiresRecalculation;
 
-        public Camera(Vector3 position, Vector2 rotation, Vector3 up, float fov) {
+        public Camera(Vector3d position, Vector2 rotation, Vector3 up, float fov) {
             _position = position;
             _rotation = rotation;
             _up = up;
@@ -22,7 +23,7 @@ namespace CMineNew.Render{
             RecalculateLookAt();
         }
 
-        public virtual Vector3 Position {
+        public virtual Vector3d Position {
             get => _position;
             set {
                 _position = value;
@@ -156,10 +157,10 @@ namespace CMineNew.Render{
             _invertedMatrix = new Matrix4(_u.X, _u.Y, _u.Z, 0,
                 _v.X, _v.Y, _v.Z, 0,
                 _n.X, _n.Y, _n.Z, 0,
-                _position.X, _position.Y, _position.Z, 1);
+                (float) _position.X, (float) _position.Y, (float) _position.Z, 1);
 
 
-            var p = -_position;
+            var p = -new Vector3((float) _position.X, (float) _position.Y, (float) _position.Z);
             _matrix = new Matrix4(_u.X, _v.X, _n.X, 0,
                 _u.Y, _v.Y, _n.Y, 0,
                 _u.Z, _v.Z, _n.Z, 0,

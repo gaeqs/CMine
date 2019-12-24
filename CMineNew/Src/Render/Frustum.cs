@@ -14,7 +14,7 @@ namespace CMineNew.Render{
         private float _fov;
         private float _aspectRatio;
         private bool _projective;
-        private Matrix4 _matrix;
+        private Matrix4 _matrix, _invertedMatrix;
 
         private Plane[] _planes;
 
@@ -124,6 +124,8 @@ namespace CMineNew.Render{
 
         public Matrix4 Matrix => _matrix;
 
+        public Matrix4 InvertedMatrix => _invertedMatrix;
+
         public Plane[] Planes => _planes;
 
         private void RecalculateFrustum() {
@@ -153,6 +155,8 @@ namespace CMineNew.Render{
                     -(_far + _near) / (_far - _near), 1);
             }
 
+            _invertedMatrix = _matrix.Inverted();
+            
             GeneratePlanes();
             _camera.GenerateViewProjectionMatrix();
         }

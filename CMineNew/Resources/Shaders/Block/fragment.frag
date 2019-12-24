@@ -1,6 +1,6 @@
 #version 440 core
 
-in vec3 fragPos, fragNormal;
+in vec3 fragNormal;
 in vec2 fragTexCoord;
 flat in vec4 fragColorFilter;
 in float fragLight;

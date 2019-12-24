@@ -10,7 +10,8 @@ layout (location = 6) in float blockLight;
 layout (location = 7) in float sunlight;
 layout (location = 8) in float waterLevels;
 
-out vec3 fragPos;
+out vec3 cameraDistance;
+out float cameraDistanceSquared;
 out vec2 fragTexCoords;
 out vec4 fragColorFilter;
 out float fragLight;
@@ -20,7 +21,11 @@ layout (std140, binding = 0) uniform Uniforms {
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
+
     vec3 cameraPosition;
+    ivec3 floorCameraPosition;
+    vec3 decimalCameraPosition;
+
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
@@ -32,8 +37,11 @@ layout (std140, binding = 0) uniform Uniforms {
 };
 
 void main () {
-    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y, worldPosition.z, 1);
-    vec4 modelPosition = model * vec4(position, 1);
+
+    ivec3 blockPosition = floatBitsToInt(worldPosition);
+    ivec3 relative = blockPosition - floorCameraPosition;
+    vec3 relativeF = vec3(relative);
+    vec3 modelRelativePosition = position + relativeF - decimalCameraPosition;
 
     uint waterLevelsInt = floatBitsToUint(waterLevels);
 
@@ -51,13 +59,17 @@ void main () {
 
     float level = water0 * is0 + water1 * is1 + water2 * is2 + water3 * is3 + 1;
     level = -1 + level / 9;
-    modelPosition.y += isTop * level;
+    modelRelativePosition.y += isTop * level;
 
-    gl_Position = viewProjection * modelPosition;
+
+    vec4 viewPosition = view * vec4(modelRelativePosition, 0.0);
+    viewPosition.w = 1;
+    gl_Position = projection * viewPosition;
     gl_Position.z += 0.0001f;
 
-    fragPos = modelPosition.xyz;
-    vec3 fragNormal = mat3(transpose(inverse(view * model))) * normal;
+    vec3 fragNormal = mat3(view) * normal;
+    cameraDistance = modelRelativePosition;
+    cameraDistanceSquared = dot(viewPosition, viewPosition);
 
     int iIndex = int(textureIndex);
     int xIndex = iIndex / spriteTextureLength;

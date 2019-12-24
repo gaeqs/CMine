@@ -84,13 +84,12 @@ namespace CMineNew.Map{
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Disable(EnableCap.DepthTest);
             GL.DepthMask(false);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         public void Draw(Camera camera, Vector3 ambientColor, float ambientStrength, bool waterShader, SkyBox skyBox) {
             _quadVao.Bind();
             UsePostRenderShader(waterShader);
-            _postRenderShader.SetUMatrix("invertedViewProjection", camera.InvertedViewProjection);
+            _postRenderShader.SetUMatrix("invertedProjection", camera.Frustum.InvertedMatrix);
             _postRenderShader.SetUVector("ambientColor", ambientColor);
             _postRenderShader.SetUFloat("ambientStrength", ambientStrength);
 
@@ -104,8 +103,6 @@ namespace CMineNew.Map{
             GL.BindTexture(TextureTarget.Texture2D, _brightnessTexture);
             GL.ActiveTexture(TextureUnit.Texture4);
             GL.BindTexture(TextureTarget.Texture2D, _blurTexture);
-            GL.ActiveTexture(TextureUnit.Texture5);
-            GL.BindTexture(TextureTarget.TextureCubeMap, skyBox.Id);
             DrawQuad();
         }
 

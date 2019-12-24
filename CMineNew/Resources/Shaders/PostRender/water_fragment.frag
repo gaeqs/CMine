@@ -8,14 +8,17 @@ uniform sampler2D gDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gBrightness;
 uniform sampler2D gSsao;
-uniform samplerCube skyBox;
 
 layout (std140, binding = 0) uniform Uniforms {
 
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
+
     vec3 cameraPosition;
+    ivec3 floorCameraPosition;
+    vec3 decimalCameraPosition;
+
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
@@ -28,7 +31,7 @@ layout (std140, binding = 0) uniform Uniforms {
 
 uniform float ambientStrength;
 uniform vec3 ambientColor;
-uniform mat4 invertedViewProjection;
+uniform mat4 invertedProjection;
 
 vec3 calculateGlobalAmbient (vec3 modelAmbientColor) {
     return ambientStrength * ambientColor * modelAmbientColor;
@@ -38,7 +41,7 @@ vec3 calculatePosition (vec2 texCoords) {
     float depth = texture2D(gDepth, texCoords).r * 2 - 1;
     vec2 projectedPositionXY = texCoords * 2.0 - 1.0;
     vec4 projected = vec4(projectedPositionXY.x, projectedPositionXY.y, depth, 1);
-    vec4 position4 = invertedViewProjection * projected;
+    vec4 position4 = invertedProjection * projected;
     return position4.xyz / position4.w;
 }
 

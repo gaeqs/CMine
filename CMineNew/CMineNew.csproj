@@ -236,6 +236,7 @@
     <Compile Include="Src\Text\StaticText.cs" />
     <Compile Include="Src\Text\StaticTextRenderer.cs" />
     <Compile Include="Src\Text\TrueTypeFont.cs" />
+    <Compile Include="Src\Util\BitUtils.cs" />
     <Compile Include="Src\Util\FolderUtils.cs" />
     <Compile Include="Src\Util\ForceUtils.cs" />
     <Compile Include="Src\Util\MathUtils.cs" />

@@ -1,4 +1,5 @@
 using System;
+using CMineNew.Geometry;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -129,6 +130,26 @@ namespace CMineNew.Render.Object{
             _vbo.SetSubData(BufferTarget.UniformBuffer, vector3, offset);
         }
 
+        public void Set(Vector3i vector3i, int index) {
+            var o = _objects[index];
+            if (o.Id != UboObject.Vector3.Id)
+                throw new ArgumentException("The argument can't be a Vector3! Id: " + o.Id);
+            var offset = GetStartOffset(index, o);
+            
+            if (_vbo.Mapping) {
+                unsafe {
+                    var pointer = (int*) _vbo.Pointer;
+                    pointer += offset >> 2;
+                    *pointer++ = vector3i.X;
+                    *pointer++ = vector3i.Y;
+                    *pointer = vector3i.Z;
+                    return;
+                }
+            }
+
+            _vbo.SetSubData(BufferTarget.UniformBuffer, vector3i, offset);
+        }
+        
         public void Set(Vector4 vector4, int index) {
             var o = _objects[index];
             if (o.Id != UboObject.Vector4.Id)

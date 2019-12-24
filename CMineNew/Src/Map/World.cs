@@ -366,6 +366,12 @@ namespace CMineNew.Map {
             //Draws GBuffer quad.
             //Draws background
             _renderData.BindDefaultFrameBuffer();
+            
+            GL.Disable(EnableCap.Blend);
+            _renderData.DrawSkyBox();
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendEquation(BlendEquationMode.FuncAdd);
             _renderData.DrawGBuffer(_player.EyesOnWater);
 
             //Draws objects in main FBO.
@@ -411,7 +417,7 @@ namespace CMineNew.Map {
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.P:
-                    _player.Position = new Vector3(125507, 100, 20);
+                    _player.Position = new Vector3(1255070, 100, 20);
                     _player.Velocity = Vector3.Zero;
                     break;
                 case Key.K:

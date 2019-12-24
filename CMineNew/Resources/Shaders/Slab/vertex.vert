@@ -20,7 +20,11 @@ layout (std140, binding = 0) uniform Uniforms {
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
+
     vec3 cameraPosition;
+    ivec3 floorCameraPosition;
+    vec3 decimalCameraPosition;
+
     vec3 sunlightDirection;
     float viewDistanceSquared;
     float viewDistanceOffsetSquared;
@@ -33,12 +37,20 @@ layout (std140, binding = 0) uniform Uniforms {
 
 
 void main () {
-    float height = upside > 0.5 ? 0.5 : 0;
-    mat4 model = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, worldPosition.x, worldPosition.y + height, worldPosition.z, 1);
-    vec4 modelPosition = model * vec4(position, 1);
-    gl_Position = viewProjection * modelPosition;
-    fragPos = modelPosition.xyz;
-    fragNormal = mat3(transpose(inverse(view * model))) * normal;
+    float height = int(upside) * 0.5;
+
+    ivec3 blockPosition = floatBitsToInt(worldPosition);
+    ivec3 relative = blockPosition - floorCameraPosition;
+    vec3 relativeF = vec3(relative);
+    relativeF.y += height;
+    vec3 modelRelativePosition = position + relativeF - decimalCameraPosition;
+
+    vec4 viewPosition = view * vec4(modelRelativePosition, 0.0);
+    viewPosition.w = 1;
+
+    gl_Position = projection * viewPosition;
+    
+    fragNormal = mat3(view) * normal;
 
     int iIndex = int(textureIndex);
     int xIndex = iIndex / spriteTextureLength;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CMineNew.Geometry;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -98,6 +99,12 @@ namespace CMineNew.Render.Object{
         public void SetSubData(BufferTarget target, Vector3 data, int offset) {
             unsafe {
                 GL.BufferSubData(target, (IntPtr) offset, sizeof(Vector3), ref data);
+            }
+        }
+        
+        public void SetSubData(BufferTarget target, Vector3i data, int offset) {
+            unsafe {
+                GL.BufferSubData(target, (IntPtr) offset, sizeof(Vector3i), ref data);
             }
         }
 

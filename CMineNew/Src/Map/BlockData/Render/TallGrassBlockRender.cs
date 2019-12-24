@@ -2,6 +2,7 @@ using CMineNew.Map.BlockData.Sketch;
 using CMineNew.Render.Mapper;
 using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
+using CMineNew.Util;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Map.BlockData.Render{
@@ -40,7 +41,7 @@ namespace CMineNew.Map.BlockData.Render{
 
         public override void AddData(int mapperIndex, Block block, int blockLight, int sunlight) {
             if (!(block is CrossBlock crossBlock)) return;
-            var pos = block.Position;
+            var pos = BitUtils.IntBitsToFloat(block.Position);
             var filter = block.TextureFilter;
             var index = crossBlock.TextureIndex;
             _mapper.AddTask(new VboMapperTask<Block>(VboMapperTaskType.Add, block,
