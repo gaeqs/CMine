@@ -20,85 +20,85 @@
     </resheader>
 
     
-    <data name="pointer" type="System.Resources.ResXFileRef">
-        <value>pointer.png;System.Byte[]</value>
+    <data name="pointer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>pointer.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="gui_hotbar" type="System.Resources.ResXFileRef">
-        <value>Gui/hotbar.png;System.Byte[]</value>
+    <data name="gui_hotbar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Gui/hotbar.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
 
-    <data name="sky_box_back" type="System.Resources.ResXFileRef">
-        <value>SkyBox/back.png;System.Byte[]</value>
+    <data name="sky_box_back" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/back.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sky_box_bottom" type="System.Resources.ResXFileRef">
-        <value>SkyBox/bottom.png;System.Byte[]</value>
+    <data name="sky_box_bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/bottom.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sky_box_front" type="System.Resources.ResXFileRef">
-        <value>SkyBox/front.png;System.Byte[]</value>
+    <data name="sky_box_front" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/front.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sky_box_left" type="System.Resources.ResXFileRef">
-        <value>SkyBox/left.png;System.Byte[]</value>
+    <data name="sky_box_left" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/left.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sky_box_right" type="System.Resources.ResXFileRef">
-        <value>SkyBox/right.png;System.Byte[]</value>
+    <data name="sky_box_right" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/right.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sky_box_top" type="System.Resources.ResXFileRef">
-        <value>SkyBox/top.png;System.Byte[]</value>
+    <data name="sky_box_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>SkyBox/top.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
     
-    <data name="stone" type="System.Resources.ResXFileRef">
-        <value>stone.png;System.Byte[]</value>
+    <data name="stone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>stone.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="dirt" type="System.Resources.ResXFileRef">
-        <value>dirt.png;System.Byte[]</value>
+    <data name="dirt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>dirt.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="grass_side" type="System.Resources.ResXFileRef">
-        <value>grass_side.png;System.Byte[]</value>
+    <data name="grass_side" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>grass_side.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="grass_top" type="System.Resources.ResXFileRef">
-        <value>grass_top.png;System.Byte[]</value>
+    <data name="grass_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>grass_top.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="water" type="System.Resources.ResXFileRef">
-        <value>water.png;System.Byte[]</value>
+    <data name="water" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>water.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="tall_grass" type="System.Resources.ResXFileRef">
-        <value>tall_grass.png;System.Byte[]</value>
+    <data name="tall_grass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>tall_grass.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="bricks" type="System.Resources.ResXFileRef">
-        <value>bricks.png;System.Byte[]</value>
+    <data name="bricks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>bricks.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="oak_log_side" type="System.Resources.ResXFileRef">
-        <value>oak_log_side.png;System.Byte[]</value>
+    <data name="oak_log_side" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>oak_log_side.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="oak_log_top" type="System.Resources.ResXFileRef">
-        <value>oak_log_top.png;System.Byte[]</value>
+    <data name="oak_log_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>oak_log_top.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
     
-    <data name="oak_leaves" type="System.Resources.ResXFileRef">
-        <value>oak_leaves.png;System.Byte[]</value>
+    <data name="oak_leaves" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>oak_leaves.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="sand" type="System.Resources.ResXFileRef">
-        <value>sand.png;System.Byte[]</value>
+    <data name="sand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>sand.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
-    <data name="torch" type="System.Resources.ResXFileRef">
-        <value>torch.png;System.Byte[]</value>
+    <data name="torch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>torch.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </data>
 
 </root>

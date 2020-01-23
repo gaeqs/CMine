@@ -24,148 +24,148 @@
         </value>
     </resheader>
 
-    <data name="block_vertex" type="System.Resources.ResXFileRef">
+    <data name="block_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Block/vertex.vert;System.String</value>
     </data>
 
-    <data name="block_fragment" type="System.Resources.ResXFileRef">
+    <data name="block_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Block/fragment.frag;System.String</value>
     </data>
 
-    <data name="tall_grass_vertex" type="System.Resources.ResXFileRef">
+    <data name="tall_grass_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>TallGrass/vertex.vert;System.String</value>
     </data>
 
-    <data name="tall_grass_fragment" type="System.Resources.ResXFileRef">
+    <data name="tall_grass_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>TallGrass/fragment.frag;System.String</value>
     </data>
 
-    <data name="slab_vertex" type="System.Resources.ResXFileRef">
+    <data name="slab_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Slab/vertex.vert;System.String</value>
     </data>
 
-    <data name="slab_fragment" type="System.Resources.ResXFileRef">
+    <data name="slab_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Slab/fragment.frag;System.String</value>
     </data>
 
-    <data name="water_vertex" type="System.Resources.ResXFileRef">
+    <data name="water_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Water/vertex.vert;System.String</value>
     </data>
 
-    <data name="water_fragment" type="System.Resources.ResXFileRef">
+    <data name="water_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Water/fragment.frag;System.String</value>
     </data>
 
-    <data name="water_water_fragment" type="System.Resources.ResXFileRef">
+    <data name="water_water_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Water/water_fragment.frag;System.String</value>
     </data>
     
-    <data name="block_lines_vertex" type="System.Resources.ResXFileRef">
+    <data name="block_lines_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>BlockLines/vertex.vert;System.String</value>
     </data>
 
-    <data name="block_lines_fragment" type="System.Resources.ResXFileRef">
+    <data name="block_lines_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>BlockLines/fragment.frag;System.String</value>
     </data>
 
-    <data name="post_render_vertex" type="System.Resources.ResXFileRef">
+    <data name="post_render_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>PostRender/vertex.vert;System.String</value>
     </data>
 
-    <data name="post_render_fragment" type="System.Resources.ResXFileRef">
+    <data name="post_render_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>PostRender/fragment.frag;System.String</value>
     </data>
 
-    <data name="post_render_water_fragment" type="System.Resources.ResXFileRef">
+    <data name="post_render_water_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>PostRender/water_fragment.frag;System.String</value>
     </data>
 
-    <data name="ssao_vertex" type="System.Resources.ResXFileRef">
+    <data name="ssao_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SSAO/vertex.vert;System.String</value>
     </data>
     
-    <data name="ssao_fragment" type="System.Resources.ResXFileRef">
+    <data name="ssao_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SSAO/fragment.frag;System.String</value>
     </data>
 
-    <data name="ssao_blur_vertex" type="System.Resources.ResXFileRef">
+    <data name="ssao_blur_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SSAOBlur/vertex.vert;System.String</value>
     </data>
 
-    <data name="ssao_blur_fragment" type="System.Resources.ResXFileRef">
+    <data name="ssao_blur_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SSAOBlur/fragment.frag;System.String</value>
     </data>
 
 
-    <data name="directional_light_vertex" type="System.Resources.ResXFileRef">
+    <data name="directional_light_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/directional_light_vertex.vert;System.String</value>
     </data>
     
-    <data name="directional_light_fragment" type="System.Resources.ResXFileRef">
+    <data name="directional_light_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/directional_light_fragment.frag;System.String</value>
     </data>
 
-    <data name="flash_light_vertex" type="System.Resources.ResXFileRef">
+    <data name="flash_light_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/flash_light_vertex.vert;System.String</value>
     </data>
 
-    <data name="flash_light_fragment" type="System.Resources.ResXFileRef">
+    <data name="flash_light_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/flash_light_fragment.frag;System.String</value>
     </data>
 
-    <data name="point_light_vertex" type="System.Resources.ResXFileRef">
+    <data name="point_light_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/point_light_vertex.vert;System.String</value>
     </data>
 
-    <data name="point_light_fragment" type="System.Resources.ResXFileRef">
+    <data name="point_light_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Light/point_light_fragment.frag;System.String</value>
     </data>
     
-    <data name="static_text_vertex" type="System.Resources.ResXFileRef">
+    <data name="static_text_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>StaticText/vertex.vert;System.String</value>
     </data>
 
-    <data name="static_text_fragment" type="System.Resources.ResXFileRef">
+    <data name="static_text_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>StaticText/fragment.frag;System.String</value>
     </data>
 
-    <data name="pointer_vertex" type="System.Resources.ResXFileRef">
+    <data name="pointer_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Pointer/vertex.vert;System.String</value>
     </data>
 
-    <data name="pointer_fragment" type="System.Resources.ResXFileRef">
+    <data name="pointer_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Pointer/fragment.frag;System.String</value>
     </data>
 
-    <data name="sky_box_vertex" type="System.Resources.ResXFileRef">
+    <data name="sky_box_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SkyBox/vertex.vert;System.String</value>
     </data>
 
-    <data name="sky_box_fragment" type="System.Resources.ResXFileRef">
+    <data name="sky_box_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>SkyBox/fragment.frag;System.String</value>
     </data>
 
-    <data name="loop_delay_viewer_vertex" type="System.Resources.ResXFileRef">
+    <data name="loop_delay_viewer_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>LoopDelayViewer/vertex.vert;System.String</value>
     </data>
 
-    <data name="loop_delay_viewer_fragment" type="System.Resources.ResXFileRef">
+    <data name="loop_delay_viewer_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>LoopDelayViewer/fragment.frag;System.String</value>
     </data>
 
-    <data name="gui_2d_element_vertex" type="System.Resources.ResXFileRef">
+    <data name="gui_2d_element_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Gui/2dElement/vertex.vert;System.String</value>
     </data>
 
-    <data name="gui_2d_element_fragment" type="System.Resources.ResXFileRef">
+    <data name="gui_2d_element_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Gui/2dElement/fragment.frag;System.String</value>
     </data>
 
-    <data name="gui_block_element_vertex" type="System.Resources.ResXFileRef">
+    <data name="gui_block_element_vertex" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Gui/BlockElement/vertex.vert;System.String</value>
     </data>
 
-    <data name="gui_block_element_fragment" type="System.Resources.ResXFileRef">
+    <data name="gui_block_element_fragment" type="System.Resources.ResXFileRef, System.Windows.Forms">
         <value>Gui/BlockElement/fragment.frag;System.String</value>
     </data>
     
