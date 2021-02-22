@@ -5,12 +5,7 @@
 ## Introduction
 
 CMine is a small Minecraft clone using new OpenGL features. It reaches up to 900FPS if run at 1080p.
-CMine is made in C# using .NET Framework v4.6.1 and OpenTK.
-
-Jams is a modern and extensible project-based MIPS assembler and simulator written in Java.
-It supports multiple themes and languages.
-
-> Currently on an alpha state, JAMS is aimed to support multiple architectures and instruction sets, allowing other developers to expand JAMS through plugins.
+> CMine is made in C# using .NET Framework v4.6.1 and OpenTK.
 
 ## Dependencies
 - C# 8.
