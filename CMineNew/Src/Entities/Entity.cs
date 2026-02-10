@@ -2,6 +2,7 @@ using System;
 using CMineNew.Collision;
 using CMineNew.Map;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Entities{
     
@@ -108,7 +109,7 @@ namespace CMineNew.Entities{
             return _guid.Equals(other._guid);
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;

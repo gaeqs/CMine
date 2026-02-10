@@ -1,20 +1,22 @@
-using OpenTK.Input;
+using OpenTK.Windowing.Common;
 
-namespace CMineNew.Entities.Controller{
-    
+namespace CMineNew.Entities.Controller
+{
     /// <summary>
     /// A PlayerController manages the movement of a player.
     /// Currently the only implementation is LocalPlayerController, which translates
     /// mouse and keyboard inputs into player's actions.
     /// </summary>
-    public abstract class PlayerController{
+    public abstract class PlayerController
+    {
         private readonly Player _player;
 
         /// <summary>
         /// Creates a player controller.
         /// </summary>
         /// <param name="player">The player.</param>
-        public PlayerController(Player player) {
+        public PlayerController(Player player)
+        {
             _player = player;
         }
 
@@ -25,7 +27,7 @@ namespace CMineNew.Entities.Controller{
         /// </summary>
         /// <param name="dif">The delay between the last tick and the current one in ticks.</param>
         public abstract void Tick(long dif);
-        
+
         /// <summary>
         /// Method called every render loop.
         /// </summary>
@@ -55,7 +57,7 @@ namespace CMineNew.Entities.Controller{
         /// </summary>
         /// <param name="eventArgs">The event.</param>
         public abstract void HandleMouseRelease(MouseButtonEventArgs eventArgs);
-        
+
         /// <summary>
         /// Method called when a mouse wheel is moved.
         /// </summary>

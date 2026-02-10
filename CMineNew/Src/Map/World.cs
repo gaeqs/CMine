@@ -8,7 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Color;
 using CMineNew.Entities;
 using CMineNew.Entities.Controller;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Model;
 using CMineNew.Map.BlockData.Snapshot;
@@ -23,6 +22,11 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using Vector2i = CMineNew.Geometry.Vector2i;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map {
     public class World : Room {
@@ -412,15 +416,15 @@ namespace CMineNew.Map {
             _player.Controller?.HandleKeyPush(args);
             base.KeyPush(args);
             switch (args.Key) {
-                case Key.R:
+                case Keys.R:
                     _player.Position = new Vector3(20, 100, 20);
                     _player.Velocity = Vector3.Zero;
                     break;
-                case Key.P:
+                case Keys.P:
                     _player.Position = new Vector3(1255070, 100, 20);
                     _player.Velocity = Vector3.Zero;
                     break;
-                case Key.K:
+                case Keys.K:
                     var pos = new Vector3i(_player.Position);
                     for (var x = -14; x < 14; x++) {
                         for (var z = -7; z < 7; z++) {
@@ -431,7 +435,7 @@ namespace CMineNew.Map {
                     }
 
                     break;
-                case Key.L:
+                case Keys.L:
                     Save();
                     break;
             }

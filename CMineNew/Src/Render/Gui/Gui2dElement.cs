@@ -3,6 +3,7 @@ using CMineNew.Map;
 using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render.Gui {
     public class Gui2dElement {

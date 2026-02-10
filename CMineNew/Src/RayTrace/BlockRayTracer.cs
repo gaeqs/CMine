@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.RayTrace{
     public class BlockRayTracer{

@@ -4,6 +4,7 @@ using CMineNew.Map.BlockData.Snapshot;
 using CMineNew.Map.BlockData.Snapshot.Interface;
 using CMineNew.Render.Object;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render.Gui {
     public class GuiBlockElement {

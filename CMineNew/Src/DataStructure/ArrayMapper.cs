@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 
 namespace CMineNew.DataStructure{
-    public class ArrayMapper<TKey>{
+    public class ArrayMapper<TKey> where TKey : notnull
+    {
         private int _elementSize;
         private int _amount;
         private int _maximumAmount;

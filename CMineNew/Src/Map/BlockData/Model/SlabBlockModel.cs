@@ -7,6 +7,7 @@ using CMineNew.Render.Object;
 using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Map.BlockData.Model{
     public class SlabBlockModel : BlockModel{

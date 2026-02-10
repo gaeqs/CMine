@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using CMineNew.Geometry;
 using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map {
     public enum BlockFace {

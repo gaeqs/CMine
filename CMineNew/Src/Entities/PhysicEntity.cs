@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using CMineNew.Collision;
-using CMineNew.Geometry;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
 using CMineNew.Map.BlockData.Type;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Entities{
     /// <summary>

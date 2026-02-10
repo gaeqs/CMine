@@ -3,6 +3,7 @@ using CMineNew.Render;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Test{
     public class DelayViewer : StaticText{

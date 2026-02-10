@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMineNew", "CMineNew\CMineNew.csproj", "{69DE02A9-5BEE-4FD1-8CD1-DC2F60148078}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMineNew", "CMineNew\CMineNew.csproj", "{69DE02A9-5BEE-4FD1-8CD1-DC2F60148078}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

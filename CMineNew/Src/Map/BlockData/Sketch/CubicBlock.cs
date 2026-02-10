@@ -1,8 +1,9 @@
 using System;
 using CMineNew.Color;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map.BlockData.Sketch{
     public abstract class CubicBlock : Block{

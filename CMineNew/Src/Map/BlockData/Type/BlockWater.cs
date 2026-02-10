@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CMineNew.Color;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static.Type;
 using CMineNew.Map.Task.Type;
-using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockWater : Block{

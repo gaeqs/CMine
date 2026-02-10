@@ -3,6 +3,7 @@ using System.Linq;
 using CMineNew.Geometry;
 using CMineNew.Map;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render{
     public class Frustum{

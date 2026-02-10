@@ -1,5 +1,6 @@
-using CMineNew.Geometry;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Util{
     public static class BitUtils{

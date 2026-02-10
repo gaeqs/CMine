@@ -1,7 +1,8 @@
 using CMineNew.Color;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData.Static.Type;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map.BlockData.Type{
     public class BlockAir : Block{

@@ -2,6 +2,8 @@ using System;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 
 namespace CMineNew.Render{
     public class Room{
@@ -26,7 +28,7 @@ namespace CMineNew.Render{
         public virtual void Draw(long delay) {
         }
 
-        public virtual void KeyPress(KeyPressEventArgs args) {
+        public virtual void KeyPress(TextInputEventArgs args) {
         }
 
         public virtual void KeyPush(KeyboardKeyEventArgs args) {
@@ -47,10 +49,10 @@ namespace CMineNew.Render{
         public virtual void MouseWheel(MouseWheelEventArgs args) {
         }
 
-        public virtual void MouseEnter(EventArgs args) {
+        public virtual void MouseEnter() {
         }
 
-        public virtual void MouseExit(EventArgs args) {
+        public virtual void MouseExit() {
         }
 
         public virtual void Close() {

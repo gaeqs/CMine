@@ -6,6 +6,7 @@ using CMineNew.Render.Object;
 using CMineNew.Text;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Test{
     public class FpsViewer : StaticText{

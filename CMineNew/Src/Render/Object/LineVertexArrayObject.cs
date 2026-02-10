@@ -5,6 +5,7 @@ using CMineNew.Collision;
 using CMineNew.Util;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render.Object{
     public class LineVertexArrayObject{

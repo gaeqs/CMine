@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CMineNew.Exception.Shader;
-using CMineNew.Geometry;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Render.Object{
     public class ShaderProgram{

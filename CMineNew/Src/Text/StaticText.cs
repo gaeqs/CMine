@@ -3,6 +3,7 @@ using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Text{
     public class StaticText{
@@ -75,8 +76,8 @@ namespace CMineNew.Text{
                 _buffer[pointer++] = x;
                 _buffer[pointer++] = _position.Y;
 
-                _buffer[pointer++] = charSize.Width * units.X;
-                _buffer[pointer++] = charSize.Height * units.Y;
+                _buffer[pointer++] = charSize.X * units.X;
+                _buffer[pointer++] = charSize.Y * units.Y;
 
                 _buffer[pointer++] = _color.R;
                 _buffer[pointer++] = _color.G;
@@ -87,7 +88,7 @@ namespace CMineNew.Text{
                 _buffer[pointer++] = coords.MinY;
                 _buffer[pointer++] = coords.MaxX;
                 _buffer[pointer++] = coords.MaxY;
-                x += charSize.Width * units.X * 0.62f;
+                x += charSize.X * units.X * 0.62f;
                 _amount++;
             }
         }

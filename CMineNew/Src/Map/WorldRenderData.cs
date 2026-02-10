@@ -1,10 +1,11 @@
 using CMineNew.Entities;
-using CMineNew.Geometry;
 using CMineNew.Map.BlockData;
 using CMineNew.Render;
 using CMineNew.Render.Gui;
 using CMineNew.Resources.Textures;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector2i = CMineNew.Geometry.Vector2i;
 
 namespace CMineNew.Map{
     public class WorldRenderData{
@@ -74,7 +75,7 @@ namespace CMineNew.Map{
             _shaderData.SetData(_camera,
                 sunlightDirection, min * min, max * max, waterShader, ticks,
                 CMine.TextureMap.SpriteSizeNormalized, CMine.TextureMap.TextureLength,
-                new Vector2i(CMine.Window.Width, CMine.Window.Height));
+                new Vector2i(CMine.Window.ClientSize.X, CMine.Window.ClientSize.Y));
         }
     }
 }

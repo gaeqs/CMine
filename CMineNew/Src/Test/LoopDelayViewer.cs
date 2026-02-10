@@ -4,6 +4,7 @@ using CMineNew.Render.Object;
 using CMineNew.Resources.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Test{
     public static class LoopDelayViewer{

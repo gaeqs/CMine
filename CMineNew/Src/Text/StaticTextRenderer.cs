@@ -1,6 +1,7 @@
 using CMineNew.Render.Object;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Text{
     public class StaticTextRenderer{

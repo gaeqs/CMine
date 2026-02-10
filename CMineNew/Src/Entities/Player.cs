@@ -1,7 +1,6 @@
 using System;
 using CMineNew.Collision;
 using CMineNew.Entities.Controller;
-using CMineNew.Geometry;
 using CMineNew.Inventory;
 using CMineNew.Map;
 using CMineNew.Map.BlockData.Snapshot;
@@ -9,6 +8,8 @@ using CMineNew.Map.BlockData.Type;
 using CMineNew.RayTrace;
 using CMineNew.Util;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Entities{
     

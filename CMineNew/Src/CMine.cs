@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-using System.IO;
 using CMineNew.Color;
 using CMineNew.Map;
 using CMineNew.Map.BlockData;
@@ -9,10 +6,14 @@ using CMineNew.Render;
 using CMineNew.Render.Gui;
 using CMineNew.Test;
 using CMineNew.Text;
-using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
-namespace CMineNew{
-    public class CMine{
+namespace CMineNew
+{
+    public class CMine
+    {
         public const int TicksPerSecond = 10000000;
         public const float TicksPerSecondF = 10000000f;
 
@@ -27,25 +28,32 @@ namespace CMineNew{
         public static TextureManager TextureManager;
         public static TextureMap TextureMap;
 
-        public static void Load() {
-            Window = new Window(1920, 1080,
-                GameWindowFlags.Fullscreen, true, (window, args) => {
-                    Directory.CreateDirectory(MainFolder);
-                    TextureMap = new TextureMap();
-                    TextureManager = new TextureManager();
-                    BlockManager.Load();
-                    BlockModelManager.Load();
-                    Pointer.Load();
+        public static void Load()
+        {
+            var gameWindowSettings = new GameWindowSettings();
+            var nativeWindowSettings = new NativeWindowSettings();
+            nativeWindowSettings.ClientSize = new Vector2i(1920, 1080);
+            nativeWindowSettings.Vsync = VSyncMode.On;
 
-                    var ttf = new TrueTypeFont(new Font(new FontFamily("Arial"), 17));
+            Window = new Window(gameWindowSettings, nativeWindowSettings, (window, args) =>
+            {
+                Directory.CreateDirectory(MainFolder);
+                TextureMap = new TextureMap();
+                TextureManager = new TextureManager();
+                BlockManager.Load();
+                BlockModelManager.Load();
+                Pointer.Load();
 
-                    var world = new World("test", ttf);
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Fonts",
+                    "JetBrainsMono.ttf");
+                var ttf = new TrueTypeFont(path, 24f);
+                var world = new World("test", ttf);
 
-                    world.StaticTexts.Add(new PositionViewer(ttf));
-                    world.StaticTexts.Add(new FpsViewer(ttf));
+                world.StaticTexts.Add(new PositionViewer(ttf));
+                world.StaticTexts.Add(new FpsViewer(ttf));
 
-                    Window.Room = world;
-                });
+                Window.Room = world;
+            });
             Window.Run();
         }
     }

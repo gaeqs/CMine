@@ -4,7 +4,8 @@ using CMineNew.Render.Object;
 using OpenTK.Graphics.OpenGL;
 
 namespace CMineNew.Render.Mapper{
-    public class GenericVboMapper<TKey> : VboMapper<TKey>{
+    public class GenericVboMapper<TKey> : VboMapper<TKey> where TKey : notnull
+    {
         private VertexBufferObject _vbo;
         private VertexArrayObject _vao;
 

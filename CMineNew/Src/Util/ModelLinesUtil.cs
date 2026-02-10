@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Util{
     public static class ModelLinesUtil{

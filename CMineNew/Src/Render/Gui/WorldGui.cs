@@ -8,6 +8,7 @@ using CMineNew.Resources.Shaders;
 using CMineNew.Resources.Textures;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render.Gui {
     public class WorldGui {

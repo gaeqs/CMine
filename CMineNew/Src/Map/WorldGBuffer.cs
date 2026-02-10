@@ -5,6 +5,10 @@ using CMineNew.Resources.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace CMineNew.Map{
     public class WorldGBuffer{
@@ -45,7 +49,7 @@ namespace CMineNew.Map{
 
         private Vector3[] _ssaoKernel;
 
-        public WorldGBuffer(INativeWindow window) {
+        public WorldGBuffer(NativeWindow window) {
             _postRenderShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_fragment);
             _postRenderShader.SetupForPostRender();
             _postRenderWaterShader = new ShaderProgram(Shaders.post_render_vertex, Shaders.post_render_water_fragment);
@@ -53,8 +57,8 @@ namespace CMineNew.Map{
             _ssaoShader = new ShaderProgram(Shaders.ssao_vertex, Shaders.ssao_fragment);
             _ssaoShader.SetupForSSAO();
             _ssaoBlurShader = new ShaderProgram(Shaders.ssao_blur_vertex, Shaders.ssao_blur_fragment);
-            _width = window.Width;
-            _height = window.Height;
+            _width = window.ClientSize.X;
+            _height = window.ClientSize.Y;
             _quadVao = GenerateQuadVao();
             GenerateTextures();
             GenerateFrameBuffer();
@@ -117,7 +121,7 @@ namespace CMineNew.Map{
 
 
         public void DrawSSAO(Matrix4 invertedProjection) {
-            if (Keyboard.GetState()[Key.B]) {
+            if (CMine.Window.KeyboardState[Keys.B]) {
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, _ssaoBlurId);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

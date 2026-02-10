@@ -1,7 +1,9 @@
-using CMineNew.Geometry;
 using CMineNew.Render;
 using CMineNew.Render.Object;
 using OpenTK;
+using OpenTK.Mathematics;
+using Vector2i = CMineNew.Geometry.Vector2i;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Map{
     public class WorldShaderData{

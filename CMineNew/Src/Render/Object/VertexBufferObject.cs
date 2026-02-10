@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using CMineNew.Geometry;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using Vector3i = CMineNew.Geometry.Vector3i;
 
 namespace CMineNew.Render.Object{
     public class VertexBufferObject{

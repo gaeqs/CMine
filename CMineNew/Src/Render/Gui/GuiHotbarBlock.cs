@@ -2,6 +2,7 @@ using CMineNew.Inventory;
 using CMineNew.Map;
 using CMineNew.Render.Object;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace CMineNew.Render.Gui{
     public class GuiHotbarBlock : GuiBlockElement{
